@@ -1,0 +1,83 @@
+@name acf_EngineChips_TurboBOV
+@inputs Play 
+@outputs 
+@persist R G B R2 G2 B2 Material:string Size
+@trigger 
+
+if(first()){
+    
+    R=20
+    G=20
+    B=20
+
+    R2=20
+    G2=20
+    B2=20
+    
+    Size=1
+    
+    Material="phoenix_storms/gear"
+
+    #bov frame
+    holoCreate(1)
+    holoPos(1,entity():toWorld(vec(0,0,0)))
+    holoScale(1, vec(0.7,0.7,0.7)*Size)          
+    holoColor(1, vec(R,G,B))          
+    holoAng(1,entity():toWorld(ang(0,0,90)))          
+    holoModel(1,"hq_tube")
+    holoMaterial(1,Material)
+    holoParent(1, entity())
+
+    #bov rear
+    holoCreate(2)
+    holoPos(2,entity():toWorld(vec(0,4,0)))
+    holoScale(2, vec(0.7,0.7,0.5)*Size)          
+    holoColor(2, vec(R,G,B))          
+    holoAng(2,entity():toWorld(ang(0,0,-90)))          
+    holoModel(2,"hq_dome")
+    holoMaterial(2,Material)
+    holoParent(2, entity())
+    
+    #bov front
+    holoCreate(3)
+    holoPos(3,entity():toWorld(vec(0,-8,0)))
+    holoScale(3, vec(0.2,0.2,0.15)*Size)          
+    holoColor(3, vec(R,G,B))          
+    holoAng(3,entity():toWorld(ang(0,0,90)))          
+    holoModel(3,"hq_tube")
+    holoMaterial(3,Material)
+    holoParent(3, entity())
+    
+    #bov paws
+    holoCreate(4)
+    holoPos(4,entity():toWorld(vec(2,-6,0)))
+    holoScale(4, vec(0.1,0.2,0.4)*Size)          
+    holoColor(4, vec(R,G,B))          
+    holoAng(4,entity():toWorld(ang(0,-30,90)))          
+    holoModel(4,"hq_square")
+    holoMaterial(4,Material)
+    holoParent(4, entity())
+    
+    holoCreate(5)
+    holoPos(5,entity():toWorld(vec(-1.2,-6,1.8)))
+    holoScale(5, vec(0.1,0.2,0.4)*Size)          
+    holoColor(5, vec(R,G,B))          
+    holoAng(5,entity():toWorld(ang(45,45,120)))          
+    holoModel(5,"hq_square")
+    holoMaterial(5,Material)
+    holoParent(5, entity())
+    
+    holoCreate(6)
+    holoPos(6,entity():toWorld(vec(-1.2,-6,-1.8)))
+    holoScale(6, vec(0.1,0.2,0.4)*Size)          
+    holoColor(6, vec(R,G,B))          
+    holoAng(6,entity():toWorld(ang(-45,45,60)))          
+    holoModel(6,"hq_square")
+    holoMaterial(6,Material)
+    holoParent(6, entity())
+
+}
+
+if(Play==1){entity():soundPlay(3,0,"/engines/turbo/turbo_hiss2.wav")}
+if(Play==0){soundStop(3)}
+

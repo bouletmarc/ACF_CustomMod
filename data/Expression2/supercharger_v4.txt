@@ -1,0 +1,364 @@
+@name Supercharger v4
+@inputs RPM Throttle Active
+@outputs TqAdd MaxRpmAdd LimitRpmAdd
+@persist TqAddValue Spin ThrottleBodies Size OpenSpeed SuperChargerPitch
+@persist [MainBodyColor HeadColor ThrottleBodyColor]:vector
+@persist [Matt Candy Chrome CarbonFiber MainBodyMaterial HeadMaterial ThrottleBodyMaterial]:string
+interval(10)
+if(first() | dupefinished() ){
+     
+    ############################################
+    # E2 SuperCharger by [GER] Danksa (Steam)  #
+    #                    TheCr4zyB0y  (YouTube)#
+    ############################################
+     
+    #######################################################
+    # Here you can change the effects of the Supercharger:#
+    #######################################################
+            
+    TqAddValue = 200
+    MaxRpmAdd = 0
+    LimitRpmAdd = 0
+    
+    Size=1
+    OpenSpeed=1.5
+     
+    ###################################
+    # Here you can customize the look:#
+    ###################################
+    # Here is the   Red,Green,Blue value to change the color
+    MainBodyColor = vec(0, 0, 0)
+    HeadColor = vec(0, 0, 0)
+    ThrottleBodyColor = vec(0, 0, 0)
+     
+    # Set the Material you want:
+     
+    # Material Types:  CarbonFiber
+    #                  Chrome (SProps needed)
+    #                  Matt
+    #                  Candy
+    
+    CarbonFiber = "phoenix_storms/mat/mat_phx_carbonfiber"
+    Chrome = "sprops/textures/sprops_chrome"
+    Matt = "phoenix_storms/mat/mat_phx_metallic"
+    Candy = "models/shiny"
+     
+    MainBodyMaterial = Chrome
+    HeadMaterial = Chrome
+    ThrottleBodyMaterial = Matt
+     
+    #################################################
+    # The Code under this is nothing for beginners! #
+    #################################################
+    # And sorry for not naming the parts :(         #
+    #################################################
+     
+
+       
+    holoCreate(1)
+    holoCreate(2)
+    holoCreate(3)
+    holoCreate(4)
+    holoCreate(5)
+    holoCreate(6)
+    holoCreate(7)
+    holoCreate(8)
+    holoCreate(9)
+    holoCreate(10)
+    holoCreate(11)
+    holoCreate(12)
+    holoCreate(13)
+    holoCreate(14)
+    holoCreate(15)
+    holoCreate(16)
+    holoCreate(17)
+    holoCreate(18)
+    holoCreate(19)
+    holoCreate(20)
+    holoCreate(21)
+    holoCreate(22)
+    holoCreate(23)
+    holoCreate(24)
+    holoCreate(25)
+    holoCreate(26)
+    holoCreate(27)
+    holoCreate(28)
+    holoCreate(29)
+    holoCreate(30)
+    holoCreate(31)
+    holoCreate(32)
+    holoCreate(33)
+     
+    holoModel(1, "hq_rcylinder")
+    holoModel(2, "hq_rcube")
+    holoModel(3, "hq_tube_thin")
+    holoModel(4, "hq_hdome_thin")
+    holoModel(5, "hq_torus")
+    holoModel(6, "hq_rcylinder")
+    holoModel(7, "hq_rcylinder_thick")
+    holoModel(8, "hq_cylinder")
+    holoModel(9, "models/Mechanics/gears2/gear_24t3.mdl")
+    holoModel(10, "hq_torus_thin")
+    holoModel(11, "hq_torus_thin")
+    holoModel(12, "hq_torus_thin")
+    holoModel(13, "hq_rcube")
+    holoModel(14, "hq_rcube_thin")
+    holoModel(15, "models/props_phx/gears/spur36.mdl")
+    holoModel(16, "hq_cylinder")
+    holoModel(17, "hq_cylinder")
+    holoModel(18, "hq_rcylinder_thin")
+    holoModel(19, "hq_rcylinder_thin")
+    holoModel(20, "hq_rcylinder_thin")
+    holoModel(21, "hq_tube")
+    holoModel(22, "hq_tube")
+    holoModel(23, "hq_tube")
+    holoModel(24, "hq_cylinder")
+    holoModel(25, "hq_cylinder")
+    holoModel(26, "hq_cylinder")
+    holoModel(27, "hq_cylinder")
+    holoModel(28, "hq_cylinder")
+    holoModel(29, "hq_cylinder")
+    holoModel(30, "cylinder")
+    holoModel(31, "hq_rcube_thin")
+    holoModel(32, "cube")
+    holoModel(33, "cube")
+     
+    holoPos(2, entity():toWorld(vec(0, 5, 2.1)*Size))
+    holoPos(3, entity():toWorld(vec(0, -1, 13)*Size))
+    holoPos(4, entity():toWorld(vec(0, 8, 13)*Size))
+    holoPos(5, entity():toWorld(vec(0, -10, 13)*Size))
+    holoPos(6, entity():toWorld(vec(0, -8, 0)*Size))
+    holoPos(7, entity():toWorld(vec(3, -8, 0)*Size))
+    holoPos(8, entity():toWorld(vec(3, -12, 0)*Size))
+    holoPos(9, entity():toWorld(vec(3, -19.5, 0)*Size))
+    holoPos(10, entity():toWorld(vec(0, 0, 0)*Size))
+    holoPos(11, entity():toWorld(vec(0, 5, 0)*Size))
+    holoPos(12, entity():toWorld(vec(0, -5, 0)*Size))
+    holoPos(13, entity():toWorld(vec(0, -5, 2.1)*Size))
+    holoPos(14, entity():toWorld(vec(0, 0, 3.5)*Size))
+    holoPos(15, entity():toWorld(vec(0, -2, 10)*Size))
+    holoPos(16, entity():toWorld(vec(0, -2, 10)*Size))
+    holoPos(17, entity():toWorld(vec(0, -2, 14)*Size))
+    holoPos(18, entity():toWorld(vec(4, -10, 13)*Size))
+    holoPos(19, entity():toWorld(vec(0, -10, 13)*Size))
+    holoPos(20, entity():toWorld(vec(-4, -10, 13)*Size))
+    holoPos(21, entity():toWorld(vec(4, -10, 13)*Size))
+    holoPos(22, entity():toWorld(vec(0, -10, 13)*Size))
+    holoPos(23, entity():toWorld(vec(-4, -10, 13)*Size))
+    holoPos(24, entity():toWorld(vec(0, -10, 15.8)*Size))
+    holoPos(25, entity():toWorld(vec(0, -10, 10.2)*Size))
+    holoPos(26, entity():toWorld(vec(2.1, -10, 11)*Size))
+    holoPos(27, entity():toWorld(vec(-2.1, -10, 11)*Size))
+    holoPos(28, entity():toWorld(vec(-2.1, -10, 15)*Size))
+    holoPos(29, entity():toWorld(vec(2.1, -10, 15)*Size))
+    holoPos(30, entity():toWorld(vec(1.2, -10, 13)*Size))
+    holoPos(31, entity():toWorld(vec(0, 0, -2)*Size))
+    holoPos(32, entity():toWorld(vec(8, -9.6, 12.6)*Size))
+     
+    holoAng(1, entity():toWorld(ang(0, 0, 90)))
+    holoAng(3, entity():toWorld(ang(0, 0, 90)))
+    holoAng(4, entity():toWorld(ang(0, 0, -90)))
+    holoAng(5, entity():toWorld(ang(0, 0, 90)))
+    holoAng(6, entity():toWorld(ang(0, 0, 90)))
+    holoAng(7, entity():toWorld(ang(0, 0, 90)))
+    holoAng(8, entity():toWorld(ang(0, 0, 90)))
+    holoAng(10, entity():toWorld(ang(0, 0, 90)))
+    holoAng(11, entity():toWorld(ang(0, 0, 90)))
+    holoAng(12, entity():toWorld(ang(0, 0, 90)))
+    holoAng(21, entity():toWorld(ang(0, 0, 90)))
+    holoAng(22, entity():toWorld(ang(0, 0, 90)))
+    holoAng(23, entity():toWorld(ang(0, 0, 90)))
+    holoAng(24, entity():toWorld(ang(0, 0, 90)))
+    holoAng(25, entity():toWorld(ang(0, 0, 90)))
+    holoAng(26, entity():toWorld(ang(0, 0, 90)))
+    holoAng(27, entity():toWorld(ang(0, 0, 90)))
+    holoAng(28, entity():toWorld(ang(0, 0, 90)))
+    holoAng(29, entity():toWorld(ang(0, 0, 90)))
+    holoAng(30, entity():toWorld(ang(90, 0, 0)))
+    holoAng(32, entity():toWorld(ang(0, 0, 45)))
+     
+    holoScale(1, vec(1.8, 1, 1.8)*Size)
+    holoScale(2, vec(0.7, 0.5, 1.3)*Size)
+    holoScale(3, vec(1.2, 0.7, 1.5)*Size)
+    holoScale(4, vec(1.2, 0.7, 0.5)*Size)
+    holoScale(5, vec(1.3, 0.8, 1)*Size)
+    holoScale(6, vec(1.2, 0.6, 0.6)*Size)
+    holoScale(7, vec(0.7, 0.7, 0.8)*Size)
+    holoScale(8, vec(0.5, 0.5, 1)*Size)
+    holoScale(9, vec(0.1, 0.1, 0.15)*Size)
+    holoScale(10, vec(1.9, 1.1, 1)*Size)
+    holoScale(11, vec(1.9, 1.1, 1)*Size)
+    holoScale(12, vec(1.9, 1.1, 1)*Size)
+    holoScale(13, vec(0.7, 0.5, 1.3)*Size)
+    holoScale(14, vec(0.8, 1.4, 0.5)*Size)
+    holoScale(15, vec(0.6, 0.13, 0.13)*Size)
+    holoScale(16, vec(0.7, 0.7, 0.1)*Size)
+    holoScale(17, vec(0.7, 0.7, 0.1)*Size)
+    holoScale(18, vec(0.29, 0.29, 0.01)*Size)
+    holoScale(19, vec(0.29, 0.29, 0.01)*Size)
+    holoScale(20, vec(0.29, 0.29, 0.01)*Size)
+    holoScale(21, vec(0.385, 0.385, 0.01)*Size)
+    holoScale(22, vec(0.385, 0.385, 0.01)*Size)
+    holoScale(23, vec(0.385, 0.385, 0.01)*Size)
+    holoScale(24, vec(0.9, 0.2, 0.01)*Size)
+    holoScale(25, vec(0.9, 0.2, 0.01)*Size)
+    holoScale(26, vec(0.125, 0.23, 0.01)*Size)
+    holoScale(27, vec(0.125, 0.23, 0.01)*Size)
+    holoScale(28, vec(0.125, 0.23, 0.01)*Size)
+    holoScale(29, vec(0.125, 0.23, 0.01)*Size)
+    holoScale(30, vec(0.05, 0.05, 1.2)*Size)
+    holoScale(31, vec(1, 1, 1)*Size)
+    holoScale(32, vec(0.05, 0.05, 0.15)*Size)
+    holoScale(33, vec(0.05, 0.05, 1)*Size)
+     
+    holoParent(1, entity())
+    holoParent(2, entity())
+    holoParent(3, entity())
+    holoParent(4, entity())
+    holoParent(5, entity())
+    holoParent(6, entity())
+    holoParent(7, entity())
+    holoParent(8, entity())
+    holoParent(9, entity())
+    holoParent(10, entity())
+    holoParent(11, entity())
+    holoParent(12, entity())
+    holoParent(13, entity())
+    holoParent(14, entity())
+    holoParent(15, entity())
+    holoParent(16, entity())
+    holoParent(17, entity())
+    holoParent(18, entity())
+    holoParent(19, entity())
+    holoParent(20, entity())
+    holoParent(21, entity())
+    holoParent(22, entity())
+    holoParent(23, entity())
+    holoParent(24, entity())
+    holoParent(25, entity())
+    holoParent(26, entity())
+    holoParent(27, entity())
+    holoParent(28, entity())
+    holoParent(29, entity())
+    holoParent(30, holoEntity(20))
+    holoParent(31, entity())
+    holoParent(32, holoEntity(30))
+    holoParent(33, entity())
+    
+        #### Custom Parent ####
+        holoParent(19, holoEntity(18))
+        holoParent(20, holoEntity(18))
+    
+    ############################
+    #The Textures for the Holos#
+    ############################
+     
+    holoMaterial(1, MainBodyMaterial)
+    holoMaterial(2, MainBodyMaterial)
+    holoMaterial(3, HeadMaterial)
+    holoMaterial(4, HeadMaterial)
+    holoMaterial(5, HeadMaterial)
+    holoMaterial(6, MainBodyMaterial)
+    holoMaterial(7, MainBodyMaterial)
+    holoMaterial(8, MainBodyMaterial)
+    holoMaterial(9, "phoenix_storms/gear")
+    holoMaterial(10, MainBodyMaterial)
+    holoMaterial(11, MainBodyMaterial)
+    holoMaterial(12, MainBodyMaterial)
+    holoMaterial(13, MainBodyMaterial)
+    holoMaterial(14, MainBodyMaterial)
+    holoMaterial(15, "phoenix_storms/wood")
+    holoMaterial(16, HeadMaterial)
+    holoMaterial(17, HeadMaterial)
+    holoMaterial(18, ThrottleBodyMaterial)
+    holoMaterial(19, ThrottleBodyMaterial)
+    holoMaterial(20, ThrottleBodyMaterial)
+    holoMaterial(21, HeadMaterial)
+    holoMaterial(22, HeadMaterial)
+    holoMaterial(23, HeadMaterial)
+    holoMaterial(24, HeadMaterial)
+    holoMaterial(25, HeadMaterial)
+    holoMaterial(26, HeadMaterial)
+    holoMaterial(27, HeadMaterial)
+    holoMaterial(28, HeadMaterial)
+    holoMaterial(29, HeadMaterial)
+    holoMaterial(30, ThrottleBodyMaterial)
+    holoMaterial(31, MainBodyMaterial)
+    holoMaterial(32, ThrottleBodyMaterial)
+    holoMaterial(33, ThrottleBodyMaterial)
+     
+    ############################
+    #And the color of the holos#
+    ############################
+     
+    holoColor(1, MainBodyColor)
+    holoColor(2, MainBodyColor)
+    holoColor(3, HeadColor)
+    holoColor(4, HeadColor)
+    holoColor(5, HeadColor)
+    holoColor(6, MainBodyColor)
+    holoColor(7, MainBodyColor)
+    holoColor(8, MainBodyColor)
+    holoColor(9, vec(20, 20, 20))
+    holoColor(10, MainBodyColor)
+    holoColor(11, MainBodyColor)
+    holoColor(12, MainBodyColor)
+    holoColor(13, MainBodyColor)
+    holoColor(14, MainBodyColor)
+    holoColor(15, vec(50, 50, 50))
+    holoColor(16, HeadColor)
+    holoColor(17, HeadColor)
+    holoColor(18, ThrottleBodyColor)
+    holoColor(19, ThrottleBodyColor)
+    holoColor(20, ThrottleBodyColor)
+    holoColor(21, HeadColor)
+    holoColor(22, HeadColor)
+    holoColor(23, HeadColor)
+    holoColor(24, HeadColor)
+    holoColor(25, HeadColor)
+    holoColor(26, HeadColor)
+    holoColor(27, HeadColor)
+    holoColor(28, HeadColor)
+    holoColor(29, HeadColor)
+    holoColor(30, ThrottleBodyColor)
+    holoColor(31, MainBodyColor)
+    holoColor(32, ThrottleBodyColor)
+    holoColor(33, ThrottleBodyColor)
+     
+    
+    #create Sound
+    entity():soundPlay(1,0,"/ambient/machines/gas_loop_1.wav")
+    SuperChargerPitch=0
+    
+}#finish first()
+     
+    ################################
+    # The Speed of the little gear #
+    ################################
+     
+    Spin = Spin + (RPM / 1000)
+     
+    ##########################
+    # The Throttlebody angle #
+    ##########################
+     
+if(Throttle > 0 & ThrottleBodies < 90){ThrottleBodies = ThrottleBodies + (2.4*OpenSpeed)}
+if(Throttle > 0 & ThrottleBodies >= 90){ThrottleBodies = 90 }
+if(Throttle == 0 & ThrottleBodies > 10){ThrottleBodies = ThrottleBodies - (2*OpenSpeed)}
+if(Throttle == 0 & ThrottleBodies <= 10){ThrottleBodies = 10 }
+     
+    #apply value's
+    TqAdd = ((ThrottleBodies*1.25)/100)*TqAddValue
+    SuperChargerPitch = (ThrottleBodies*2.85)*Active
+    soundPitch(1,SuperChargerPitch)
+    
+    
+    ################
+    # Moving holos #
+    ################
+     
+    holoAng(9, entity():toWorld(ang(Spin, 0, 90)))
+    holoAng(18, entity():toWorld(ang(0, 0, 90 - ThrottleBodies)))
+    holoPos(33, entity():toWorld(vec(8, -9, 8.15 - ThrottleBodies / 60)*Size))
+    holoAng(33, entity():toWorld(ang(0, 0, cos(ThrottleBodies * 2.5 + 90))))
+     
