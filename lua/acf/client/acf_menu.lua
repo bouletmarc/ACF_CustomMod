@@ -446,7 +446,7 @@ local function CreateSoundBrowser(path)
 			end
 			
 		PowerText = ButtonsSidePanel:Add( "DLabel" )
-			ValueText = math.floor(SliderT:GetValue() * SliderPeakMax:GetValue() / 9548.8)
+			ValueText = math.floor(100 * 100 / 9548.8)
 			ValueText2 = math.Round(ValueText*1.34)
 			PowerText:SetText( "Power : "..ValueText.." kW / "..ValueText2.." HP @ "..SliderPeakMax:GetValue().." RPM")
 			PowerText:SetTextColor(Color(0,0,200,255))
@@ -511,6 +511,9 @@ local function CreateSoundBrowser(path)
 				ValueText2 = math.Round(ValueText*1.34)
 				PowerText:SetText( "Power : "..ValueText.." kW / "..ValueText2.." HP @ "..SliderPeakMax:GetValue().." RPM")
 			end
+			ValueText = math.floor(SliderT:GetValue() * SliderPeakMax:GetValue() / 9548.8)
+			ValueText2 = math.Round(ValueText*1.34)
+			PowerText:SetText( "Power : "..ValueText.." kW / "..ValueText2.." HP @ "..SliderPeakMax:GetValue().." RPM")
 			
 		SliderLimit = ButtonsSidePanel:Add( "DNumSlider" )
 			SliderLimit:SetText( "Limit Rpm" )
