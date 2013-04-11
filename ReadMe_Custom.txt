@@ -95,6 +95,10 @@ On Automatic Gearbox :
 ###################################
 ###################################
 
+--V6.1
+--Updated to Rev.268 / 269
+--Fixed issue with Engine Maker Menu
+
 --V6.0
 --Updated to Rev.263 / 264
 	--Quick Updated to Rev.266 / 267
