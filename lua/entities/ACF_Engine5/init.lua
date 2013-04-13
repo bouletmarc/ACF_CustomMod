@@ -136,6 +136,7 @@ function MakeACF_Engine5(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Engine5.FlyRPM = 0
 	Engine5:SetModel( Engine5.Model )	
 	Engine5.Sound = nil
+	Engine5.SoundPitch = 1
 	Engine5.RPM = {}
 
 	Engine5:PhysicsInit( SOLID_VPHYSICS )      	
@@ -617,7 +618,7 @@ function ENT:CalcRPM()
 	--##############################################################################################
 	
 	if self.Sound then
-		self.Sound:ChangePitch( math.min( 20 + SmoothRPM / 50, 255 ), 0 )
+		self.Sound:ChangePitch( math.min( 20 + (SmoothRPM * self.SoundPitch) / 50, 255 ), 0 )
 		self.Sound:ChangeVolume( 0.25 + self.Throttle / 1.5, 0 )
 	end
 	

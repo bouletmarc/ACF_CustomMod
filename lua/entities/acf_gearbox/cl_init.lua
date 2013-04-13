@@ -1,46 +1,54 @@
 include("shared.lua")
 
 ENT.RenderGroup 		= RENDERGROUP_OPAQUE
-local maxtorque = 0  -- this is for the max torque output on the tooltip - Wrex
+
 function ENT:Draw()
 	self:DoNormalDraw()
-    Wire_Render(self.Entity)
+	self:DrawModel()
+    Wire_Render(self)
 end
 
 function ENT:DoNormalDraw()
-	local e = self.Entity
+	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
-		if not self.DisplayString then self.DisplayString = "" end
-		AddWorldTip(e:EntIndex(),self.DisplayString,0.5,e:GetPos(),e)
+		local txt = self:GetOverlayText()
+		if txt ~= "" then
+			AddWorldTip( e:EntIndex(), txt, 0.5, e:GetPos(), e )
+		end
 	end
-	e:DrawModel()
 end
 
-function ACFGearboxCreateDisplayString( data, Timer )
+function ENT:GetOverlayText()
+	local List = list.Get( "ACFEnts" )
 	
-	local Ent = data:ReadEntity()
-	local Id = data:ReadString()
-	local List = list.Get("ACFEnts")
-	local FinalGear = data:ReadShort()/100
+	local name = self:GetNetworkedString( "WireName" )
+	local id = self:GetNetworkedBeamString( "ID" )
+	local txt = List["Mobility"][id]["name"].."\n"
 	
-	Ent.DisplayString = List["Mobility"][Id]["name"].."\n"
-	for I = 1,List["Mobility"][Id]["gears"] do
-		Ent.DisplayString = Ent.DisplayString.."Gear "..I.." : "..tostring(data:ReadShort()/100).."\n"
+	for i = 1, List["Mobility"][id]["gears"] do
+		local gear = math.Round( self:GetNetworkedBeamFloat( "Gear" .. i ), 3 )
+		txt = txt .. "Gear " .. i .. ": " .. tostring( gear ) .. "\n"
 	end
-	Ent.DisplayString = Ent.DisplayString.."Final Gear : "..tostring(FinalGear).."\n Maximum Torque Rating: "..(maxtorque).."n-m / "..math.Round(maxtorque*0.73).."ft-lb"
-	if data:ReadBool() then
-		Ent:SetBodygroup(1,1)
-	else
-		Ent:SetBodygroup(1,0)
-	end
+	local fd = math.Round( self:GetNetworkedBeamFloat( "FinalDrive" ), 3 )
+	txt = txt .. "Final Drive: " .. tostring( fd ) .. "\n"
+	
+	local maxtq = List["Mobility"][id]["maxtq"]
+	txt = txt .. "Maximum Torque Rating: " .. tostring( maxtq ) .. "n-m / " .. tostring( math.Round( maxtq * 0.73 ) ) .. "ft-lb"
 	
 	if (not game.SinglePlayer()) then
-		local PlayerName = Ent:GetPlayerName()
-		Ent.DisplayString = Ent.DisplayString .."(" .. PlayerName .. ")"
+		local PlayerName = self:GetPlayerName()
+		txt = txt .. "\n(" .. PlayerName .. ")"
 	end
- 
+	
+	if(name and name ~= "") then
+	    if (txt == "") then
+	        return "- "..name.." -"
+	    end
+	    return "- "..name.." -\n"..txt
+	end
+	
+	return txt
 end
-usermessage.Hook( "ACFGearbox_SendRatios", ACFGearboxCreateDisplayString )
 
 function ACFGearboxGUICreate( Table )
 
