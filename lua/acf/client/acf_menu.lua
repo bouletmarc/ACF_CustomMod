@@ -398,7 +398,7 @@ local function CreateSoundBrowser(path)
 
 	SoundBrowserPanel:SetSizable(true)
 	SoundBrowserPanel:SetDeleteOnClose( false )
-	SoundBrowserPanel:SetTitle("Engine Menu V4.0")
+	SoundBrowserPanel:SetTitle("Engine Menu V4.1")
 	SoundBrowserPanel:SetVisible(false)
 	SoundBrowserPanel:SetCookieName( "wire_sound_browser" )
 	SoundBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
@@ -485,6 +485,10 @@ local function CreateSoundBrowser(path)
 			SliderIdle.Label:SetWide(50)
 			SliderIdle.OnValueChanged = function( self, val )
 				RunConsoleCommand( "acfmenu_data4", val )
+				if(SliderIdle:GetValue() > SliderPeakMin:GetValue()) then
+					SliderPeakMin:SetValue( SliderIdle:GetValue() )
+					RunConsoleCommand( "acfmenu_data5", SliderPeakMin:GetValue() )
+				end
 			end
 			
 		SliderPeakMin = ButtonsSidePanel:Add( "DNumSlider" )
@@ -499,6 +503,14 @@ local function CreateSoundBrowser(path)
 			SliderPeakMin.Label:SetWide(50)
 			SliderPeakMin.OnValueChanged = function( self, val )
 				RunConsoleCommand( "acfmenu_data5", val )
+				if(SliderPeakMin:GetValue() > SliderPeakMax:GetValue()) then
+					SliderPeakMax:SetValue( SliderPeakMin:GetValue() )
+					RunConsoleCommand( "acfmenu_data6", SliderPeakMax:GetValue() )
+				end
+				if(SliderPeakMin:GetValue() < SliderIdle:GetValue()) then
+					SliderIdle:SetValue( SliderPeakMin:GetValue() )
+					RunConsoleCommand( "acfmenu_data4", SliderIdle:GetValue() )
+				end
 			end
 			
 		SliderPeakMax = ButtonsSidePanel:Add( "DNumSlider" )
@@ -517,6 +529,14 @@ local function CreateSoundBrowser(path)
 				ValueText2 = math.Round(ValueText*1.34)
 				PowerText:SetText( "Power : "..ValueText.." kW / "..ValueText2.." HP @ "..SliderPeakMax:GetValue().." RPM")
 				PowerText:SizeToContents()
+				if(SliderPeakMax:GetValue() > SliderLimit:GetValue()) then
+					SliderLimit:SetValue( SliderPeakMax:GetValue() )
+					RunConsoleCommand( "acfmenu_data7", SliderLimit:GetValue() )
+				end
+				if(SliderPeakMax:GetValue() < SliderPeakMin:GetValue()) then
+					SliderPeakMin:SetValue( SliderPeakMax:GetValue() )
+					RunConsoleCommand( "acfmenu_data6", SliderPeakMin:GetValue() )
+				end
 			end
 			ValueText = math.floor(SliderT:GetValue() * SliderPeakMax:GetValue() / 9548.8)
 			ValueText2 = math.Round(ValueText*1.34)
@@ -535,6 +555,10 @@ local function CreateSoundBrowser(path)
 			SliderLimit.Label:SetWide(50)
 			SliderLimit.OnValueChanged = function( self, val )
 				RunConsoleCommand( "acfmenu_data7", val )
+				if(SliderLimit:GetValue() < SliderPeakMax:GetValue()) then
+					SliderPeakMax:SetValue( SliderLimit:GetValue() )
+					RunConsoleCommand( "acfmenu_data6", SliderPeakMax:GetValue() )
+				end
 			end
 			
 		SliderFly = ButtonsSidePanel:Add( "DNumSlider" )
@@ -804,7 +828,7 @@ local function CreateSoundBrowser(path)
 	SoundText = Buttons2Panel:Add("DLabel")
 	SoundText:DockMargin(5, 0, 5, 0)
 	SoundText:Dock(LEFT)
-	SoundText:SetText( "Sound : "..strSound )
+	SoundText:SetText( "Sound : ".."Choose a Sound" )
 	SoundText:SetFont( "DefaultBold" )
 	SoundText:SetWide(280)
 	SoundText:SetTall(10)
@@ -813,7 +837,7 @@ local function CreateSoundBrowser(path)
 	ModelText = Buttons2Panel:Add("DLabel")
 	ModelText:DockMargin(5, 0, 5, 0)
 	ModelText:Dock(RIGHT)
-	ModelText:SetText( "Model : "..strModel )
+	ModelText:SetText( "Model : ".."Choose a Model" )
 	ModelText:SetFont( "DefaultBold" )
 	ModelText:SetWide(280)
 	ModelText:SetTall(10)
