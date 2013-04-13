@@ -235,10 +235,10 @@ function PANEL:Init()
 	self.Files:SetMultiSelect(false)
 	self.Files:Dock(FILL)
 
-	self.Files:AddColumn("Name")
-	local Column = self.Files:AddColumn("Type")
-	Column:SetFixedWidth(70)
-	Column:SetWide(70)
+	self.Files:AddColumn("Engine")
+	local Column = self.Files:AddColumn("Setting's")
+	Column:SetFixedWidth(170)
+	Column:SetWide(170)
 
 	self.Files.OnRowSelected = function(parent, id, line)
 		local name = line.m_strFilename

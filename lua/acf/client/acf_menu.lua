@@ -7,7 +7,7 @@ local SoundBrowserPanel = nil
 local TabFileBrowser = nil
 local TabModelBrowser = nil
 local TabFavourites = nil
---local TabFavourites2 = nil
+local TabFavourites2 = nil
 local SoundObj = nil
 local SoundObjNoEffect = nil
 
@@ -398,7 +398,7 @@ local function CreateSoundBrowser(path)
 
 	SoundBrowserPanel:SetSizable(true)
 	SoundBrowserPanel:SetDeleteOnClose( false )
-	SoundBrowserPanel:SetTitle("Engine Menu V3.5")
+	SoundBrowserPanel:SetTitle("Engine Menu V4.0")
 	SoundBrowserPanel:SetVisible(false)
 	SoundBrowserPanel:SetCookieName( "wire_sound_browser" )
 	SoundBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
@@ -406,7 +406,7 @@ local function CreateSoundBrowser(path)
 	TabFileBrowser = vgui.Create("acf_filebrowser") // The file tree browser.
 	TabFavourites = vgui.Create("acf_listeditor") // The favourites manager.
 	TabModelBrowser = vgui.Create("acf_modelbrowser") // The file tree browser.
-	--TabFavourites2 = vgui.Create("acf_list2editor") // The favourites manager.
+	TabFavourites2 = vgui.Create("acf_list2editor") // The favourites manager.
 	// Todo: Add a tab with a sound property browser. sound.GetTable() needed.
 	
 	local ButtonsSidePanel = SoundBrowserPanel:Add("DPanel") // The buttons.
@@ -572,9 +572,9 @@ local function CreateSoundBrowser(path)
 	BrowserTabs:DockMargin(5, 5, 5, 5)
 	BrowserTabs:Dock(FILL)
 	BrowserTabs:AddSheet("Sounds Browser", TabFileBrowser, "icon16/folder.png", false, false, "Browse your sound folder.")
-	BrowserTabs:AddSheet("Favourites sounds", TabFavourites, "icon16/star.png", false, false, "View your favourites sounds.")
+	BrowserTabs:AddSheet("Favourites Sounds", TabFavourites, "icon16/star.png", false, false, "View your favourites sounds.")
 	BrowserTabs:AddSheet("Models Browser", TabModelBrowser, "icon16/folder.png", false, false, "Browse your model folder.")
-	--BrowserTabs:AddSheet("Favourites engines", TabFavourites2, "icon16/star.png", false, false, "View your favourites engines.")
+	BrowserTabs:AddSheet("Favourites Settings", TabFavourites2, "icon16/star.png", false, false, "View your favourites settings.")
 
 	local SoundInfoText = nil
 	TabFileBrowser:SetRootName("sound")
@@ -749,10 +749,10 @@ local function CreateSoundBrowser(path)
 	
 	--#################
 	
-	/*file.CreateDir("modelslists")
-	TabFavourites2:SetRootPath("modelslists")
+	file.CreateDir("engineslists")
+	TabFavourites2:SetRootPath("engineslists")
 
-	TabFavourites2.DoClick = function(parent, item, data)
+	/*TabFavourites2.DoClick = function(parent, item, data)
 		if(file.Exists("models/engines/"..item, "GAME")) then
 			TabModelBrowser:SetOpenFile(item)
 		end
@@ -916,17 +916,25 @@ local function CreateSoundBrowser(path)
 	end
 
 	local SoundemitterButton = ButtonsPanel:Add("DButton") // The soundemitter button. Hidden in e2 mode.
-	SoundemitterButton:SetText("Auto Sending")
-	SoundemitterButton:SetDrawBackground(false)
-	SoundemitterButton:SetDisabled( true )
+	SoundemitterButton:SetText("Save to Favorite")
+	--SoundemitterButton:SetDrawBackground(false)
+	--SoundemitterButton:SetDisabled( true )
 	SoundemitterButton:SetTextColor(Color(150,0,0,255))
 	SoundemitterButton:DockMargin(0, 2, 0, 0)
 	SoundemitterButton:SetTall(PlayStopPanel:GetTall() - 1.8)
 	SoundemitterButton:Dock(BOTTOM)
-	SoundemitterButton:SetVisible(false)
+	--SoundemitterButton:SetVisible(false)
 	SoundemitterButton.DoClick = function(btn)
-		SetupSoundemitter(strSound)
-		SetupModelemitter(strModel)
+		TabFavourites2:AddItem("Model : ", strModel)
+		TabFavourites2:AddItem("Sound : ", strSound)
+		TabFavourites2:AddItem("Name : ", EngineName:GetValue())
+		TabFavourites2:AddItem("Torque : ", SliderT:GetValue())
+		TabFavourites2:AddItem("Idle : ", SliderIdle:GetValue())
+		TabFavourites2:AddItem("Peak Minimum : ", SliderPeakMin:GetValue())
+		TabFavourites2:AddItem("Peak Maximum : ", SliderPeakMax:GetValue())
+		TabFavourites2:AddItem("Limit Rpm : ", SliderLimit:GetValue())
+		TabFavourites2:AddItem("Flywheel Mass : ", SliderFly:GetValue())
+		TabFavourites2:AddItem("Weight : ", SliderWeight:GetValue())
 	end
 
 	/*local ClipboardButton = ButtonsPanel:Add("DButton") // The soundemitter button. Hidden in soundemitter mode.
