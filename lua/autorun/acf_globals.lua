@@ -5,7 +5,7 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 287 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.Version2 = 16 
+ACF.Version2 = 17 
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -61,7 +61,6 @@ AddCSLuaFile( "acf/client/acf_filebrowser.lua" )
 AddCSLuaFile( "acf/client/acf_listeditor.lua" )
 AddCSLuaFile( "acf/client/acf_modelbrowser.lua" )
 AddCSLuaFile( "acf/client/acf_list2editor.lua" )
-AddCSLuaFile( "acf/client/acf_list3editor.lua" )
 
 
 
@@ -83,7 +82,6 @@ elseif (CLIENT) then
 	include("acf/client/acf_listeditor.lua")
 	include("acf/client/acf_modelbrowser.lua")
 	include("acf/client/acf_list2editor.lua")
-	include("acf/client/acf_list3editor.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
