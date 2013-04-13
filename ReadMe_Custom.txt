@@ -95,6 +95,14 @@ On Automatic Gearbox :
 ###################################
 ###################################
 
+--V6.2
+--Updated to Rev.274
+--Added Custom Updated Checker
+--Improved Engine Maker maker
+--Engine Maker Menu 3.5
+--Added some icons to the Menu Tree
+--Fixed power bar in Engine Menu
+
 --V6.1
 --Updated to Rev.268 / 269
 --Fixed issue with Engine Maker Menu

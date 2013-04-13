@@ -4,6 +4,9 @@ ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
 ACF.Version = 274 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
+--##############
+ACF.Version2 = 8 
+ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
 ACF.Threshold = 150	--Health Divisor
@@ -313,6 +316,21 @@ function ACF_UpdateChecking( )
 		ACF.CurrentVersion = rev
 		
 	end, function() end)
+	
+	http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/",function(contents,size)
+		local rev2 = tonumber(string.match( contents, "([0-9]+) commits" ))
+		if rev2 and ACF.Version2 >= rev2 then
+			print("[ACF] ACF Custom Is Up To Date, Latest Version: "..rev2)
+			
+		elseif !rev2 then
+			print("[ACF] No Internet Connection Detected! ACF Custom Update Check Failed")
+		else
+			print("[ACF] A newer version of ACF Custom is available! Version: "..rev2..", You have Version: "..ACF.Version2)
+			print("[ACF] Please update!")
+		end
+		ACF.CurrentVersion2 = rev2
+		
+	end, function() end)
 end
 ACF_UpdateChecking( )
 
@@ -369,6 +387,13 @@ function ACF_ChatVersionPrint(ply)
 	timer.Simple( 2,function()
 		ply:SendLua(
 			"chat.AddText(Color(255,0,0),\"A newer version of ACF is available!\")"
+			) 
+		end)
+	end	
+	if not ACF.Version2 or ACF.Version2 < ACF.CurrentVersion2 then
+	timer.Simple( 2,function()
+		ply:SendLua(
+			"chat.AddText(Color(255,0,0),\"A newer version of ACF Custom is available!\")"
 			) 
 		end)
 	end	

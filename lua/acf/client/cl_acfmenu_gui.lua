@@ -48,7 +48,7 @@ function PANEL:Init( )
 	function HomeNode:DoClick()
 		acfmenupanel:UpdateDisplay(self.mytable)
 	end
-	HomeNode.Icon:SetImage( "gui/silkicons/newspaper" )
+	HomeNode.Icon:SetImage( "gui/silkicons/star" )
 	
 	local RoundAttribs = list.Get("ACFRoundTypes")
 	self.RoundAttribs = {}
@@ -138,7 +138,7 @@ function PANEL:Init( )
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		EndNode.Icon:SetImage( "gui/silkicons/wrench" )
 
 	end
 	--#########################################################################################################
@@ -242,7 +242,7 @@ function PANEL:Init( )
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		EndNode.Icon:SetImage( "gui/silkicons/wrench" )
 
 	end
 	
@@ -349,17 +349,37 @@ function ACFHomeGUICreate( Table )
 	if not acfmenupanel.CustomDisplay then return end
 	--start version
 	
+	VersionText1 = vgui.Create( "DLabel" )
+	VersionText1:SetText("ACF Version")
+	VersionText1:SetTextColor(Color(0,0,50,255))
+	VersionText1:SetFont( "DefaultBold" )
+	VersionText1:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( VersionText1 )
+	
 	VersionT = vgui.Create( "DLabel" )
 	--versiontext = "Version\n\n".."SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
-	VersionT:SetText("Version\n\n".."SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version)
-	VersionT:SetTextColor(Color(0,0,255,255))
+	VersionT:SetText("SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version)
+	VersionT:SetTextColor(Color(0,0,250,255))
 	VersionT:SetFont( "DefaultBold" )
 	VersionT:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( VersionT )
 	
+	VersionText2 = vgui.Create( "DLabel" )
+	VersionText2:SetText("Custom Version")
+	VersionText2:SetTextColor(Color(0,0,50,255))
+	VersionText2:SetFont( "DefaultBold" )
+	VersionText2:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( VersionText2 )
+	
+	VersionT2 = vgui.Create( "DLabel" )
+	VersionT2:SetText("SVN Version: "..ACF.CurrentVersion2.."\nCurrent Version: "..ACF.Version2)
+	VersionT2:SetTextColor(Color(0,0,250,255))
+	VersionT2:SetFont( "DefaultBold" )
+	VersionT2:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( VersionT2 )
+	
 	
 	acfmenupanel["CData"]["VersionText"] = vgui.Create( "DLabel" )
-	
 	local color
 	local versionstring
 	if ACF.Version >= ACF.CurrentVersion then
@@ -368,15 +388,31 @@ function ACFHomeGUICreate( Table )
 	else
 		versionstring = "Out Of Date"
 		color = Color(225,0,0,255)
-
 	end
 	
-	acfmenupanel["CData"]["VersionText"]:SetText("ACF Is "..versionstring.."!\n\n\n\n")
+	acfmenupanel["CData"]["VersionText"]:SetText("\nACF Is "..versionstring.."!")
 	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
 	acfmenupanel["CData"]["VersionText"]:SetFont( "DefaultBold" )
 	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
-	
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionText"] )
+	
+	
+	VersionT3 = vgui.Create( "DLabel" )
+	local color2
+	local versionstring2
+	if ACF.Version2 >= ACF.CurrentVersion2 then
+		versionstring2 = "Up To Date"
+		color2 = Color(0,225,0,255)
+	else
+		versionstring2 = "Out Of Date"
+		color2 = Color(225,0,0,255)
+	end
+	
+	VersionT3:SetText("ACF Custom Is "..versionstring2.."!\n\n\n\n")
+	VersionT3:SetColor(color2) 
+	VersionT3:SetFont( "DefaultBold" )
+	VersionT3:SizeToContents() 
+	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
 	-- end version
 	
 	--acfmenupanel:CPanelText("Header", "Changelog")
