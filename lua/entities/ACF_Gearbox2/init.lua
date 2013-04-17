@@ -127,7 +127,7 @@ function MakeACF_Gearbox2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 
 	local phys = Gearbox2:GetPhysicsObject()  	
 	if IsValid( phys ) then 
-		phys:SetMass( Gearbox.Mass ) 
+		phys:SetMass( Gearbox2.Mass ) 
 	end
 	
 	Gearbox2.In = Gearbox2:WorldToLocal(Gearbox2:GetAttachment(Gearbox2:LookupAttachment( "input" )).Pos)
