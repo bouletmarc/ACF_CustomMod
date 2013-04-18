@@ -1,44 +1,59 @@
 include("shared.lua")
 
 ENT.RenderGroup 		= RENDERGROUP_OPAQUE
-ENT.AutomaticFrameAdvance = true
-local maxtorque = 0  -- this is for the max torque output on the tooltip - Wrex
+
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
-    Wire_Render(self.Entity)
+    Wire_Render(self)
 end
 
 function ENT:DoNormalDraw()
-	local e = self.Entity
+	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
-		if(self:GetOverlayText() ~= "") then
-			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
+		local txt = self:GetOverlayText()
+		if txt ~= "" then
+			AddWorldTip( e:EntIndex(), txt, 0.5, e:GetPos(), e )
 		end
 	end
 end
 
 function ENT:GetOverlayText()
-	local name = self.Entity:GetNetworkedString("WireName")
-	local Type = self.Entity:GetNetworkedBeamString("Type")
-	local Weight = self.Entity:GetNetworkedBeamInt("Weight")
-	local Current = self.Entity:GetNetworkedBeamInt("Current")
-	local Declutch = self.Entity:GetNetworkedBeamInt("Declutch")
-	local RpmMin = self.Entity:GetNetworkedBeamInt("RpmMin")
-	local RpmMax = self.Entity:GetNetworkedBeamInt("RpmMax")
+	local List = list.Get( "ACFEnts" )
 	
+	local name = self:GetNetworkedString( "WireName" )
+	local id = self:GetNetworkedBeamString( "ID" )
+	local txt = List["Mobility"][id]["name"].."\n"
+
+	local Weight = self:GetNetworkedBeamInt("Weight")
+	local Current = self:GetNetworkedBeamInt("Current")
+	local Declutch = self:GetNetworkedBeamInt("Declutch")
+	local RpmMin = self:GetNetworkedBeamInt("RpmMin")
+	local RpmMax = self:GetNetworkedBeamInt("RpmMax")
 	
-	local txt = Type.."\nWeight : "..Weight.."Kg\nCurrent Gear : "..Current.."\nDeclutch Rpm : "..Declutch.."RPM\nRpm Min : "..RpmMin.."RPM\nRpm Max : "..RpmMax.."RPM\nMaximum Torque Rating: "..(maxtorque).."n-m / "..math.Round(maxtorque*0.73).."ft-lb/n" or ""
+	local txt = txt .."\nWeight : "..Weight.."Kg\nCurrent Gear : "..Current.."\nDeclutch Rpm : "..Declutch.."RPM\nRpm Min : "..RpmMin.."RPM\nRpm Max : "..RpmMax.."RPM\n" or ""
+
+	
+	for i = 1, List["Mobility"][id]["gears"] do
+		local gear = math.Round( self:GetNetworkedBeamFloat( "Gear" .. i ), 3 )
+		txt = txt .. "Gear " .. i .. ": " .. tostring( gear ) .. "\n"
+	end	
+	
+	local maxtq = List["Mobility"][id]["maxtq"]
+	txt = txt .. "Maximum Torque Rating: " .. tostring( maxtq ) .. "n-m / " .. tostring( math.Round( maxtq * 0.73 ) ) .. "ft-lb"
+	
 	if (not game.SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()
 		txt = txt .. "\n(" .. PlayerName .. ")"
 	end
+	
 	if(name and name ~= "") then
 	    if (txt == "") then
 	        return "- "..name.." -"
 	    end
 	    return "- "..name.." -\n"..txt
 	end
+	
 	return txt
 end
 --usermessage.Hook( "ACFGearbox_SendRatios", ACFGearboxCreateDisplayString )

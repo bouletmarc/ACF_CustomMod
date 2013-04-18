@@ -488,7 +488,7 @@ end
 function ENT:ChangeGear(value)
 
 	self.Gear = math.Clamp(value,0,self.Gears)
-	self.GearRatio = (self.GearTable[self.Gear] or 0)*self.Gear0
+	self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
 	self.ChangeFinished = CurTime() + self.SwitchTime
 	self.InGear = false
 	

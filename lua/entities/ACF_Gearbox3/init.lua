@@ -158,6 +158,9 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Gearbox3:SetNetworkedBeamInt("Declutch",Gearbox3.Gear7)
 	Gearbox3:SetNetworkedBeamInt("RpmMax",Gearbox3.Gear9)
 	Gearbox3:SetNetworkedBeamInt("RpmMin",Gearbox3.Gear8)
+	for i = 1, Gearbox.Gears do
+		Gearbox:SetNetworkedBeamFloat( "Gear" .. i, Gearbox.GearTable[i] )
+	end 
 		
 	return Gearbox3
 end
@@ -246,6 +249,9 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Declutch",self.Gear7)
 	self:SetNetworkedBeamInt("RpmMax",self.Gear9)
 	self:SetNetworkedBeamInt("RpmMin",self.Gear8)
+	for i = 1, self.Gears do
+		self:SetNetworkedBeamFloat( "Gear" .. i, self.GearTable[i] )
+	end
 	
 	return Feedback
 end
