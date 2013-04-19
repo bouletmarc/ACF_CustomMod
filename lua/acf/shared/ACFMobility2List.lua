@@ -2170,18 +2170,19 @@ Mobility2Table["NosBottle"] = EngineNos
 
 --###################################################################################################################################
 --Automatic Gearbox
+--4speed
 local Gear4TMA = {}
 	Gear4TMA.id = "4Gear-T-MA"
 	Gear4TMA.ent = "acf_gearbox3"
 	Gear4TMA.type = "Mobility2"
-	Gear4TMA.name = "4s, Transaxial, Medium"
+	Gear4TMA.name = "4s, Auto, Transaxial, Medium"
 	Gear4TMA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
 	Gear4TMA.model = "models/engines/transaxial_m.mdl"
 	Gear4TMA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear4TMA.category = "4 Speed Auto"
+	Gear4TMA.category = "Auto Transaxial 4speed"
 	Gear4TMA.weight = 70
 	Gear4TMA.switch = 0.1
-	Gear4TMA.maxtq = 1000
+	Gear4TMA.maxtq = 4000
 	Gear4TMA.gears = 4
 	Gear4TMA.doubleclutch = false
 	Gear4TMA.geartable = {}
@@ -2200,20 +2201,352 @@ local Gear4TMA = {}
 	end
 Mobility2Table["4Gear-T-MA"] = Gear4TMA
 
+local Gear4TSA = {}
+	Gear4TSA.id = "4Gear-T-SA"
+	Gear4TSA.ent = "acf_gearbox3"
+	Gear4TSA.type = "Mobility2"
+	Gear4TSA.name = "4s, Auto, Transaxial, Small"
+	Gear4TSA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4TSA.model = "models/engines/transaxial_s.mdl"
+	Gear4TSA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TSA.category = "Auto Transaxial 4speed"
+	Gear4TSA.weight = 40
+	Gear4TSA.switch = 0.1
+	Gear4TSA.maxtq = 1000
+	Gear4TSA.gears = 4
+	Gear4TSA.doubleclutch = false
+	Gear4TSA.geartable = {}
+		Gear4TSA.geartable[-1] = 0.3	--final
+		Gear4TSA.geartable[0] = 0		--unknow
+		Gear4TSA.geartable[1] = 0.1		--Gear1
+		Gear4TSA.geartable[2] = 0.2		--Gear2
+		Gear4TSA.geartable[3] = 0.3		--Gear3
+		Gear4TSA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4TSA.geartable[7] = 2000	--Declutch Rpm
+		Gear4TSA.geartable[8] = 4500	--Rpm Minimum
+		Gear4TSA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4TSA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4TSA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-T-SA"] = Gear4TSA
+
+local Gear4TLA = {}
+	Gear4TLA.id = "4Gear-T-LA"
+	Gear4TLA.ent = "acf_gearbox3"
+	Gear4TLA.type = "Mobility2"
+	Gear4TLA.name = "4s, Auto, Transaxial, Large"
+	Gear4TLA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4TLA.model = "models/engines/transaxial_l.mdl"
+	Gear4TLA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TLA.category = "Auto Transaxial 4speed"
+	Gear4TLA.weight = 200
+	Gear4TLA.switch = 0.1
+	Gear4TLA.maxtq = 10000
+	Gear4TLA.gears = 4
+	Gear4TLA.doubleclutch = false
+	Gear4TLA.geartable = {}
+		Gear4TLA.geartable[-1] = 0.3	--final
+		Gear4TLA.geartable[0] = 0		--unknow
+		Gear4TLA.geartable[1] = 0.1		--Gear1
+		Gear4TLA.geartable[2] = 0.2		--Gear2
+		Gear4TLA.geartable[3] = 0.3		--Gear3
+		Gear4TLA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4TLA.geartable[7] = 2000	--Declutch Rpm
+		Gear4TLA.geartable[8] = 4500	--Rpm Minimum
+		Gear4TLA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4TLA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4TLA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-T-LA"] = Gear4TLA
+
+--4speed DUAL
+local Gear4TMAD = {}
+	Gear4TMAD.id = "4Gear-T-MAD"
+	Gear4TMAD.ent = "acf_gearbox3"
+	Gear4TMAD.type = "Mobility2"
+	Gear4TMAD.name = "4s, Auto, Transaxial, Medium, Dual"
+	Gear4TMAD.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4TMAD.model = "models/engines/transaxial_m.mdl"
+	Gear4TMAD.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TMAD.category = "Auto Transaxial 4speed"
+	Gear4TMAD.weight = 70
+	Gear4TMAD.switch = 0.1
+	Gear4TMAD.maxtq = 4000
+	Gear4TMAD.gears = 4
+	Gear4TMAD.doubleclutch = true
+	Gear4TMAD.geartable = {}
+		Gear4TMAD.geartable[-1] = 0.3	--final
+		Gear4TMAD.geartable[0] = 0		--unknow
+		Gear4TMAD.geartable[1] = 0.1		--Gear1
+		Gear4TMAD.geartable[2] = 0.2		--Gear2
+		Gear4TMAD.geartable[3] = 0.3		--Gear3
+		Gear4TMAD.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4TMAD.geartable[7] = 2000	--Declutch Rpm
+		Gear4TMAD.geartable[8] = 4500	--Rpm Minimum
+		Gear4TMAD.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4TMAD.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4TMAD.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-T-MAD"] = Gear4TMAD
+
+local Gear4TSAD = {}
+	Gear4TSAD.id = "4Gear-T-SAD"
+	Gear4TSAD.ent = "acf_gearbox3"
+	Gear4TSAD.type = "Mobility2"
+	Gear4TSAD.name = "4s, Auto, Transaxial, Small, Dual"
+	Gear4TSAD.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4TSAD.model = "models/engines/transaxial_s.mdl"
+	Gear4TSAD.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TSAD.category = "Auto Transaxial 4speed"
+	Gear4TSAD.weight = 40
+	Gear4TSAD.switch = 0.1
+	Gear4TSAD.maxtq = 1000
+	Gear4TSAD.gears = 4
+	Gear4TSAD.doubleclutch = true
+	Gear4TSAD.geartable = {}
+		Gear4TSAD.geartable[-1] = 0.3	--final
+		Gear4TSAD.geartable[0] = 0		--unknow
+		Gear4TSAD.geartable[1] = 0.1		--Gear1
+		Gear4TSAD.geartable[2] = 0.2		--Gear2
+		Gear4TSAD.geartable[3] = 0.3		--Gear3
+		Gear4TSAD.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4TSAD.geartable[7] = 2000	--Declutch Rpm
+		Gear4TSAD.geartable[8] = 4500	--Rpm Minimum
+		Gear4TSAD.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4TSAD.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4TSAD.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-T-SAD"] = Gear4TSAD
+
+local Gear4TLAD = {}
+	Gear4TLAD.id = "4Gear-T-LAD"
+	Gear4TLAD.ent = "acf_gearbox3"
+	Gear4TLAD.type = "Mobility2"
+	Gear4TLAD.name = "4s, Auto, Transaxial, Large, Dual"
+	Gear4TLAD.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4TLAD.model = "models/engines/transaxial_l.mdl"
+	Gear4TLAD.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4TLAD.category = "Auto Transaxial 4speed"
+	Gear4TLAD.weight = 200
+	Gear4TLAD.switch = 0.1
+	Gear4TLAD.maxtq = 10000
+	Gear4TLAD.gears = 4
+	Gear4TLAD.doubleclutch = true
+	Gear4TLAD.geartable = {}
+		Gear4TLAD.geartable[-1] = 0.3	--final
+		Gear4TLAD.geartable[0] = 0		--unknow
+		Gear4TLAD.geartable[1] = 0.1		--Gear1
+		Gear4TLAD.geartable[2] = 0.2		--Gear2
+		Gear4TLAD.geartable[3] = 0.3		--Gear3
+		Gear4TLAD.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4TLAD.geartable[7] = 2000	--Declutch Rpm
+		Gear4TLAD.geartable[8] = 4500	--Rpm Minimum
+		Gear4TLAD.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4TLAD.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4TLAD.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-T-LAD"] = Gear4TLAD
+
+--4speed straight
+local Gear4SMA = {}
+	Gear4SMA.id = "4Gear-S-MA"
+	Gear4SMA.ent = "acf_gearbox3"
+	Gear4SMA.type = "Mobility2"
+	Gear4SMA.name = "4s, Auto, Straight, Medium"
+	Gear4SMA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4SMA.model = "models/engines/t5med.mdl"
+	Gear4SMA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4SMA.category = "Auto Straight 4speed"
+	Gear4SMA.weight = 70
+	Gear4SMA.switch = 0.1
+	Gear4SMA.maxtq = 4000
+	Gear4SMA.gears = 4
+	Gear4SMA.doubleclutch = false
+	Gear4SMA.geartable = {}
+		Gear4SMA.geartable[-1] = 0.3	--final
+		Gear4SMA.geartable[0] = 0		--unknow
+		Gear4SMA.geartable[1] = 0.1		--Gear1
+		Gear4SMA.geartable[2] = 0.2		--Gear2
+		Gear4SMA.geartable[3] = 0.3		--Gear3
+		Gear4SMA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4SMA.geartable[7] = 2000	--Declutch Rpm
+		Gear4SMA.geartable[8] = 4500	--Rpm Minimum
+		Gear4SMA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4SMA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4SMA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-S-MA"] = Gear4SMA
+
+local Gear4SSA = {}
+	Gear4SSA.id = "4Gear-S-SA"
+	Gear4SSA.ent = "acf_gearbox3"
+	Gear4SSA.type = "Mobility2"
+	Gear4SSA.name = "4s, Auto, Straight, Small"
+	Gear4SSA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4SSA.model = "models/engines/t5small.mdl"
+	Gear4SSA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4SSA.category = "Auto Straight 4speed"
+	Gear4SSA.weight = 40
+	Gear4SSA.switch = 0.1
+	Gear4SSA.maxtq = 1000
+	Gear4SSA.gears = 4
+	Gear4SSA.doubleclutch = false
+	Gear4SSA.geartable = {}
+		Gear4SSA.geartable[-1] = 0.3	--final
+		Gear4SSA.geartable[0] = 0		--unknow
+		Gear4SSA.geartable[1] = 0.1		--Gear1
+		Gear4SSA.geartable[2] = 0.2		--Gear2
+		Gear4SSA.geartable[3] = 0.3		--Gear3
+		Gear4SSA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4SSA.geartable[7] = 2000	--Declutch Rpm
+		Gear4SSA.geartable[8] = 4500	--Rpm Minimum
+		Gear4SSA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4SSA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4SSA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-S-SA"] = Gear4SSA
+
+local Gear4SLA = {}
+	Gear4SLA.id = "4Gear-S-LA"
+	Gear4SLA.ent = "acf_gearbox3"
+	Gear4SLA.type = "Mobility2"
+	Gear4SLA.name = "4s, Auto, Straight, Large"
+	Gear4SLA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4SLA.model = "models/engines/t5large.mdl"
+	Gear4SLA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4SLA.category = "Auto Straight 4speed"
+	Gear4SLA.weight = 200
+	Gear4SLA.switch = 0.1
+	Gear4SLA.maxtq = 10000
+	Gear4SLA.gears = 4
+	Gear4SLA.doubleclutch = false
+	Gear4SLA.geartable = {}
+		Gear4SLA.geartable[-1] = 0.3	--final
+		Gear4SLA.geartable[0] = 0		--unknow
+		Gear4SLA.geartable[1] = 0.1		--Gear1
+		Gear4SLA.geartable[2] = 0.2		--Gear2
+		Gear4SLA.geartable[3] = 0.3		--Gear3
+		Gear4SLA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4SLA.geartable[7] = 2000	--Declutch Rpm
+		Gear4SLA.geartable[8] = 4500	--Rpm Minimum
+		Gear4SLA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4SLA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4SLA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-S-LA"] = Gear4SLA
+
+--4 Speed Inline
+local Gear4IMA = {}
+	Gear4IMA.id = "4Gear-I-MA"
+	Gear4IMA.ent = "acf_gearbox3"
+	Gear4IMA.type = "Mobility2"
+	Gear4IMA.name = "4s, Auto, Inline, Medium"
+	Gear4IMA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4IMA.model = "models/engines/linear_m.mdl"
+	Gear4IMA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4IMA.category = "Auto Inline 4speed"
+	Gear4IMA.weight = 70
+	Gear4IMA.switch = 0.1
+	Gear4IMA.maxtq = 4000
+	Gear4IMA.gears = 4
+	Gear4IMA.doubleclutch = false
+	Gear4IMA.geartable = {}
+		Gear4IMA.geartable[-1] = 0.3	--final
+		Gear4IMA.geartable[0] = 0		--unknow
+		Gear4IMA.geartable[1] = 0.1		--Gear1
+		Gear4IMA.geartable[2] = 0.2		--Gear2
+		Gear4IMA.geartable[3] = 0.3		--Gear3
+		Gear4IMA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4IMA.geartable[7] = 2000	--Declutch Rpm
+		Gear4IMA.geartable[8] = 4500	--Rpm Minimum
+		Gear4IMA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4IMA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4IMA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-I-MA"] = Gear4IMA
+
+local Gear4ISA = {}
+	Gear4ISA.id = "4Gear-I-SA"
+	Gear4ISA.ent = "acf_gearbox3"
+	Gear4ISA.type = "Mobility2"
+	Gear4ISA.name = "4s, Auto, Inline, Small"
+	Gear4ISA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4ISA.model = "models/engines/linear_s.mdl"
+	Gear4ISA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4ISA.category = "Auto Inline 4speed"
+	Gear4ISA.weight = 40
+	Gear4ISA.switch = 0.1
+	Gear4ISA.maxtq = 1000
+	Gear4ISA.gears = 4
+	Gear4ISA.doubleclutch = false
+	Gear4ISA.geartable = {}
+		Gear4ISA.geartable[-1] = 0.3	--final
+		Gear4ISA.geartable[0] = 0		--unknow
+		Gear4ISA.geartable[1] = 0.1		--Gear1
+		Gear4ISA.geartable[2] = 0.2		--Gear2
+		Gear4ISA.geartable[3] = 0.3		--Gear3
+		Gear4ISA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4ISA.geartable[7] = 2000	--Declutch Rpm
+		Gear4ISA.geartable[8] = 4500	--Rpm Minimum
+		Gear4ISA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4ISA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4ISA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-I-SA"] = Gear4ISA
+
+local Gear4ILA = {}
+	Gear4ILA.id = "4Gear-I-LA"
+	Gear4ILA.ent = "acf_gearbox3"
+	Gear4ILA.type = "Mobility2"
+	Gear4ILA.name = "4s, Auto, Inline, Large"
+	Gear4ILA.desc = "A medium sized, 4 speed gearbox, automatic gearbox."
+	Gear4ILA.model = "models/engines/linear_l.mdl"
+	Gear4ILA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear4ILA.category = "Auto Inline 4speed"
+	Gear4ILA.weight = 200
+	Gear4ILA.switch = 0.1
+	Gear4ILA.maxtq = 10000
+	Gear4ILA.gears = 4
+	Gear4ILA.doubleclutch = false
+	Gear4ILA.geartable = {}
+		Gear4ILA.geartable[-1] = 0.3	--final
+		Gear4ILA.geartable[0] = 0		--unknow
+		Gear4ILA.geartable[1] = 0.1		--Gear1
+		Gear4ILA.geartable[2] = 0.2		--Gear2
+		Gear4ILA.geartable[3] = 0.3		--Gear3
+		Gear4ILA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear4ILA.geartable[7] = 2000	--Declutch Rpm
+		Gear4ILA.geartable[8] = 4500	--Rpm Minimum
+		Gear4ILA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear4ILA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear4ILA.guiupdate = function() return end
+	end
+Mobility2Table["4Gear-I-LA"] = Gear4ILA
 
 --6 Speed
 local Gear6TSA = {}
 	Gear6TSA.id = "6Gear-T-SA"
 	Gear6TSA.ent = "acf_gearbox3"
 	Gear6TSA.type = "Mobility2"
-	Gear6TSA.name = "6s, Transaxial, Small"
+	Gear6TSA.name = "6s, Auto, Transaxial, Small"
 	Gear6TSA.desc = "A small 6 speed gearbox, automatic gearbox."
 	Gear6TSA.model = "models/engines/transaxial_s.mdl"
 	Gear6TSA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear6TSA.category = "6 Speed Auto"
+	Gear6TSA.category = "Auto Transaxial 6speed"
 	Gear6TSA.weight = 40
 	Gear6TSA.switch = 0.15
-	Gear6TSA.maxtq = 500
+	Gear6TSA.maxtq = 1000
 	Gear6TSA.gears = 6
 	Gear6TSA.doubleclutch = false
 	Gear6TSA.geartable = {}
@@ -2238,14 +2571,14 @@ local Gear6TMA = {}
 	Gear6TMA.id = "6Gear-T-MA"
 	Gear6TMA.ent = "acf_gearbox3"
 	Gear6TMA.type = "Mobility2"
-	Gear6TMA.name = "6s, Transaxial, Medium"
+	Gear6TMA.name = "6s, Auto, Transaxial, Medium"
 	Gear6TMA.desc = "A medium duty 6 speed gearbox with a limited torque rating, automatic gearbox."
 	Gear6TMA.model = "models/engines/transaxial_m.mdl"
 	Gear6TMA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear6TMA.category = "6 Speed Auto"
+	Gear6TMA.category = "Auto Transaxial 6speed"
 	Gear6TMA.weight = 70
 	Gear6TMA.switch = 0.1
-	Gear6TMA.maxtq = 1000
+	Gear6TMA.maxtq = 4000
 	Gear6TMA.gears = 6
 	Gear6TMA.doubleclutch = false
 	Gear6TMA.geartable = {}
@@ -2271,11 +2604,11 @@ local Gear6TLA = {}
 	Gear6TLA.id = "6Gear-T-LA"
 	Gear6TLA.ent = "acf_gearbox3"
 	Gear6TLA.type = "Mobility2"
-	Gear6TLA.name = "6s, Transaxial, Large"
+	Gear6TLA.name = "6s, Auto, Transaxial, Large"
 	Gear6TLA.desc = "A large 6 speed gearbox, automatic gearbox."
 	Gear6TLA.model = "models/engines/transaxial_l.mdl"
 	Gear6TLA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear6TLA.category = "6 Speed Auto"
+	Gear6TLA.category = "Auto Transaxial 6speed"
 	Gear6TLA.weight = 200
 	Gear6TLA.switch = 0.3
 	Gear6TLA.maxtq = 10000
@@ -2304,14 +2637,14 @@ local Gear6TSAD = {}
 	Gear6TSAD.id = "6Gear-T-SA"
 	Gear6TSAD.ent = "acf_gearbox3"
 	Gear6TSAD.type = "Mobility2"
-	Gear6TSAD.name = "6s, Transaxial, Small, Dual"
+	Gear6TSAD.name = "6s, Auto, Transaxial, Small, Dual"
 	Gear6TSAD.desc = "A small 6 speed gearbox, automatic gearbox."
 	Gear6TSAD.model = "models/engines/transaxial_s.mdl"
 	Gear6TSAD.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear6TSAD.category = "6 Speed Auto"
+	Gear6TSAD.category = "Auto Transaxial 6speed"
 	Gear6TSAD.weight = 40
 	Gear6TSAD.switch = 0.15
-	Gear6TSAD.maxtq = 500
+	Gear6TSAD.maxtq = 1000
 	Gear6TSAD.gears = 6
 	Gear6TSAD.doubleclutch = true
 	Gear6TSAD.geartable = {}
@@ -2336,14 +2669,14 @@ local Gear6TMAD = {}
 	Gear6TMAD.id = "6Gear-T-MA"
 	Gear6TMAD.ent = "acf_gearbox3"
 	Gear6TMAD.type = "Mobility2"
-	Gear6TMAD.name = "6s, Transaxial, Medium, Dual"
+	Gear6TMAD.name = "6s, Auto, Transaxial, Medium, Dual"
 	Gear6TMAD.desc = "A medium duty 6 speed gearbox, automatic gearbox."
 	Gear6TMAD.model = "models/engines/transaxial_m.mdl"
 	Gear6TMAD.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear6TMAD.category = "6 Speed Auto"
+	Gear6TMAD.category = "Auto Transaxial 6speed"
 	Gear6TMAD.weight = 70
 	Gear6TMAD.switch = 0.1
-	Gear6TMAD.maxtq = 1000
+	Gear6TMAD.maxtq = 4000
 	Gear6TMAD.gears = 6
 	Gear6TMAD.doubleclutch = true
 	Gear6TMAD.geartable = {}
@@ -2369,11 +2702,11 @@ local Gear6TLAD = {}
 	Gear6TLAD.id = "6Gear-T-LA"
 	Gear6TLAD.ent = "acf_gearbox3"
 	Gear6TLAD.type = "Mobility2"
-	Gear6TLAD.name = "6s, Transaxial, Large, Dual"
+	Gear6TLAD.name = "6s, Auto, Transaxial, Large, Dual"
 	Gear6TLAD.desc = "A large 6 speed gearbox, automatic gearbox."
 	Gear6TLAD.model = "models/engines/transaxial_l.mdl"
 	Gear6TLAD.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-	Gear6TLAD.category = "6 Speed Auto"
+	Gear6TLAD.category = "Auto Transaxial 6speed"
 	Gear6TLAD.weight = 200
 	Gear6TLAD.switch = 0.3
 	Gear6TLAD.maxtq = 10000
@@ -2396,6 +2729,190 @@ local Gear6TLAD = {}
 		Gear6TLAD.guiupdate = function() return end
 	end
 Mobility2Table["6Gear-T-LA"] = Gear6TLAD
+
+--6speed straight
+local Gear6SMA = {}
+	Gear6SMA.id = "6Gear-S-MA"
+	Gear6SMA.ent = "acf_gearbox3"
+	Gear6SMA.type = "Mobility2"
+	Gear6SMA.name = "6s, Auto, Straight, Medium"
+	Gear6SMA.desc = "A medium sized, 6 speed gearbox, automatic gearbox."
+	Gear6SMA.model = "models/engines/t5med.mdl"
+	Gear6SMA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6SMA.category = "Auto Straight 6speed"
+	Gear6SMA.weight = 70
+	Gear6SMA.switch = 0.1
+	Gear6SMA.maxtq = 4000
+	Gear6SMA.gears = 6
+	Gear6SMA.doubleclutch = false
+	Gear6SMA.geartable = {}
+		Gear6SMA.geartable[-1] = 0.3	--final
+		Gear6SMA.geartable[0] = 0		--unknow
+		Gear6SMA.geartable[1] = 0.1		--Gear1
+		Gear6SMA.geartable[2] = 0.2		--Gear2
+		Gear6SMA.geartable[3] = 0.3		--Gear3
+		Gear6SMA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear6SMA.geartable[7] = 2000	--Declutch Rpm
+		Gear6SMA.geartable[8] = 4500	--Rpm Minimum
+		Gear6SMA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear6SMA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear6SMA.guiupdate = function() return end
+	end
+Mobility2Table["6Gear-S-MA"] = Gear6SMA
+
+local Gear6SSA = {}
+	Gear6SSA.id = "6Gear-S-SA"
+	Gear6SSA.ent = "acf_gearbox3"
+	Gear6SSA.type = "Mobility2"
+	Gear6SSA.name = "6s, Auto, Straight, Small"
+	Gear6SSA.desc = "A medium sized, 6 speed gearbox, automatic gearbox."
+	Gear6SSA.model = "models/engines/t5small.mdl"
+	Gear6SSA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6SSA.category = "Auto Straight 6speed"
+	Gear6SSA.weight = 40
+	Gear6SSA.switch = 0.1
+	Gear6SSA.maxtq = 1000
+	Gear6SSA.gears = 6
+	Gear6SSA.doubleclutch = false
+	Gear6SSA.geartable = {}
+		Gear6SSA.geartable[-1] = 0.3	--final
+		Gear6SSA.geartable[0] = 0		--unknow
+		Gear6SSA.geartable[1] = 0.1		--Gear1
+		Gear6SSA.geartable[2] = 0.2		--Gear2
+		Gear6SSA.geartable[3] = 0.3		--Gear3
+		Gear6SSA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear6SSA.geartable[7] = 2000	--Declutch Rpm
+		Gear6SSA.geartable[8] = 4500	--Rpm Minimum
+		Gear6SSA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear6SSA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear6SSA.guiupdate = function() return end
+	end
+Mobility2Table["6Gear-S-SA"] = Gear6SSA
+
+local Gear6SLA = {}
+	Gear6SLA.id = "6Gear-S-LA"
+	Gear6SLA.ent = "acf_gearbox3"
+	Gear6SLA.type = "Mobility2"
+	Gear6SLA.name = "6s, Auto, Straight, Large"
+	Gear6SLA.desc = "A medium sized, 6 speed gearbox, automatic gearbox."
+	Gear6SLA.model = "models/engines/t5large.mdl"
+	Gear6SLA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6SLA.category = "Auto Straight 6speed"
+	Gear6SLA.weight = 200
+	Gear6SLA.switch = 0.1
+	Gear6SLA.maxtq = 10000
+	Gear6SLA.gears = 6
+	Gear6SLA.doubleclutch = false
+	Gear6SLA.geartable = {}
+		Gear6SLA.geartable[-1] = 0.3	--final
+		Gear6SLA.geartable[0] = 0		--unknow
+		Gear6SLA.geartable[1] = 0.1		--Gear1
+		Gear6SLA.geartable[2] = 0.2		--Gear2
+		Gear6SLA.geartable[3] = 0.3		--Gear3
+		Gear6SLA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear6SLA.geartable[7] = 2000	--Declutch Rpm
+		Gear6SLA.geartable[8] = 4500	--Rpm Minimum
+		Gear6SLA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear6SLA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear6SLA.guiupdate = function() return end
+	end
+Mobility2Table["6Gear-S-LA"] = Gear6SLA
+
+--6 Speed Inline
+local Gear6IMA = {}
+	Gear6IMA.id = "6Gear-I-MA"
+	Gear6IMA.ent = "acf_gearbox3"
+	Gear6IMA.type = "Mobility2"
+	Gear6IMA.name = "6s, Auto, Inline, Medium"
+	Gear6IMA.desc = "A medium sized, 6 speed gearbox, automatic gearbox."
+	Gear6IMA.model = "models/engines/linear_m.mdl"
+	Gear6IMA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6IMA.category = "Auto Inline 6speed"
+	Gear6IMA.weight = 70
+	Gear6IMA.switch = 0.1
+	Gear6IMA.maxtq = 4000
+	Gear6IMA.gears = 6
+	Gear6IMA.doubleclutch = false
+	Gear6IMA.geartable = {}
+		Gear6IMA.geartable[-1] = 0.3	--final
+		Gear6IMA.geartable[0] = 0		--unknow
+		Gear6IMA.geartable[1] = 0.1		--Gear1
+		Gear6IMA.geartable[2] = 0.2		--Gear2
+		Gear6IMA.geartable[3] = 0.3		--Gear3
+		Gear6IMA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear6IMA.geartable[7] = 2000	--Declutch Rpm
+		Gear6IMA.geartable[8] = 4500	--Rpm Minimum
+		Gear6IMA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear6IMA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear6IMA.guiupdate = function() return end
+	end
+Mobility2Table["6Gear-I-MA"] = Gear6IMA
+
+local Gear6ISA = {}
+	Gear6ISA.id = "6Gear-I-SA"
+	Gear6ISA.ent = "acf_gearbox3"
+	Gear6ISA.type = "Mobility2"
+	Gear6ISA.name = "6s, Auto, Inline, Small"
+	Gear6ISA.desc = "A medium sized, 6 speed gearbox, automatic gearbox."
+	Gear6ISA.model = "models/engines/linear_s.mdl"
+	Gear6ISA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6ISA.category = "Auto Inline 6speed"
+	Gear6ISA.weight = 40
+	Gear6ISA.switch = 0.1
+	Gear6ISA.maxtq = 1000
+	Gear6ISA.gears = 6
+	Gear6ISA.doubleclutch = false
+	Gear6ISA.geartable = {}
+		Gear6ISA.geartable[-1] = 0.3	--final
+		Gear6ISA.geartable[0] = 0		--unknow
+		Gear6ISA.geartable[1] = 0.1		--Gear1
+		Gear6ISA.geartable[2] = 0.2		--Gear2
+		Gear6ISA.geartable[3] = 0.3		--Gear3
+		Gear6ISA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear6ISA.geartable[7] = 2000	--Declutch Rpm
+		Gear6ISA.geartable[8] = 4500	--Rpm Minimum
+		Gear6ISA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear6ISA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear6ISA.guiupdate = function() return end
+	end
+Mobility2Table["6Gear-I-SA"] = Gear6ISA
+
+local Gear6ILA = {}
+	Gear6ILA.id = "6Gear-I-LA"
+	Gear6ILA.ent = "acf_gearbox3"
+	Gear6ILA.type = "Mobility2"
+	Gear6ILA.name = "6s, Auto, Inline, Large"
+	Gear6ILA.desc = "A medium sized, 6 speed gearbox, automatic gearbox."
+	Gear6ILA.model = "models/engines/linear_l.mdl"
+	Gear6ILA.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+	Gear6ILA.category = "Auto Inline 6speed"
+	Gear6ILA.weight = 200
+	Gear6ILA.switch = 0.1
+	Gear6ILA.maxtq = 10000
+	Gear6ILA.gears = 6
+	Gear6ILA.doubleclutch = false
+	Gear6ILA.geartable = {}
+		Gear6ILA.geartable[-1] = 0.3	--final
+		Gear6ILA.geartable[0] = 0		--unknow
+		Gear6ILA.geartable[1] = 0.1		--Gear1
+		Gear6ILA.geartable[2] = 0.2		--Gear2
+		Gear6ILA.geartable[3] = 0.3		--Gear3
+		Gear6ILA.geartable[6] = -0.1	--Gear4 (reverse)
+		Gear6ILA.geartable[7] = 2000	--Declutch Rpm
+		Gear6ILA.geartable[8] = 4500	--Rpm Minimum
+		Gear6ILA.geartable[9] = 6500	--Rpm Maximum
+	if ( CLIENT ) then
+		Gear6ILA.guicreate = (function( Panel, Table ) ACFGearbox3GUICreate( Table ) end or nil)
+		Gear6ILA.guiupdate = function() return end
+	end
+Mobility2Table["6Gear-I-LA"] = Gear6ILA
+
+
 
 
 --###################################################################################################################################
