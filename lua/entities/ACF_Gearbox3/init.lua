@@ -152,14 +152,14 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	--timer.Simple(0.5, function() Gearbox3:UpdateHUD() end )
 	
 	--##############################################
-	Gearbox3:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	Gearbox3:SetNetworkedBeamString( "ID", Id )
 	Gearbox3:SetNetworkedBeamInt("Weight",Gearbox3.Mass)
 	Gearbox3:SetNetworkedBeamInt("Current",Gearbox3.Gear)
 	Gearbox3:SetNetworkedBeamInt("Declutch",Gearbox3.Gear7)
 	Gearbox3:SetNetworkedBeamInt("RpmMax",Gearbox3.Gear9)
 	Gearbox3:SetNetworkedBeamInt("RpmMin",Gearbox3.Gear8)
-	for i = 1, Gearbox.Gears do
-		Gearbox:SetNetworkedBeamFloat( "Gear" .. i, Gearbox.GearTable[i] )
+	for i = 1, Gearbox3.Gears do
+		Gearbox3:SetNetworkedBeamFloat( "Gear" .. i, Gearbox3.GearTable[i] )
 	end 
 		
 	return Gearbox3
@@ -243,7 +243,8 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	--self:UpdateHUD()
 	
 	--##############################################
-	self:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	self:SetNetworkedBeamString( "ID", Id )
+	
 	self:SetNetworkedBeamInt("Weight",self.Mass)
 	self:SetNetworkedBeamInt("Current",self.Gear)
 	self:SetNetworkedBeamInt("Declutch",self.Gear7)
