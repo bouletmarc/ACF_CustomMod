@@ -27,6 +27,7 @@ function ENT:Initialize()
 	
 	self.Usable = 1
 	self.AllowChange = 0
+	self.ClutchMode = 0
 	--########################
 	
 	self.TotalReqTq = 0
@@ -105,6 +106,7 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	
 	--Get reverse gear final drive
 	Gearbox3.ReverseGear = 6
+	Gearbox3.ClutchMode = 0
 	--############################ 
 		
 	local Inputs = {"Reverse"}
@@ -235,6 +237,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	
 	--Get reverse gear final drive
 	self.ReverseGear = 6
+	self.ClutchMode = 0
 	--############################ 
 	
 		
@@ -280,9 +283,13 @@ function ENT:TriggerInput( iname , value )
 	elseif ( iname == "Right Brake" ) then
 		self.RBrake = math.Clamp(value,0,100)
 	elseif ( iname == "Left Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	elseif ( iname == "Right Clutch" ) then
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	end		
 
 end
@@ -356,15 +363,6 @@ function ENT:CheckEnts()		--Check if every entity we are linked to still actuall
 end
 
 function ENT:Calc( InputRPM, InputInertia )
-
-	--Clutching
-	if (InputRPM < self.DeclutchRpm ) then
-		self.LClutch = 0*self.MaxTorque
-		self.RClutch = 0*self.MaxTorque
-	elseif (InputRPM >= self.DeclutchRpm ) then
-		self.LClutch = 1*self.MaxTorque
-		self.RClutch = 1*self.MaxTorque
-	end
 	
 
 	if self.LastActive == CurTime() then
@@ -380,6 +378,17 @@ function ENT:Calc( InputRPM, InputInertia )
 	local SelfWorld = self:LocalToWorld( BoxPhys:GetAngleVelocity() ) - self:GetPos()
 	self.WheelReqTq = {}
 	self.TotalReqTq = 0
+	
+	--Clutching
+	if (InputRPM < self.DeclutchRpm ) then
+		self.ClutchMode = 1
+		self.LClutch = math.Clamp(1-1,0,1)*self.MaxTorque
+		self.RClutch = math.Clamp(1-1,0,1)*self.MaxTorque
+	elseif (InputRPM >= self.DeclutchRpm ) then
+		self.ClutchMode = 0
+		self.LClutch = math.Clamp(1-0,0,1)*self.MaxTorque
+		self.RClutch = math.Clamp(1-0,0,1)*self.MaxTorque
+	end
 	
 	for Key, WheelEnt in pairs(self.WheelLink) do
 		if IsValid( WheelEnt ) then

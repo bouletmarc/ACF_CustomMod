@@ -385,9 +385,14 @@ function ENT:Calc( InputRPM, InputInertia )
 		end
 	end
 	--####################
+	/*if(RPM>=MaxRpm){Reducer= ((RPM-MaxRpm)+((RPM-MaxRpm)/3000))-(RPM-MaxRpm)}
+	if(RPM<=MinRPM){Reducer= ((MinRPM-RPM)+((MinRPM-RPM)/3000))-(MinRPM-RPM)}
+	FinalNumber=0.01+Reducer*/
+	if(self.LClutch > 0 and self.RClutch > 0) then
 	if (InputRPM >= self.RpmLimit) then
+			self.Reducer = ((InputRPM-self.RpmLimit)+((InputRPM-self.RpmLimit)/3000))-(InputRPM-self.RpmLimit)
 			if(self.GearFinal2 < self.RatioMax) then
-				self.GearFinal = self.GearFinal+0.005
+				self.GearFinal = self.GearFinal+(0.001+self.Reducer)
 				self.GearFinal2 = tonumber(self.GearFinal)
 			elseif(self.GearFinal2 >= self.RatioMax) then
 				self.GearFinal = self.RatioMax
@@ -396,10 +401,12 @@ function ENT:Calc( InputRPM, InputInertia )
 			self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
 			self:SetNetworkedBeamInt("Final",self.GearFinal*1000)
 			self:SetNetworkedBeamInt("Ratio",self.GearRatio*1000)
+			Wire_TriggerOutput(self, "Ratio", self.GearRatio)
 		--decrease
 		elseif (InputRPM <= self.RpmLimit2) then
+			self.Reducer = ((self.RpmLimit2-InputRPM)+((self.RpmLimit2-InputRPM)/3000))-(self.RpmLimit2-InputRPM)
 			if(self.GearFinal2 > self.RatioMin) then
-				self.GearFinal = self.GearFinal-0.005
+				self.GearFinal = self.GearFinal-(0.001+self.Reducer)
 				self.GearFinal2 = tonumber(self.GearFinal)
 			elseif(self.GearFinal2 <= self.RatioMin) then
 				self.GearFinal = self.RatioMin
@@ -408,7 +415,9 @@ function ENT:Calc( InputRPM, InputInertia )
 			self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
 			self:SetNetworkedBeamInt("Final",self.GearFinal*1000)
 			self:SetNetworkedBeamInt("Ratio",self.GearRatio*1000)
+			Wire_TriggerOutput(self, "Ratio", self.GearRatio)
 		end
+	end
 	--####################
 	return math.min(self.TotalReqTq, self.MaxTorque)
 
