@@ -2,10 +2,10 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 313 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 315 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.Version2 = 27 
+ACF.Version2 = 28 
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -22,7 +22,7 @@ ACF.Spalling = 0
 ACF.GunfireEnabled = true
 ACF.MeshCalcEnabled = false
 
-ACF.HEPower = 6000		--HE Filler power per KG in KJ
+ACF.HEPower = 10000		--HE Filler power per KG in KJ
 ACF.HEDensity = 1.65	--HE Filler density (That's TNT density)
 ACF.HEFrag = 1500		--Mean fragment number for equal weight TNT and casing
 ACF.HEBlastPen = 0.4	--Blast penetration exponent based of HE power
