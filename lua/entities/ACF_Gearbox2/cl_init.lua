@@ -28,9 +28,10 @@ function ENT:GetOverlayText()
 	local Current = self.Entity:GetNetworkedBeamInt("Current")
 	local RpmMax = self.Entity:GetNetworkedBeamInt("RpmMax")
 	local RpmMin = self.Entity:GetNetworkedBeamInt("RpmMin")
+	local Declutch = self.Entity:GetNetworkedBeamInt("Declutch")
 	local Ratio = self.Entity:GetNetworkedBeamInt("Ratio")/1000
 	
-	local txt = Type.."\nWeight : "..Weight.."Kg\nGear1 : "..Gear1.."\nGear2 : "..Gear2.."\nRpm Max : "..RpmMax.."Rpm\nRpm Min : "..RpmMin.."Rpm\nFinal Drive : "..FinalGear.."\nCurrent Gear : "..Current.."\nRatio : "..Ratio.."\n Maximum Torque Rating: "..(maxtorque).."n-m / "..math.Round(maxtorque*0.73).."ft-lb/n" or ""
+	local txt = Type.."\nWeight : "..Weight.."Kg\nGear1 : "..Gear1.."\nGear2 : "..Gear2.."\nRpm Max : "..RpmMax.."Rpm\nRpm Min : "..RpmMin.."Rpm\nDeclutch : "..Declutch.."Rpm\nFinal Drive : "..FinalGear.."\nCurrent Gear : "..Current.."\nRatio : "..Ratio.."\n Maximum Torque Rating: "..(maxtorque).."n-m / "..math.Round(maxtorque*0.73).."ft-lb/n" or ""
 	if (not game.SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()
 		txt = txt .. "\n(" .. PlayerName .. ")"
@@ -91,6 +92,8 @@ function ACFGearbox2GUICreate( Table )
 			ACF_CvtSlider2(5, Value, Table.id, "Rpm maximum")
 		elseif ID == 6 then
 			ACF_CvtSlider5(6, Value, Table.id, "Rpm minimum")
+		elseif ID == 7 then
+			ACF_CvtSlider6(7, Value, Table.id, "Declutch Rpm")
 		end
 	end
 	
@@ -205,6 +208,27 @@ function ACF_CvtSlider5(Gear, Value, ID, Desc)
 			acfmenupanel["CData"][Gear]:SetText( Desc or "Rpm minimum"..Gear )
 			acfmenupanel["CData"][Gear]:SetMin( 1000 )
 			acfmenupanel["CData"][Gear]:SetMax( 8000 )
+			acfmenupanel["CData"][Gear]:SetDecimals( 0 )
+			acfmenupanel["CData"][Gear]["Gear"] = Gear
+			acfmenupanel["CData"][Gear]["ID"] = ID
+			acfmenupanel["CData"][Gear]:SetValue(Value)
+			RunConsoleCommand( "acfmenu_data"..Gear, Value )
+			acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
+				acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+				RunConsoleCommand( "acfmenu_data"..Gear, val )
+			end
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
+	end
+
+end
+
+function ACF_CvtSlider6(Gear, Value, ID, Desc)
+
+	if Gear and not acfmenupanel["CData"][Gear] then	
+		acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+			acfmenupanel["CData"][Gear]:SetText( Desc or "Declutch Rpm"..Gear )
+			acfmenupanel["CData"][Gear]:SetMin( 1000 )
+			acfmenupanel["CData"][Gear]:SetMax( 4000 )
 			acfmenupanel["CData"][Gear]:SetDecimals( 0 )
 			acfmenupanel["CData"][Gear]["Gear"] = Gear
 			acfmenupanel["CData"][Gear]["ID"] = ID

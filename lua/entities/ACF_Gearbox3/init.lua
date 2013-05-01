@@ -273,8 +273,10 @@ function ENT:TriggerInput( iname , value )
 			self:SetNetworkedBeamInt("Current",self.Gear)
 		end
 	elseif ( iname == "Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+			self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	elseif ( iname == "Brake" ) then
 		self.LBrake = math.Clamp(value,0,100)
 		self.RBrake = math.Clamp(value,0,100)

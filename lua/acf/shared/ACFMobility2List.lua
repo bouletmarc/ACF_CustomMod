@@ -1689,6 +1689,7 @@ local Gear2TS2 = {}
 		Gear2TS2.geartable[4] = 0.8			--Maximum Ratio
 		Gear2TS2.geartable[5] = 6500		--Max rpm
 		Gear2TS2.geartable[6] = 5500		--Min rpm
+		Gear2TS2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2TS2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2TS2.guiupdate = function() return end
@@ -1718,6 +1719,7 @@ local Gear2TM2 = {}
 		Gear2TM2.geartable[4] = 0.8
 		Gear2TM2.geartable[5] = 6500
 		Gear2TM2.geartable[6] = 5500
+		Gear2TM2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2TM2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2TM2.guiupdate = function() return end
@@ -1747,6 +1749,7 @@ local Gear2TL2 = {}
 		Gear2TL2.geartable[4] = 0.8
 		Gear2TL2.geartable[5] = 6500
 		Gear2TL2.geartable[6] = 5500
+		Gear2TL2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2TL2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2TL2.guiupdate = function() return end
@@ -1776,6 +1779,7 @@ local Gear2LS2 = {}
 		Gear2LS2.geartable[4] = 0.8
 		Gear2LS2.geartable[5] = 6500
 		Gear2LS2.geartable[6] = 5500
+		Gear2LS2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2LS2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2LS2.guiupdate = function() return end
@@ -1805,6 +1809,7 @@ local Gear2LM2 = {}
 		Gear2LM2.geartable[4] = 0.8
 		Gear2LM2.geartable[5] = 6500
 		Gear2LM2.geartable[6] = 5500
+		Gear2LM2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2LM2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2LM2.guiupdate = function() return end
@@ -1834,6 +1839,7 @@ local Gear2LL2 = {}
 		Gear2LL2.geartable[4] = 0.8
 		Gear2LL2.geartable[5] = 6500
 		Gear2LL2.geartable[6] = 5500
+		Gear2LL2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2LL2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2LL2.guiupdate = function() return end
@@ -1864,6 +1870,7 @@ local Gear2TS3 = {}
 		Gear2TS3.geartable[4] = 0.8
 		Gear2TS3.geartable[5] = 6500
 		Gear2TS3.geartable[6] = 5500
+		Gear2TS3.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2TS3.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2TS3.guiupdate = function() return end
@@ -1893,6 +1900,7 @@ local Gear2TM3 = {}
 		Gear2TM3.geartable[4] = 0.8
 		Gear2TM3.geartable[5] = 6500
 		Gear2TM3.geartable[6] = 5500
+		Gear2TM3.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2TM3.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2TM3.guiupdate = function() return end
@@ -1922,6 +1930,7 @@ local Gear2TL3 = {}
 		Gear2TL3.geartable[4] = 0.8
 		Gear2TL3.geartable[5] = 6500
 		Gear2TL3.geartable[6] = 5500
+		Gear2TL3.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2TL3.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2TL3.guiupdate = function() return end
@@ -1951,6 +1960,7 @@ local Gear2LS3 = {}
 		Gear2LS3.geartable[4] = 0.8
 		Gear2LS3.geartable[5] = 6500
 		Gear2LS3.geartable[6] = 5500
+		Gear2LS3.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2LS3.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2LS3.guiupdate = function() return end
@@ -1980,6 +1990,7 @@ local Gear2LM3 = {}
 		Gear2LM3.geartable[4] = 0.8
 		Gear2LM3.geartable[5] = 6500
 		Gear2LM3.geartable[6] = 5500
+		Gear2LM3.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2LM3.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2LM3.guiupdate = function() return end
@@ -2009,6 +2020,7 @@ local Gear2LL3 = {}
 		Gear2LL3.geartable[4] = 0.8
 		Gear2LL3.geartable[5] = 6500
 		Gear2LL3.geartable[6] = 5500
+		Gear2LL3.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2LL3.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2LL3.guiupdate = function() return end
@@ -2039,6 +2051,7 @@ local Gear2SS2 = {}
 		Gear2SS2.geartable[4] = 0.8
 		Gear2SS2.geartable[5] = 6500
 		Gear2SS2.geartable[6] = 5500
+		Gear2SS2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2SS2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2SS2.guiupdate = function() return end
@@ -2068,6 +2081,7 @@ local Gear2SM2 = {}
 		Gear2SM2.geartable[4] = 0.8
 		Gear2SM2.geartable[5] = 6500
 		Gear2SM2.geartable[6] = 5500
+		Gear2SM2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2SM2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2SM2.guiupdate = function() return end
@@ -2097,6 +2111,7 @@ local Gear2SL2 = {}
 		Gear2SL2.geartable[4] = 0.8
 		Gear2SL2.geartable[5] = 6500
 		Gear2SL2.geartable[6] = 5500
+		Gear2SL2.geartable[7] = 2500		--Declutch rpm
 	if ( CLIENT ) then
 		Gear2SL2.guicreate = (function( Panel, Table ) ACFGearbox2GUICreate( Table ) end or nil)
 		Gear2SL2.guiupdate = function() return end

@@ -25,6 +25,8 @@ function ENT:Initialize()
 	self.RatioMax = 0
 	self.RpmLimit = 0
 	self.RpmLimit2 = 0
+	self.DeclutchRpm = 0
+	self.ClutchMode = 0
 	
 	self.TotalReqTq = 0
 	self.RClutch = 0
@@ -100,7 +102,9 @@ function MakeACF_Gearbox2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Gearbox2.RatioMax = tonumber(Gearbox2.Gear4)
 	Gearbox2.RpmLimit = tonumber(Gearbox2.Gear5)
 	Gearbox2.RpmLimit2 = tonumber(Gearbox2.Gear6)
+	Gearbox2.DeclutchRpm = tonumber(Gearbox2.Gear7)
 	Gearbox2.GearFinal2 = tonumber(Gearbox2.GearFinal)
+	Gearbox2.ClutchMode = 0
 		
 	local Inputs = {"Gear","Gear Up","Gear Down"}
 	if Gearbox2.Dual then
@@ -154,6 +158,7 @@ function MakeACF_Gearbox2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Gearbox2:SetNetworkedBeamInt("Gear2Over",Gearbox2.Gear2*1000)
 	Gearbox2:SetNetworkedBeamInt("RpmMax",Gearbox2.Gear5)
 	Gearbox2:SetNetworkedBeamInt("RpmMin",Gearbox2.Gear6)
+	Gearbox2:SetNetworkedBeamInt("Declutch",Gearbox2.Gear7)
 	Gearbox2:SetNetworkedBeamInt("Current",Gearbox2.Gear)
 	Gearbox2:SetNetworkedBeamInt("Ratio",Gearbox2.GearRatio*1000)
 		
@@ -229,7 +234,9 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.RatioMax = tonumber(self.Gear4)
 	self.RpmLimit = tonumber(self.Gear5)
 	self.RpmLimit2 = tonumber(self.Gear6)
+	self.DeclutchRpm = tonumber(self.Gear7)
 	self.GearFinal2 = tonumber(self.GearFinal)
+	self.ClutchMode = 0
 		
 	--self:UpdateHUD()
 	
@@ -241,6 +248,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Gear2Over",self.Gear2*1000)
 	self:SetNetworkedBeamInt("RpmMax",self.Gear5)
 	self:SetNetworkedBeamInt("RpmMin",self.Gear6)
+	self:SetNetworkedBeamInt("Declutch",self.Gear7)
 	self:SetNetworkedBeamInt("Current",self.Gear)
 	self:SetNetworkedBeamInt("Ratio",self.GearRatio*1000)
 	
@@ -260,8 +268,10 @@ function ENT:TriggerInput( iname , value )
 			self:ChangeGear(math.floor(self.Gear - 1))
 		end
 	elseif ( iname == "Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+			self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	elseif ( iname == "Brake" ) then
 		self.LBrake = math.Clamp(value,0,100)
 		self.RBrake = math.Clamp(value,0,100)
@@ -270,11 +280,15 @@ function ENT:TriggerInput( iname , value )
 	elseif ( iname == "Right Brake" ) then
 		self.RBrake = math.Clamp(value,0,100)
 	elseif ( iname == "Left Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	elseif ( iname == "Right Clutch" ) then
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
-	end		
-
+		if(self.ClutchMode == 0 ) then
+			self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
+	end
+	
 end
 
 function ENT:Think()
@@ -360,6 +374,17 @@ function ENT:Calc( InputRPM, InputInertia )
 	local SelfWorld = self:LocalToWorld( BoxPhys:GetAngleVelocity() ) - self:GetPos()
 	self.WheelReqTq = {}
 	self.TotalReqTq = 0
+	
+	--Clutching
+	if (InputRPM < self.DeclutchRpm ) then
+		self.ClutchMode = 1
+		self.LClutch = math.Clamp(1-1,0,1)*self.MaxTorque
+		self.RClutch = math.Clamp(1-1,0,1)*self.MaxTorque
+	elseif (InputRPM >= self.DeclutchRpm ) then
+		self.ClutchMode = 0
+		self.LClutch = math.Clamp(1-0,0,1)*self.MaxTorque
+		self.RClutch = math.Clamp(1-0,0,1)*self.MaxTorque
+	end
 	
 	for Key, WheelEnt in pairs(self.WheelLink) do
 		if IsValid( WheelEnt ) then
