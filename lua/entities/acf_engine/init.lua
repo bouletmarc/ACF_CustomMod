@@ -33,7 +33,7 @@ function ENT:Initialize()
 	self.CutRpm = 0
 	--####################
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
+	self.Inputs = Wire_CreateInputs( self { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput( self, "Entity", self )
 	self.WireDebugName = "ACF Engine"
@@ -115,11 +115,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine:SetNetworkedBeamInt("Weight",Engine.Weight)
 	Engine:SetNetworkedBeamInt("Rpm",Engine.FlyRPM)
 	--####################################################
-
-	undo.Create("ACF Engine")
-		undo.AddEntity( Engine )
-		undo.SetPlayer( Owner )
-	undo.Finish()
 
 	Owner:AddCount("_acf_engine", Engine)
 	Owner:AddCleanup( "acfmenu", Engine )
@@ -384,7 +379,7 @@ function ENT:ACFInit()
 
 end
 
-function ENT:CalcRPM( )
+function ENT:CalcRPM()
 
 	local DeltaTime = CurTime() - self.LastThink
 	-- local AutoClutch = math.min(math.max(self.FlyRPM-self.IdleRPM,0)/(self.IdleRPM+self.LimitRPM/10),1)

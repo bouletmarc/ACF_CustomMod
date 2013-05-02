@@ -58,7 +58,7 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	local Gearbox3 = ents.Create("ACF_Gearbox3")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
-	if not Gearbox3:IsValid() then return false end
+	if not IsValid( Gearbox3 ) then return false end
 	Gearbox3:SetAngles(Angle)
 	Gearbox3:SetPos(Pos)
 	Gearbox3:Spawn()
@@ -141,11 +141,6 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Gearbox3.OutL = Gearbox3:WorldToLocal(Gearbox3:GetAttachment(Gearbox3:LookupAttachment( "driveshaftL" )).Pos)
 	Gearbox3.OutR = Gearbox3:WorldToLocal(Gearbox3:GetAttachment(Gearbox3:LookupAttachment( "driveshaftR" )).Pos)
 		
-	undo.Create("ACF Gearbox3")
-		undo.AddEntity( Gearbox3 )
-		undo.SetPlayer( Owner )
-	undo.Finish()
-	
 	Owner:AddCount("_acf_Gearbox3", Gearbox3)
 	Owner:AddCleanup( "acfmenu", Gearbox3 )
 	

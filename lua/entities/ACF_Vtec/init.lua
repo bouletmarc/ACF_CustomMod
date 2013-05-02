@@ -11,9 +11,9 @@ function ENT:Initialize()
 	
 	self.CanUpdate = true
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "RPM" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "ActiveChips" }, { "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+	self.Inputs = Wire_CreateInputs( self, { "RPM" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "ActiveChips" }, { "NORMAL" } )
+	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Vtec"
 
 end  
@@ -56,11 +56,6 @@ function MakeACF_Vtec(Owner, Pos, Angle, Id, Data1)
 	Vtec:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
 	Vtec:SetNetworkedBeamInt("Kicking",Vtec.KickRpm)
 	Vtec:SetNetworkedBeamInt("Weight",Vtec.Weight)
-	
-	undo.Create("ACF Vtec")
-		undo.AddEntity( Vtec )
-		undo.SetPlayer( Owner )
-	undo.Finish()
 	
 	Owner:AddCount("_acf_vtec", Vtec)
 	Owner:AddCleanup( "acfmenu", Vtec )
@@ -111,11 +106,11 @@ function ENT:TriggerInput( iname , value )
 		if (value > self.Kickv) then
 			self.RPM = true
 			self.KickActive = 1
-			Wire_TriggerOutput(self.Entity, "ActiveChips", self.KickActive)
+			Wire_TriggerOutput(self, "ActiveChips", self.KickActive)
 		elseif (value <= self.Kickv) then
 			self.RPM = false
 			self.KickActive = 0
-			Wire_TriggerOutput(self.Entity, "ActiveChips", self.KickActive)
+			Wire_TriggerOutput(self, "ActiveChips", self.KickActive)
 		end
 	end
 
@@ -123,10 +118,10 @@ end
 
 
 function ENT:OnRemove()
-	Wire_Remove(self.Entity)
+	Wire_Remove(self)
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+    Wire_Restored(self)
 end
 	

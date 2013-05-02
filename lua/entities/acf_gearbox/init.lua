@@ -46,7 +46,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	local Gearbox = ents.Create("ACF_Gearbox")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
-	if not Gearbox:IsValid() then return false end
+	if not IsValid( Gearbox ) then return false end
 	Gearbox:SetAngles(Angle)
 	Gearbox:SetPos(Pos)
 	Gearbox:Spawn()
@@ -118,11 +118,6 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.OutL = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftL" )).Pos)
 	Gearbox.OutR = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftR" )).Pos)
 		
-	undo.Create("ACF Gearbox")
-		undo.AddEntity( Gearbox )
-		undo.SetPlayer( Owner )
-	undo.Finish()
-	
 	Owner:AddCount("_acf_Gearbox", Gearbox)
 	Owner:AddCleanup( "acfmenu", Gearbox )
 	
@@ -323,10 +318,10 @@ function ENT:CheckEnts()		--Check if every entity we are linked to still actuall
 end
 
 function ENT:Calc( InputRPM, InputInertia )
-
 	if self.LastActive == CurTime() then
 		return math.min(self.TotalReqTq, self.MaxTorque)
 	end
+	
 	if self.ChangeFinished < CurTime() and self.GearRatio != 0 then
 		self.InGear = true
 	end
@@ -384,8 +379,8 @@ end
 function ENT:Act( Torque, DeltaTime )
 	
 	local ReactTq = 0
-	--local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		--Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
-	 
+	--local AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))		
+	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
 	if Torque != 0 then
 		AvailTq = math.min(math.abs(Torque)/self.TotalReqTq,1)/self.GearRatio*-(-Torque/math.abs(Torque))

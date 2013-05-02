@@ -7,11 +7,11 @@ ENT.AutomaticFrameAdvance = true
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
-    Wire_Render(self.Entity)
+    Wire_Render(self)
 end
 
 function ENT:DoNormalDraw()
-	local e = self.Entity
+	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
 		if(self:GetOverlayText() ~= "") then
 			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
@@ -20,10 +20,10 @@ function ENT:DoNormalDraw()
 end
 
 function ENT:GetOverlayText()
-	local name = self.Entity:GetNetworkedString("WireName")
-	local Type = self.Entity:GetNetworkedBeamString("Type")
-	local Kicking = self.Entity:GetNetworkedBeamInt("Kicking")
-	local Weight = self.Entity:GetNetworkedBeamInt("Weight")
+	local name = self:GetNetworkedString("WireName")
+	local Type = self:GetNetworkedBeamString("Type")
+	local Kicking = self:GetNetworkedBeamInt("Kicking")
+	local Weight = self:GetNetworkedBeamInt("Weight")
 	
 	local txt = Type.."\nKick Rpm : "..Kicking.."Rpm\nWeight : "..Weight.."Kg\n" or ""
 	if (not game.SinglePlayer()) then

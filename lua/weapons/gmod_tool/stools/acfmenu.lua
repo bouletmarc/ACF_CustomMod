@@ -21,16 +21,25 @@ cleanup.Register( "acfmenu" )
 
 if CLIENT then	
 	language.Add( "Tool.acfmenu.listname", "ACF Menu" )
-	language.Add( "Tool.acfmenu.name", "ACF Custom BM V6.5" )
+	language.Add( "Tool.acfmenu.name", "Armored Combat Framework Custom" )
 	language.Add( "Tool.acfmenu.desc", "Spawn the ACF weapons and ammo" )
 	language.Add( "Tool.acfmenu.0", "Left click to spawn the entity of your choice, Right click to link an entity to another (+Use to unlink)" )
 	language.Add( "Tool.acfmenu.1", "Right click to link the selected sensor to a pod" )
 	
 	language.Add( "Undone_ACF Entity", "Undone ACF Entity" )
-	language.Add( "Undone_ACF Engine", "Undone ACF Engine" )
-	language.Add( "Undone_ACF Gearbox", "Undone ACF Gearbox" )
-	language.Add( "Undone_ACF Ammo", "Undone ACF Ammo" )
-	language.Add( "Undone_ACF Gun", "Undone ACF Gun" )
+	language.Add( "Undone_acf_engine", "Undone ACF Engine" )
+	language.Add( "Undone_acf_engine2", "Undone ACF Engine" )
+	language.Add( "Undone_acf_engine3", "Undone ACF Engine" )
+	language.Add( "Undone_acf_engine4", "Undone ACF Engine" )
+	language.Add( "Undone_acf_engine5", "Undone ACF Engine Maker" )
+	language.Add( "Undone_acf_gearbox", "Undone ACF Gearbox" )
+	language.Add( "Undone_acf_gearbox2", "Undone ACF Gearbox CVT" )
+	language.Add( "Undone_acf_gearbox3", "Undone ACF Gearbox Automatic" )
+	language.Add( "Undone_acf_chips", "Undone ACF Engine Chips" )
+	language.Add( "Undone_acf_vtec", "Undone ACF Vtec Chip" )
+	language.Add( "Undone_acf_nos", "Undone ACF Nos Bottle" )
+	language.Add( "Undone_acf_ammo", "Undone ACF Ammo" )
+	language.Add( "Undone_acf_gun", "Undone ACF Gun" )
 	language.Add( "SBoxLimit_acf_gun", "You've reached the ACF Guns limit!" )
 	language.Add( "SBoxLimit_acf_rack", "You've reached the ACF Launchers limit!" )
 	language.Add( "SBoxLimit_acf_ammo", "You've reached the ACF Explosives limit!" )
@@ -41,7 +50,7 @@ if CLIENT then
 	------------------------------------*/
 	function TOOL.BuildCPanel( CPanel )
 	
-		local pnldef_ACFmenu = vgui.RegisterFile( "ACF/Client/cl_ACFMenu_gui.lua" )
+		local pnldef_ACFmenu = vgui.RegisterFile( "acf/client/cl_acfmenu_gui.lua" )
 		
 		// create
 		local DPanel = vgui.CreateFromTable( pnldef_ACFmenu )
@@ -82,7 +91,12 @@ function TOOL:LeftClick( trace )
 		else
 			local Ent = DupeClass.Func(ply, unpack(ArgTable))		--Using the Duplicator entity register to find the right factory function
 			Ent:Activate()
-			Ent:GetPhysicsObject():Wake() 
+			Ent:GetPhysicsObject():Wake()
+			
+			undo.Create( ACF.Weapons[Type][Id]["ent"] )
+				undo.AddEntity( Ent )
+				undo.SetPlayer( ply )
+			undo.Finish()
 		end
 		
 		if Feedback != nil then

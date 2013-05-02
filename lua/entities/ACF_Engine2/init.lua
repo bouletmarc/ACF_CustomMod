@@ -32,9 +32,9 @@ function ENT:Initialize()
 	self.CutRpm = 0
 	--####################
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "RPM", "Torque", "Power", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Engine2"
 
 end  
@@ -127,11 +127,6 @@ function MakeACF_Engine2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Engine2:SetNetworkedBeamInt("Weight",Engine2.Weight)
 	Engine2:SetNetworkedBeamInt("Rpm",Engine2.FlyRPM)
 	--####################################################
-
-	undo.Create("ACF Engine2")
-		undo.AddEntity( Engine2 )
-		undo.SetPlayer( Owner )
-	undo.Finish()
 
 	Owner:AddCount("_acf_engine2", Engine2)
 	Owner:AddCleanup( "acfmenu", Engine2 )

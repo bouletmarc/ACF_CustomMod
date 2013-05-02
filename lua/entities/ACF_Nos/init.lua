@@ -21,9 +21,9 @@ function ENT:Initialize()
 	self.LegalThink = 0
 	self.LastActive = 0
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "ActiveNos" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "Active", "Usable" }, { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+	self.Inputs = Wire_CreateInputs( self, { "ActiveNos" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "Active", "Usable" }, { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
+	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Nos"
 end  
 
@@ -85,11 +85,6 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Nos:SetNetworkedBeamInt("Usable",Nos.UsableNos)
 	Nos:SetNetworkedBeamInt("Weight",Nos.Weight)
 	
-	undo.Create("ACF Nos")
-		undo.AddEntity( Nos )
-		undo.SetPlayer( Owner )
-	undo.Finish()
-	
 	Owner:AddCount("_acf_nos", Nos)
 	Owner:AddCleanup( "acfmenu", Nos )
 	
@@ -137,11 +132,11 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.BoostTime = 10
 	
 	--send Wire Outputs
-	Wire_TriggerOutput(self.Entity, "TqAdd", self.TorqueAdd3)
-	Wire_TriggerOutput(self.Entity, "MaxRpmAdd", self.RpmAddFinal)
-	Wire_TriggerOutput(self.Entity, "LimitRpmAdd", self.RpmAddFinal)
-	Wire_TriggerOutput(self.Entity, "Usable", self.UsableNos)
-	Wire_TriggerOutput(self.Entity, "Active", self.ActiveChips2)
+	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
+	Wire_TriggerOutput(self, "MaxRpmAdd", self.RpmAddFinal)
+	Wire_TriggerOutput(self, "LimitRpmAdd", self.RpmAddFinal)
+	Wire_TriggerOutput(self, "Usable", self.UsableNos)
+	Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 	--Send to GUI
 	self:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
 	self:SetNetworkedBeamInt("TorqueAdd",self.TorqueAdd2)
@@ -168,7 +163,7 @@ function ENT:Think()
 	local Time = CurTime()
 	
 	if self.LegalThink < Time and self.LastActive+2 > Time then
-		if self.Entity:GetPhysicsObject():GetMass() < self.Mass or self.Entity:GetParent():IsValid() then
+		if self:GetPhysicsObject():GetMass() < self.Mass or self:GetParent():IsValid() then
 			self.Legal = false
 		else 
 			self.Legal = true
@@ -188,10 +183,10 @@ function ENT:Think()
 			end
 			self.Sound = nil
 			--Send Wire Outputs
-			Wire_TriggerOutput(self.Entity, "TqAdd", self.TorqueAdd3)
-			Wire_TriggerOutput(self.Entity, "MaxRpmAdd", self.RpmAddFinal)
-			Wire_TriggerOutput(self.Entity, "LimitRpmAdd", self.RpmAddFinal)
-			Wire_TriggerOutput(self.Entity, "Active", self.ActiveChips2)
+			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
+			Wire_TriggerOutput(self, "MaxRpmAdd", self.RpmAddFinal)
+			Wire_TriggerOutput(self, "LimitRpmAdd", self.RpmAddFinal)
+			Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 			--send GUI
 			self:SetNetworkedBeamInt("TorqueAdd",self.TorqueAdd2)
 			self:SetNetworkedBeamInt("Usable",self.UsableNos)
@@ -200,7 +195,7 @@ function ENT:Think()
 		if self.AllowNos < CurTime() and self.UsableNos == 0 then
 			self.UsableNos = 1 --usable
 			--send wire
-			Wire_TriggerOutput(self.Entity, "Usable", self.UsableNos)
+			Wire_TriggerOutput(self, "Usable", self.UsableNos)
 			--send GUI
 			self:SetNetworkedBeamInt("TorqueAdd",self.TorqueAdd2)
 			self:SetNetworkedBeamInt("Usable",self.UsableNos)
@@ -208,7 +203,7 @@ function ENT:Think()
 	end
 	
 	
-	self.Entity:NextThink(Time+1)
+	self:NextThink(Time+1)
 	return true
 	
 end
@@ -221,11 +216,11 @@ function ENT:PowerUp(value)
 	self.TorqueAdd3 = self.TorqueAdd2	--Get Torque
 	self.RpmAddFinal = self.RpmAdd		--Get RPM
 	--Send Wire Outputs
-	Wire_TriggerOutput(self.Entity, "TqAdd", self.TorqueAdd3)
-	Wire_TriggerOutput(self.Entity, "MaxRpmAdd", self.RpmAddFinal)
-	Wire_TriggerOutput(self.Entity, "LimitRpmAdd", self.RpmAddFinal)
-	Wire_TriggerOutput(self.Entity, "Usable", self.UsableNos)
-	Wire_TriggerOutput(self.Entity, "Active", self.ActiveChips2)
+	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
+	Wire_TriggerOutput(self, "MaxRpmAdd", self.RpmAddFinal)
+	Wire_TriggerOutput(self, "LimitRpmAdd", self.RpmAddFinal)
+	Wire_TriggerOutput(self, "Usable", self.UsableNos)
+	Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 	--send GUI
 	self:SetNetworkedBeamInt("TorqueAdd",self.TorqueAdd2)
 	self:SetNetworkedBeamInt("Usable",self.UsableNos)
@@ -236,11 +231,11 @@ end
 
 
 function ENT:OnRemove()
-	Wire_Remove(self.Entity)
+	Wire_Remove(self)
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+    Wire_Restored(self)
 end
 	
 	

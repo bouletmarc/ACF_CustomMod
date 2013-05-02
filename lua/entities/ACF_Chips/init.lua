@@ -11,9 +11,9 @@ function ENT:Initialize()
 	
 	self.CanUpdate = true
 	
-	self.Inputs = Wire_CreateInputs( self.Entity, { "ActiveChips" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, { "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "Active" }, { "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
-	Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
+	self.Inputs = Wire_CreateInputs( self, { "ActiveChips" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "Active" }, { "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
+	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Chips"
 
 end  
@@ -63,11 +63,6 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 	Chips:SetNetworkedBeamInt("MaxRPMAdd",Chips.MaxRPMAdd2)
 	Chips:SetNetworkedBeamInt("LimitRPMAdd",Chips.LimitRPMAdd2)
 	Chips:SetNetworkedBeamInt("Weight",Chips.Weight)
-	
-	undo.Create("ACF Chips")
-		undo.AddEntity( Chips )
-		undo.SetPlayer( Owner )
-	undo.Finish()
 	
 	Owner:AddCount("_acf_chips", Chips)
 	Owner:AddCleanup( "acfmenu", Chips )
@@ -131,20 +126,20 @@ function ENT:TriggerInput( iname , value )
 			self.TorqueAdd3 = self.TorqueAdd2
 			self.MaxRPMAdd3 = self.MaxRPMAdd2
 			self.LimitRPMAdd3 = self.LimitRPMAdd2
-			Wire_TriggerOutput(self.Entity, "TqAdd", self.TorqueAdd3)
-			Wire_TriggerOutput(self.Entity, "MaxRpmAdd", self.MaxRPMAdd3)
-			Wire_TriggerOutput(self.Entity, "LimitRpmAdd", self.LimitRPMAdd3)
-			Wire_TriggerOutput(self.Entity, "Active", self.ActiveChips2)
+			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
+			Wire_TriggerOutput(self, "MaxRpmAdd", self.MaxRPMAdd3)
+			Wire_TriggerOutput(self, "LimitRpmAdd", self.LimitRPMAdd3)
+			Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 		elseif (value <= 0) then
 			self.ActiveChips = false
 			self.ActiveChips2 = 0
 			self.TorqueAdd3 = 0
 			self.MaxRPMAdd3 = 0
 			self.LimitRPMAdd3 = 0
-			Wire_TriggerOutput(self.Entity, "TqAdd", self.TorqueAdd3)
-			Wire_TriggerOutput(self.Entity, "MaxRpmAdd", self.MaxRPMAdd3)
-			Wire_TriggerOutput(self.Entity, "LimitRpmAdd", self.LimitRPMAdd3)
-			Wire_TriggerOutput(self.Entity, "Active", self.ActiveChips2)
+			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
+			Wire_TriggerOutput(self, "MaxRpmAdd", self.MaxRPMAdd3)
+			Wire_TriggerOutput(self, "LimitRpmAdd", self.LimitRPMAdd3)
+			Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 		end
 	end
 
@@ -152,11 +147,11 @@ end
 
 
 function ENT:OnRemove()
-	Wire_Remove(self.Entity)
+	Wire_Remove(self)
 end
 
 function ENT:OnRestore()
-    Wire_Restored(self.Entity)
+    Wire_Restored(self)
 end
 	
 	
