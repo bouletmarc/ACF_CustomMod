@@ -11,7 +11,7 @@ AccessorFunc( PANEL, "m_strFile", 			"File" ) // sounds listed in list files
 AccessorFunc( PANEL, "m_bUnsaved", 			"Unsaved" ) // edited list file Saved?
 
 local max_char_count = 200 //File length limit
-local max_item_count = 512 //Item count limit
+local max_item_count = 10 //Item count limit
 
 local invalid_filename_chars = {
 	["*"] = "",
@@ -216,7 +216,7 @@ function PANEL:Init()
 
 	self.ListsPanel = vgui.Create("DPanel")
 	self.ListsPanel:SetDrawBackground(false)
-
+	
 	self.FilesPanel = vgui.Create("DPanel")
 	self.FilesPanel:SetDrawBackground(false)
 
@@ -230,15 +230,15 @@ function PANEL:Init()
 		self:SaveList(self.FileBrowser:GetFileName())
 	end)
 	self.FileBrowser.Update:Remove() // it's replaced
-
+	
 	self.Files = self.FilesPanel:Add("DListView")
 	self.Files:SetMultiSelect(false)
 	self.Files:Dock(FILL)
 
-	self.Files:AddColumn("Engine")
-	local Column = self.Files:AddColumn("Setting's")
-	Column:SetFixedWidth(170)
-	Column:SetWide(170)
+	self.Files:AddColumn("Setting's")
+	local Column = self.Files:AddColumn("Type")
+	Column:SetFixedWidth(80)
+	Column:SetWide(80)
 
 	self.Files.OnRowSelected = function(parent, id, line)
 		local name = line.m_strFilename
@@ -264,6 +264,30 @@ function PANEL:Init()
 		self.m_strFile = name
 		self.m_strSelectedList = self.m_strList
 
+		self:DoRightClick(name, data, parent, line)
+	end
+	
+	Column.OnRowSelected = function(parent, id, line)
+		local name = line.m_strFilename
+		local data = line.m_tabData
+		self.m_strFile = name
+		self.m_strSelectedList = self.m_strList
+		self:DoClick(name, data, parent, line)
+	end
+
+	Column.DoDoubleClick = function(parent, id, line)
+		local name = line.m_strFilename
+		local data = line.m_tabData
+		self.m_strFile = name
+		self.m_strSelectedList = self.m_strList
+		self:DoDoubleClick(name, data, parent, line)
+	end
+
+	Column.OnRowRightClick = function(parent, id, line)
+		local name = line.m_strFilename
+		local data = line.m_tabData
+		self.m_strFile = name
+		self.m_strSelectedList = self.m_strList
 		self:DoRightClick(name, data, parent, line)
 	end
 
@@ -328,12 +352,12 @@ function PANEL:Init()
 	self.ListNameLabel:Dock(FILL)
 	self.ListNameLabel:DockMargin(12, 0, 0, 0)
 	self.ListNameLabel:SetDark(true)
-
+	
 	self.SplitPanel = self:Add( "DHorizontalDivider" )
 	self.SplitPanel:Dock( FILL )
 	self.SplitPanel:SetLeft(self.ListsPanel)
 	self.SplitPanel:SetRight(self.FilesPanel)
-	self.SplitPanel:SetLeftWidth(200)
+	self.SplitPanel:SetLeftWidth(150)
 	self.SplitPanel:SetLeftMin(150)
 	self.SplitPanel:SetRightMin(300)
 	self.SplitPanel:SetDividerWidth(3)
@@ -508,6 +532,7 @@ function PANEL:SaveList(strfile)
 		end
 
 		for key, itemtable in SortedPairs(self.Tabfile) do
+		--for key, itemtable in pairs(self.Tabfile) do
 			local item = key
 			for k, supitem in ipairs(itemtable) do
 				item = item.." | "..supitem

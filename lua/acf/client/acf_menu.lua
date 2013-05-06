@@ -303,37 +303,6 @@ local function Sendmenu2(strModel, ModelEmitter) // Open a sending and setup men
 
 		Menu:AddSpacer()
 
-		/*if (IsValid(TabFavourites2)) then
-			// Add the soundpath to the favourites.
-			if (TabFavourites2:ItemInList(strModel)) then
-
-				//Remove from favourites
-					MenuItem = Menu:AddOption("Remove from favourites", function()
-						TabFavourites2:RemoveItem(strModel)
-					end)
-					MenuItem:SetImage("icon16/bin_closed.png")
-
-			else
-
-				//Add to favourites
-					MenuItem = Menu:AddOption("Add to favourites", function()
-						TabFavourites2:AddItem(strModel, "file")
-					end)
-					MenuItem:SetImage("icon16/star.png")
-					local max_item_count = 512
-					local count = TabFavourites2.TabfileCount
-					if (count >= max_item_count) then
-						MenuItem:SetTextColor(Color(gray,gray,gray,255)) // custom disabling
-						MenuItem.DoClick = function() end
-
-						MenuItem:SetToolTip("The favourites list is Full! It can't hold more than "..max_item_count.." items!")
-					end
-
-			end
-		end*/
-
-		Menu:AddSpacer()
-
 		//Print to console
 			MenuItem = Menu:AddOption("Print to console", function()
 				// Print the soundpath in the Console/HUD.
@@ -393,12 +362,12 @@ local function CreateSoundBrowser(path)
 	SoundBrowserPanel:SetPos(50,25)
 	SoundBrowserPanel:SetSize(850, 500)
 
-	SoundBrowserPanel:SetMinWidth(630)
-	SoundBrowserPanel:SetMinHeight(400)
+	SoundBrowserPanel:SetMinWidth(750)
+	SoundBrowserPanel:SetMinHeight(500)
 
 	SoundBrowserPanel:SetSizable(true)
 	SoundBrowserPanel:SetDeleteOnClose( false )
-	SoundBrowserPanel:SetTitle("Engine Menu V4.1")
+	SoundBrowserPanel:SetTitle("Engine Menu V4.2")
 	SoundBrowserPanel:SetVisible(false)
 	SoundBrowserPanel:SetCookieName( "wire_sound_browser" )
 	SoundBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
@@ -442,8 +411,14 @@ local function CreateSoundBrowser(path)
 			EngineName:SetPos( 5,220 )
 			EngineName:SetWide( 210 )
 			EngineName.OnTextChanged = function( )
-				RunConsoleCommand( "acfmenu_data10", EngineName:GetValue() )
-				EngineName:SetTextColor(Color(0,0,200,255))
+				if EngineName:GetValue() == "" then
+					EngineName:SetText( "PUT NAME HERE" )
+					EngineName:SetTextColor(Color(200,0,0,255))
+					RunConsoleCommand( "acfmenu_data10", EngineName:GetValue() )
+				else
+					RunConsoleCommand( "acfmenu_data10", EngineName:GetValue() )
+					EngineName:SetTextColor(Color(0,0,200,255))
+				end
 			end
 			
 		PowerText = ButtonsSidePanel:Add( "DLabel" )
@@ -776,23 +751,77 @@ local function CreateSoundBrowser(path)
 	file.CreateDir("engineslists")
 	TabFavourites2:SetRootPath("engineslists")
 
-	/*TabFavourites2.DoClick = function(parent, item, data)
-		if(file.Exists("models/engines/"..item, "GAME")) then
-			TabModelBrowser:SetOpenFile(item)
-		end
-
-		strModel = "models/engines/"..item
-		if (!IsValid(SoundInfoText)) then return end
-		SoundInfoText:SetText(GetInfoString(item, data))
-		if (!IsValid(DisplayModel)) then return end
-		DisplayModel:SetModel( strModel )
-		DisplayModel2:SetModel( strModel )
-		DisplayModel3:SetModel( strModel )
-		if (!IsValid(ModelText)) then return end
-		ModelText:SetText( "Model : "..strModel )
+	TabFavourites2.DoClick = function(parent, item, data)
+		local newString = ""
+		if string.find(item, "0. Name : ") then 
+			newString = string.gsub(item,"0. Name : ","")
+			RunConsoleCommand( "acfmenu_data10", newString )
+			EngineName:SetText(newString)
+			EngineName:SetTextColor(Color(0,0,200,255))
+		elseif string.find(item, "1. Model : ") then 
+			newString = string.gsub(item,"1. Model : ","")
+			strModel = newString
+			if (!IsValid(SoundInfoText)) then return end
+				SoundInfoText:SetText(GetInfoString(strModel, data))
+			if (!IsValid(DisplayModel)) then return end
+				DisplayModel:SetModel( strModel )
+				DisplayModel2:SetModel( strModel )
+				DisplayModel3:SetModel( strModel )
+			if (!IsValid(ModelText)) then return end
+				ModelText:SetText( "Model : "..strModel )
+				ModelText:SetTextColor(Color(0,0,150,255))
+				SetupModelemitter(strModel)
+		elseif string.find(item, "2. Sound : ") then 
+			newString = string.gsub(item,"2. Sound : ","")
+			strSound = newString
+			if (!IsValid(SoundInfoText)) then return end
+				SoundInfoText:SetText(GetInfoString(strSound, data))
+			if (!IsValid(SoundText)) then return end
+				SoundText:SetText( "Sound : "..strSound )
+				SoundText:SetTextColor(Color(0,0,150,255))
+				SetupSoundemitter(strSound)
+		elseif string.find(item, "3. Torque : ") then 
+			newString = string.gsub(item,"3. Torque : ","")
+			SliderT:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data3", newString )
+			ValueText = math.floor(SliderT:GetValue() * SliderPeakMax:GetValue() / 9548.8)
+			ValueText2 = math.Round(ValueText*1.34)
+			PowerText:SetText( "Power : "..ValueText.." kW / "..ValueText2.." HP @ "..SliderPeakMax:GetValue().." RPM")
+			PowerText:SizeToContents()
+		elseif string.find(item, "4. Idle : ") then 
+			newString = string.gsub(item,"4. Idle : ","")
+			SliderIdle:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data4", newString )
+		elseif string.find(item, "5. Peak Min : ") then 
+			newString = string.gsub(item,"5. Peak Min : ","")
+			SliderPeakMin:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data5", newString )
+		elseif string.find(item, "6. Peak Max : ") then 
+			newString = string.gsub(item,"6. Peak Max : ","")
+			SliderPeakMax:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data6", newString )
+			ValueText = math.floor(SliderT:GetValue() * SliderPeakMax:GetValue() / 9548.8)
+			ValueText2 = math.Round(ValueText*1.34)
+			PowerText:SetText( "Power : "..ValueText.." kW / "..ValueText2.." HP @ "..SliderPeakMax:GetValue().." RPM")
+			PowerText:SizeToContents()
+		elseif string.find(item, "7. Limit : ") then 
+			newString = string.gsub(item,"7. Limit : ","")
+			SliderLimit:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data7", newString )
+		elseif string.find(item, "8. Flywheel : ") then 
+			newString = string.gsub(item,"8. Flywheel : ","")
+			SliderFly:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data8", newString )
+		elseif string.find(item, "9. Weight : ") then 
+			newString = string.gsub(item,"9. Weight : ","")
+			SliderWeight:SetValue( newString )
+			RunConsoleCommand( "acfmenu_data9", newString )
+		else return end
+		
+		
 	end
 
-	TabFavourites2.DoDoubleClick = function(parent, item, data)
+	/*TabFavourites2.DoDoubleClick = function(parent, item, data)
 		if(file.Exists("models/engines/"..item, "GAME")) then
 			TabModelBrowser:SetOpenFile(item)
 		end
@@ -825,10 +854,21 @@ local function CreateSoundBrowser(path)
 	Buttons2Panel:SetWide(InfoPanel:GetTall() * 1)
 	Buttons2Panel:SetDrawBackground(false)
 	
+		--##########
+		if strSound == "" then 
+			strSound = "Choose a Sound" 
+			SetupSoundemitter(strSound)
+		end
+		if strModel == "" then 
+			strModel = "Choose a Model" 
+			SetupModelemitter(strModel)
+		end
+		--##########
+	
 	SoundText = Buttons2Panel:Add("DLabel")
 	SoundText:DockMargin(5, 0, 5, 0)
 	SoundText:Dock(LEFT)
-	SoundText:SetText( "Sound : ".."Choose a Sound" )
+	SoundText:SetText( "Sound : "..strSound )
 	SoundText:SetFont( "DefaultBold" )
 	SoundText:SetWide(280)
 	SoundText:SetTall(10)
@@ -837,7 +877,7 @@ local function CreateSoundBrowser(path)
 	ModelText = Buttons2Panel:Add("DLabel")
 	ModelText:DockMargin(5, 0, 5, 0)
 	ModelText:Dock(RIGHT)
-	ModelText:SetText( "Model : ".."Choose a Model" )
+	ModelText:SetText( "Model : "..strModel )
 	ModelText:SetFont( "DefaultBold" )
 	ModelText:SetWide(280)
 	ModelText:SetTall(10)
@@ -941,40 +981,25 @@ local function CreateSoundBrowser(path)
 
 	local SoundemitterButton = ButtonsPanel:Add("DButton") // The soundemitter button. Hidden in e2 mode.
 	SoundemitterButton:SetText("Save to Favorite")
-	--SoundemitterButton:SetDrawBackground(false)
-	--SoundemitterButton:SetDisabled( true )
 	SoundemitterButton:SetTextColor(Color(150,0,0,255))
 	SoundemitterButton:DockMargin(0, 2, 0, 0)
 	SoundemitterButton:SetTall(PlayStopPanel:GetTall() - 1.8)
 	SoundemitterButton:Dock(BOTTOM)
-	--SoundemitterButton:SetVisible(false)
-	SoundemitterButton.DoClick = function(btn)
-		TabFavourites2:AddItem("Model : ", strModel)
-		TabFavourites2:AddItem("Sound : ", strSound)
-		TabFavourites2:AddItem("Name : ", EngineName:GetValue())
-		TabFavourites2:AddItem("Torque : ", SliderT:GetValue())
-		TabFavourites2:AddItem("Idle : ", SliderIdle:GetValue())
-		TabFavourites2:AddItem("Peak Minimum : ", SliderPeakMin:GetValue())
-		TabFavourites2:AddItem("Peak Maximum : ", SliderPeakMax:GetValue())
-		TabFavourites2:AddItem("Limit Rpm : ", SliderLimit:GetValue())
-		TabFavourites2:AddItem("Flywheel Mass : ", SliderFly:GetValue())
-		TabFavourites2:AddItem("Weight : ", SliderWeight:GetValue())
+	SoundemitterButton.DoClick = function()
+		TabFavourites2:AddItem("0. Name : "..GetConVarString("acfmenu_data10"), "string")
+		TabFavourites2:AddItem("1. Model : "..GetConVarString("wire_soundemitter_model"), "file")
+		TabFavourites2:AddItem("2. Sound : "..GetConVarString("wire_soundemitter_sound"), "file")
+		TabFavourites2:AddItem("3. Torque : "..GetConVarString("acfmenu_data3"), "number")
+		TabFavourites2:AddItem("4. Idle : "..GetConVarString("acfmenu_data4"), "number")
+		TabFavourites2:AddItem("5. Peak Min : "..GetConVarString("acfmenu_data5"), "number")
+		TabFavourites2:AddItem("6. Peak Max : "..GetConVarString("acfmenu_data6"), "number")
+		TabFavourites2:AddItem("7. Limit : "..GetConVarString("acfmenu_data7"), "number")
+		TabFavourites2:AddItem("8. Flywheel : "..GetConVarString("acfmenu_data8"), "number")
+		TabFavourites2:AddItem("9. Weight : "..GetConVarString("acfmenu_data9"), "number")
 	end
-
-	/*local ClipboardButton = ButtonsPanel:Add("DButton") // The soundemitter button. Hidden in soundemitter mode.
-	ClipboardButton:SetText("Copy to clipboard")
-	ClipboardButton:SetTextColor(Color(150,0,0,255))
-	ClipboardButton:DockMargin(0, 2, 0, 0)
-	ClipboardButton:SetTall(PlayStopPanel:GetTall() - 2)
-	ClipboardButton:Dock(BOTTOM)
-	ClipboardButton:SetVisible(false)
-	ClipboardButton.DoClick = function(btn)
-		SetupClipboard(strSound)
-	end*/
 
 	SoundBrowserPanel.PerformLayout = function(self, ...)
 		SoundemitterButton:SetVisible( true )
-		/*ClipboardButton:SetVisible(!self.Soundemitter)*/
 
 		TunePitchSlider:SetWide(TunePanel:GetWide() / 2 - 4)
 		TuneVolumeSlider:SetWide(TunePanel:GetWide() / 2 - 4)
@@ -986,8 +1011,6 @@ local function CreateSoundBrowser(path)
 
 		if (self.Soundemitter) then
 			SoundemitterButton:SetTall(PlayStopPanel:GetTall() - 1.8)
-		else
-			/*ClipboardButton:SetTall(PlayStopPanel:GetTall() - 2)*/
 		end
 
 		DFrame.PerformLayout(self, ...)
