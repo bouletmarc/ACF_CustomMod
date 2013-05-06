@@ -13,8 +13,6 @@ function ENT:Initialize()
 
 	self.LastCheck = 0
 	self.LastThink = 0
-	self.Mass = 0
-	self.PhysMass = 0
 	self.MassRatio = 1
 	self.Legal = true
 	self.CanUpdate = true
@@ -43,10 +41,11 @@ function MakeACF_Engine5(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 
-	local Engine5 = ents.Create("ACF_engine5")
+	local Engine5 = ents.Create( "acf_engine" )
+	if not IsValid( Engine5 ) then return false end
+	
 	local List = list.Get("ACFEnts")
-	local Classes = list.Get("ACFClasses")
-	if not Engine5:IsValid() then return false end
+	
 	Engine5:SetAngles(Angle)
 	Engine5:SetPos(Pos)
 	Engine5:Spawn()
@@ -414,6 +413,7 @@ function ENT:Think()
 
 		if self.LastCheck < CurTime() then
 			self:CheckRopes()
+			self:CalcMassRatio()
 			if tonumber(self:GetPhysicsObject():GetMass()) < tonumber(self.Weight) or tonumber(self:GetParent():IsValid()) then
 				self.Legal = false
 			else 
@@ -431,10 +431,10 @@ function ENT:Think()
 
 end
 
-function ENT:ACFInit()
+function ENT:CalcMassRatio()
 	
-	self.Mass = 0
-	self.PhysMass = 0
+	local Mass = 0
+	local PhysMass = 0
 	
 	-- get the shit that is physically attached to the vehicle
 	local PhysEnts = ACF_GetAllPhysicalConstraints( self )
@@ -455,18 +455,24 @@ function ENT:ACFInit()
 		local phys = v:GetPhysicsObject()
 		if not IsValid( phys ) then continue end
 		
-		self.Mass = self.Mass + phys:GetMass()
+		Mass = Mass + phys:GetMass()
 		
 		if PhysEnts[ v ] then
-			self.PhysMass = self.PhysMass + phys:GetMass()
+			PhysMass = PhysMass + phys:GetMass()
 		end
 		
 	end
 
-	self.MassRatio = self.PhysMass / self.Mass
+	self.MassRatio = PhysMass / Mass
+	
+	Wire_TriggerOutput( self, "Mass", math.Round( Mass, 2 ) )
+	Wire_TriggerOutput( self, "Physical Mass", math.Round( PhysMass, 2 ) )
+	
+end
 
-	Wire_TriggerOutput( self, "Mass", math.floor( self.Mass ) )
-	Wire_TriggerOutput( self, "Physical Mass", math.floor( self.PhysMass ) )
+function ENT:ACFInit()
+	
+	self:CalcMassRatio()
 
 	self.LastThink = CurTime()
 	self.Torque = self.PeakTorque
