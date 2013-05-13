@@ -21,7 +21,7 @@ cleanup.Register( "acfmenu" )
 
 if CLIENT then	
 	language.Add( "Tool.acfmenu.listname", "ACF Menu" )
-	language.Add( "Tool.acfmenu.name", "Armored Combat Framework Custom" )
+	language.Add( "Tool.acfmenu.name", "ACF Custom" )
 	language.Add( "Tool.acfmenu.desc", "Spawn the ACF weapons and ammo" )
 	language.Add( "Tool.acfmenu.0", "Left click to spawn the entity of your choice, Right click to link an entity to another (+Use to unlink)" )
 	language.Add( "Tool.acfmenu.1", "Right click to link the selected sensor to a pod" )

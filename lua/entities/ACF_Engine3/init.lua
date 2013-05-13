@@ -60,7 +60,7 @@ function MakeACF_Engine3(Owner, Pos, Angle, Id)
 	Engine3.IdleRPM = List["Mobility2"][Id]["idlerpm"]
 	Engine3.PeakMinRPM = List["Mobility2"][Id]["peakminrpm"]
 	Engine3.PeakMaxRPM = List["Mobility2"][Id]["peakmaxrpm"]
-	Engine3.LimitRPM = List["Mobility2"][Id]["limitprm"]
+	Engine3.LimitRPM = List["Mobility2"][Id]["limitrpm"]
 	Engine3.Inertia = List["Mobility2"][Id]["flywheelmass"]*(3.1416)^2
 	Engine3.iselec = List["Mobility2"][Id]["iselec"]
 	Engine3.elecpower = List["Mobility2"][Id]["elecpower"]
@@ -70,7 +70,7 @@ function MakeACF_Engine3(Owner, Pos, Angle, Id)
 	Engine3.PeakTorque2 = List["Mobility2"][Id]["torque"]
 	Engine3.PeakTorque3 = List["Mobility2"][Id]["torque"]
 	Engine3.PeakMaxRPM2 = List["Mobility2"][Id]["peakmaxrpm"]
-	Engine3.LimitRPM2 = List["Mobility2"][Id]["limitprm"]
+	Engine3.LimitRPM2 = List["Mobility2"][Id]["limitrpm"]
 	Engine3.FlywheelMass2 = List["Mobility2"][Id]["flywheelmass"]
 	Engine3.FlywheelMass3 = Engine3.FlywheelMass2
 	Engine3.Idling = List["Mobility2"][Id]["idlerpm"]
@@ -145,7 +145,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.IdleRPM = List["Mobility2"][Id]["idlerpm"]
 	self.PeakMinRPM = List["Mobility2"][Id]["peakminrpm"]
 	self.PeakMaxRPM = List["Mobility2"][Id]["peakmaxrpm"]
-	self.LimitRPM = List["Mobility2"][Id]["limitprm"]
+	self.LimitRPM = List["Mobility2"][Id]["limitrpm"]
 	self.Inertia = List["Mobility2"][Id]["flywheelmass"]*(3.1416)^2
 	self.iselec = List["Mobility2"][Id]["iselec"] -- is the engine electric?
 	self.elecpower = List["Mobility2"][Id]["elecpower"] -- how much power does it output
@@ -155,7 +155,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.PeakTorque2 = List["Mobility2"][Id]["torque"]
 	self.PeakTorque3 = List["Mobility2"][Id]["torque"]
 	self.PeakMaxRPM2 = List["Mobility2"][Id]["peakmaxrpm"]
-	self.LimitRPM2 = List["Mobility2"][Id]["limitprm"]
+	self.LimitRPM2 = List["Mobility2"][Id]["limitrpm"]
 	self.FlywheelMass2 = List["Mobility2"][Id]["flywheelmass"]
 	self.FlywheelMass3 = self.FlywheelMass2
 	self.Idling = List["Mobility2"][Id]["idlerpm"]

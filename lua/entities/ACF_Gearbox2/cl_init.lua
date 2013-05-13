@@ -6,11 +6,11 @@ local maxtorque = 0  -- this is for the max torque output on the tooltip - Wrex
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
-    Wire_Render(self.Entity)
+    Wire_Render(self)
 end
 
 function ENT:DoNormalDraw()
-	local e = self.Entity
+	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
 		if(self:GetOverlayText() ~= "") then
 			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
@@ -19,17 +19,17 @@ function ENT:DoNormalDraw()
 end
 
 function ENT:GetOverlayText()
-	local name = self.Entity:GetNetworkedString("WireName")
-	local Type = self.Entity:GetNetworkedBeamString("Type")
-	local Weight = self.Entity:GetNetworkedBeamInt("Weight")
-	local FinalGear = self.Entity:GetNetworkedBeamInt("Final")/1000
-	local Gear1 = self.Entity:GetNetworkedBeamInt("Gear1Over")/1000
-	local Gear2 = self.Entity:GetNetworkedBeamInt("Gear2Over")/1000
-	local Current = self.Entity:GetNetworkedBeamInt("Current")
-	local RpmMax = self.Entity:GetNetworkedBeamInt("RpmMax")
-	local RpmMin = self.Entity:GetNetworkedBeamInt("RpmMin")
-	local Declutch = self.Entity:GetNetworkedBeamInt("Declutch")
-	local Ratio = self.Entity:GetNetworkedBeamInt("Ratio")/1000
+	local name = self:GetNetworkedString("WireName")
+	local Type = self:GetNetworkedBeamString("Type")
+	local Weight = self:GetNetworkedBeamInt("Weight")
+	local FinalGear = self:GetNetworkedBeamInt("Final")/1000
+	local Gear1 = self:GetNetworkedBeamInt("Gear1Over")/1000
+	local Gear2 = self:GetNetworkedBeamInt("Gear2Over")/1000
+	local Current = self:GetNetworkedBeamInt("Current")
+	local RpmMax = self:GetNetworkedBeamInt("RpmMax")
+	local RpmMin = self:GetNetworkedBeamInt("RpmMin")
+	local Declutch = self:GetNetworkedBeamInt("Declutch")
+	local Ratio = self:GetNetworkedBeamInt("Ratio")/1000
 	
 	local txt = Type.."\nWeight : "..Weight.."Kg\nGear1 : "..Gear1.."\nGear2 : "..Gear2.."\nRpm Max : "..RpmMax.."Rpm\nRpm Min : "..RpmMin.."Rpm\nDeclutch : "..Declutch.."Rpm\nFinal Drive : "..FinalGear.."\nCurrent Gear : "..Current.."\nRatio : "..Ratio.."\n Maximum Torque Rating: "..(maxtorque).."n-m / "..math.Round(maxtorque*0.73).."ft-lb/n" or ""
 	if (not game.SinglePlayer()) then
