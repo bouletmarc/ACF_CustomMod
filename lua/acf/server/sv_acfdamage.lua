@@ -326,8 +326,25 @@ end
 
 function ACF_AmmoExplosion( Origin , Pos )
 
-	local HEWeight = Origin.Ammo/2
+	--old method, purely based on ammo count
+	--local HEWeight = Origin.Ammo/2
+	
+	--treats propellant as 1x the explosive power of TNT
+	--local BoomPower = Origin.BulletData["BoomPower"]
+	--if not BoomPower then BoomPower = 0.002 end --make sure refills are explosive
+	--local HEWeight = BoomPower * Origin.Ammo
+	
+	--treats propellant as ~1/8x the explosive power of TNT
+	local HEContent, PropContent
+	if Origin.RoundType == "Refill" then
+		HEContent = 0.001
+		PropContent = 0.001
+	else 
+		HEContent = Origin.BulletData["FillerMass"] or 0
+		PropContent = Origin.BulletData["PropMass"] or 0
+	end
 	local LastHE = 0
+	local HEWeight = (HEContent+PropContent*(ACF.PBase/ACF.HEPower))*Origin.Ammo
 	local Power = HEWeight * ACF.HEPower					--Power in KiloJoules of the filler mass of  TNT 
 	local Radius = (HEWeight)^0.33*8*39.37				--Scalling law found on the net, based on 1PSI overpressure from 1 kg of TNT at 15m
 	local Search = true
@@ -366,17 +383,25 @@ function ACF_AmmoExplosion( Origin , Pos )
 				if ( Occ.Hit and Occ.Entity:EntIndex() != Found.Entity:EntIndex() ) then 
 						--Msg("Target Occluded\n")
 				else
-					local FoundHE = Found.Ammo*2
-					--Msg("Adding " ..FoundAmmo.. " to the blast\n")
-					HEWeight = HEWeight + FoundHE
-					--Msg("Boom = " ..BoomPower.. "\n")
+				
+					local FoundHE, FoundPropel
+					if Found.RoundType == "Refill" then
+						FoundHE = 0.001
+						FoundPropel = 0.001
+					else 
+						FoundHE = Found.BulletData["FillerMass"] or 0
+						FoundPropel = Found.BulletData["PropMass"] or 0
+					end
+					local FoundHEWeight = (FoundHE+FoundPropel*(ACF.PBase/ACF.HEPower))*Found.Ammo
+	
+					--local FoundHE = Found.Ammo*2
+					HEWeight = HEWeight + FoundHEWeight
 					Found.IsExplosive = false
 					Found.DamageAction = false
 					Found.KillAction = false
 					Found.Exploding = true
 					table.insert(Filter,Found)
 					Found:Remove()
-					
 				end			
 			end
 		end	

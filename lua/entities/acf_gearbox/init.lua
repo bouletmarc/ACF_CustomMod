@@ -32,6 +32,7 @@ function ENT:Initialize()
 	
 	self.RPM = {}
 	self.CurRPM = 0
+    self.CVT = false
 	self.InGear = false
 	self.CanUpdate = true
 	self.LastActive = 0
@@ -60,6 +61,11 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.MaxTorque = List["Mobility"][Id]["maxtq"]
 	Gearbox.Gears = List["Mobility"][Id]["gears"]
 	Gearbox.Dual = List["Mobility"][Id]["doubleclutch"]
+    Gearbox.CVT = List["Mobility"][Id]["cvt"]
+    if Gearbox.CVT then
+		Gearbox.TargetMinRPM = Data3
+		Gearbox.TargetMaxRPM = math.max(Data4,Data3+100)
+	end
 	Gearbox.GearTable = List["Mobility"][Id]["geartable"]
 		Gearbox.GearTable["Final"] = Data10
 		Gearbox.GearTable[1] = Data1
@@ -97,9 +103,21 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		table.insert(Inputs, "Brake")
 	end
 	
+    local Outputs = { "Ratio", "Entity" , "Current Gear" }
+    local OutputTypes = { "NORMAL" , "ENTITY" , "NORMAL" }
+    if Gearbox.CVT then
+        table.insert(Outputs,"Min Target RPM")
+        table.insert(Outputs,"Max Target RPM")
+        table.insert(OutputTypes,"NORMAL")
+    end
+	
 	Gearbox.Inputs = Wire_CreateInputs( Gearbox.Entity, Inputs )
-	Gearbox.Outputs = WireLib.CreateSpecialOutputs( Gearbox.Entity, { "Ratio", "Entity" , "Current Gear" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	Gearbox.Outputs = WireLib.CreateSpecialOutputs( Gearbox.Entity, Outputs, OutputTypes )
 	Wire_TriggerOutput(Gearbox.Entity, "Entity", Gearbox.Entity)
+    if Gearbox.CVT then
+		Wire_TriggerOutput(Gearbox.Entity, "Min Target RPM", Gearbox.TargetMinRPM)
+		Wire_TriggerOutput(Gearbox.Entity, "Max Target RPM", Gearbox.TargetMaxRPM)
+	end
 	Gearbox.WireDebugName = "ACF Gearbox"
 	
 	Gearbox.LClutch = Gearbox.MaxTorque
@@ -117,7 +135,7 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Gearbox.In = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "input" )).Pos)
 	Gearbox.OutL = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftL" )).Pos)
 	Gearbox.OutR = Gearbox:WorldToLocal(Gearbox:GetAttachment(Gearbox:LookupAttachment( "driveshaftR" )).Pos)
-		
+	
 	Owner:AddCount("_acf_Gearbox", Gearbox)
 	Owner:AddCleanup( "acfmenu", Gearbox )
 	
@@ -131,6 +149,10 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	
 	Gearbox:SetNetworkedBeamString( "ID", Id )
 	Gearbox:SetNetworkedBeamFloat( "FinalDrive", Gearbox.Gear0 )
+	if Gearbox.CVT then
+		Gearbox:SetNetworkedBeamInt( "TargetMinRPM", Gearbox.TargetMinRPM )
+		Gearbox:SetNetworkedBeamInt( "TargetMaxRPM", Gearbox.TargetMaxRPM )
+	end
 	
 	for i = 1, Gearbox.Gears do
 		Gearbox:SetNetworkedBeamFloat( "Gear" .. i, Gearbox.GearTable[i] )
@@ -156,6 +178,15 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	return Feedback end
 		
 	if self.Id != Id then
+	
+		self.Id = Id
+		self.Mass = List["Mobility"][Id]["weight"]
+		self.SwitchTime = List["Mobility"][Id]["switch"]
+		self.MaxTorque = List["Mobility"][Id]["maxtq"]
+		self.Gears = List["Mobility"][Id]["gears"]
+		self.Dual = List["Mobility"][Id]["doubleclutch"]
+        self.CVT = List["Mobility"][Id]["cvt"]
+		
 		local Inputs = {"Gear","Gear Up","Gear Down"}
 		if self.Dual then
 			table.insert(Inputs,"Left Clutch")
@@ -166,17 +197,26 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 			table.insert(Inputs, "Clutch")
 			table.insert(Inputs, "Brake")
 		end
+        
+        local Outputs = { "Ratio", "Entity" , "Current Gear" }
+        local OutputTypes = { "NORMAL" , "ENTITY" , "NORMAL" }
+        if self.CVT then
+			table.insert(Outputs,"Min Target RPM")
+			table.insert(Outputs,"Max Target RPM")
+            table.insert(OutputTypes,"NORMAL")
+        end
 		
-		self.Id = Id
-		self.Mass = List["Mobility"][Id]["weight"]
-		self.SwitchTime = List["Mobility"][Id]["switch"]
-		self.MaxTorque = List["Mobility"][Id]["maxtq"]
-		self.Gears = List["Mobility"][Id]["gears"]
-		self.Dual = List["Mobility"][Id]["doubleclutch"]
-		
-		self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
-		
+		self.Inputs = Wire_CreateInputs( self, Inputs )
+        self.Outputs = WireLib.CreateSpecialOutputs( self.Entity, Outputs, OutputTypes )
+        Wire_TriggerOutput(self.Entity, "Entity", self.Entity)
 	end
+    
+    if self.CVT then 
+        self.TargetMinRPM = ArgsTable[7]
+        self.TargetMaxRPM = math.max(ArgsTable[8],ArgsTable[7]+100)
+		Wire_TriggerOutput(self.Entity, "Min Target RPM", self.TargetMinRPM)
+		Wire_TriggerOutput(self.Entity, "Max Target RPM", self.TargetMaxRPM)
+    end
 	
 	self.GearTable["Final"] = ArgsTable[14]
 	self.GearTable[1] = ArgsTable[5]
@@ -200,9 +240,9 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.Gear7 = ArgsTable[11]
 	self.Gear8 = ArgsTable[12]
 	self.Gear9 = ArgsTable[13]
-		
+	
 	self:ChangeGear(1)
-		
+	
 	if self.Dual then
 		self:SetBodygroup(1, 1)
 	else
@@ -214,6 +254,11 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	
 	for i = 1, self.Gears do
 		self:SetNetworkedBeamFloat( "Gear" .. i, self.GearTable[i] )
+	end
+	
+	if self.CVT then
+		self:SetNetworkedBeamInt( "TargetMinRPM", self.TargetMinRPM )
+		self:SetNetworkedBeamInt( "TargetMaxRPM", self.TargetMaxRPM )
 	end
 	
 	return Feedback
@@ -342,6 +387,12 @@ function ENT:Calc( InputRPM, InputInertia )
 			elseif self.WheelSide[Key] == 1 then
 				Clutch = self.RClutch
 			end
+		
+            if self.CVT and self.Gear == 1 then
+                self.GearTable[1] = math.Clamp((InputRPM - self.TargetMinRPM) / ((self.TargetMaxRPM - self.TargetMinRPM) or 1),0.05,1)
+                self.GearRatio = (self.GearTable[1] or 0)*self.GearTable["Final"]
+                Wire_TriggerOutput(self.Entity, "Ratio", self.GearRatio)
+            end
 		
 			self.WheelReqTq[Key] = 0
 			if WheelEnt.IsGeartrain then
@@ -590,6 +641,5 @@ end
 function ENT:OnRestore()
     Wire_Restored(self)
 end
-
 
 
