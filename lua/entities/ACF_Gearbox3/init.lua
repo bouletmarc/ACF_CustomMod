@@ -535,7 +535,7 @@ end
 
 function ENT:Link( Target )
 
-	if ( !Target or (Target:GetClass() != "prop_physics" and Target:GetClass() != "acf_gearbox3") ) then return "Can only link plain props or other gearboxes" end
+	if ( !Target or (Target:GetClass() != "prop_physics" and Target:GetClass() != "acf_gearbox3" and Target:GetClass() != "acf_gearbox") ) then return "Can only link plain props or other gearboxes" end
 	
 	for Key,Value in pairs(self.WheelLink) do
 		if Value == Target then return "This is already linked to this gearbox !" end
