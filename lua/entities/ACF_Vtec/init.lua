@@ -69,18 +69,19 @@ duplicator.RegisterEntityClass("acf_vtec", MakeACF_Vtec, "Pos", "Angle", "Id", "
 
 --if updating
 function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
-		
-	local Feedback = "Chip updated successfully"
-	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
-		Feedback = "You don't own that chip !"
-	return Feedback end
-	
-	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
+	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
+	-- and pos and angle of the tool trace inserted at the start
+
+	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
+		return false, "You don't own that vtec!"
+	end
+
+	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
-	
-	if ( List["Mobility2"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
-		Feedback = "The new chip needs to have the same model as the old one !"
-	return Feedback end
+
+	if List["Mobility2"][Id]["model"] ~= self.Model then
+		return false, "The new vtec must have the same model!"
+	end
 	
 	if self.Id != Id then
 		self.Id = Id
@@ -98,8 +99,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Weight",self.Weight)
 	
 	
-	return Feedback
-end
+	return true, "Vtec updated successfully!"
 
 function ENT:TriggerInput( iname , value )
 	if (iname == "RPM") then

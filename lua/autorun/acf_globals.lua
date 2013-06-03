@@ -2,10 +2,10 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 361 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 366 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.Version2 = 44 
+ACF.Version2 = 45 
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -67,6 +67,7 @@ AddCSLuaFile( "acf/client/acf_list2editor.lua" )
 if (SERVER) then
 	util.AddNetworkString( "ACF_KilledByACF" )
 	util.AddNetworkString( "ACF_RenderDamage" )
+	util.AddNetworkString( "ACF_Notify" )
 
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
@@ -193,6 +194,22 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 	end	
 end
 
+if SERVER then
+	function ACF_SendNotify( ply, success, msg )
+		net.Start( "ACF_Notify" )
+			net.WriteBit( success )
+			net.WriteString( msg or "" )
+		net.Send( ply )
+	end
+else
+	local function ACF_Notify()
+		local Type = NOTIFY_ERROR
+		if tobool( net.ReadBit() ) then Type = NOTIFY_GENERIC end
+		
+		GAMEMODE:AddNotify( net.ReadString(), Type, 7 )
+	end
+	net.Receive( "ACF_Notify", ACF_Notify )
+end
 
 function ACF_UpdateChecking( )
 	

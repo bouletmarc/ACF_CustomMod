@@ -97,21 +97,23 @@ duplicator.RegisterEntityClass("acf_nos", MakeACF_Nos, "Pos", "Angle", "Id", "To
 
 --if updating
 function ENT:Update( ArgsTable )	--That table is the player data, as sorted in the ACFCvars above, with player who shot, and pos and angle of the tool trace inserted at the start
-		
-	local Feedback = "Chip updated successfully"
+	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
+	-- and pos and angle of the tool trace inserted at the start
+
 	if self.ActiveChips then
-		Feedback = "Please turn off the chip before updating it"
-	return Feedback end
-	if ( ArgsTable[1] != self.Owner ) then --Argtable[1] is the player that shot the tool
-		Feedback = "You don't own that chip !"
-	return Feedback end
+		return false, "Please turn off the nos bottle before updating it"
+	end
 	
-	local Id = ArgsTable[4]	--Argtable[4] is the engine ID
+	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
+		return false, "You don't own that nos bottle!"
+	end
+
+	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
-	
-	if ( List["Mobility2"][Id]["model"] != self.Model ) then --Make sure the models are the sames before doing a changeover
-		Feedback = "The new chip needs to have the same model as the old one !"
-	return Feedback end
+
+	if List["Mobility2"][Id]["model"] ~= self.Model then
+		return false, "The new nos bottle must have the same model!"
+	end
 	
 	if self.Id != Id then
 		self.Id = Id
@@ -144,7 +146,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Weight",self.Weight)
 	
 	
-	return Feedback
+	return true, "Nos updated successfully!"
 end
 
 function ENT:TriggerInput( iname , value )

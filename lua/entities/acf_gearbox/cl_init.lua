@@ -66,13 +66,7 @@ function ACFGearboxGUICreate( Table )
 		acfmenupanel.GearboxData[Table.id]["GearTable"] = Table.geartable
 	end
 		
-	--#######################
-	--acfmenupanel:CPanelText("Name", Table.name)
-	TextName = vgui.Create( "DLabel" )
-		TextName:SetText( "Name : "..Table.name)
-		TextName:SetTextColor(Color(0,0,200,255))
-		TextName:SetFont( "CloseCaption_BoldItalic" )
-	acfmenupanel.CustomDisplay:AddItem( TextName )
+	acfmenupanel:CPanelText("Name", Table.name)
 	
 	acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
 		acfmenupanel.CData.DisplayModel:SetModel( Table.model )
@@ -83,12 +77,7 @@ function ACFGearboxGUICreate( Table )
 		acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel , entity ) end
 	acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 	
-	--acfmenupanel:CPanelText("Desc", Table.desc)
-	TextDesc = vgui.Create( "DLabel" )
-		TextDesc:SetText( "Desc : "..Table.desc)
-		TextDesc:SetTextColor(Color(0,0,200,255))
-		TextDesc:SetFont( "DefaultBold" )
-	acfmenupanel.CustomDisplay:AddItem( TextDesc )
+	acfmenupanel:CPanelText("Desc", Table.desc)	--Description (Name, Desc)
 	
 	if (acfmenupanel.GearboxData[Table.id]["GearTable"][-2] or 0) != 0 then
 		ACF_GearsSlider(2, acfmenupanel.GearboxData[Table.id]["GearTable"][2], Table.id)
@@ -106,19 +95,9 @@ function ACFGearboxGUICreate( Table )
 		end
 	end
 	
-	--acfmenupanel:CPanelText("Desc", Table.desc)
-	--acfmenupanel:CPanelText("MaxTorque", "Clutch Maximum Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb")
-	TextTorque = vgui.Create( "DLabel" )
-		TextTorque:SetText( "Max Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb")
-		TextTorque:SetTextColor(Color(0,0,200,255))
-		TextTorque:SetFont( "DefaultBold" )
-	acfmenupanel.CustomDisplay:AddItem( TextTorque )
-	--acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
-	TextWeight = vgui.Create( "DLabel" )
-		TextWeight:SetText( "Weight : "..(Table.weight).." kg")
-		TextWeight:SetTextColor(Color(0,0,200,255))
-		TextWeight:SetFont( "DefaultBold" )
-	acfmenupanel.CustomDisplay:AddItem( TextWeight )
+	acfmenupanel:CPanelText("Desc", Table.desc)
+	acfmenupanel:CPanelText("MaxTorque", "Clutch Maximum Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb")
+	acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight.."kg")
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
 	maxtorque = Table.maxtq
