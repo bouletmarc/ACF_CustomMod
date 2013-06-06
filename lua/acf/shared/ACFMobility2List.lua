@@ -1064,7 +1064,7 @@ local Engine65V12C = {}
 	Engine65V12C.flywheelmass = 0.05		--in Meter/Kg
 	Engine65V12C.peakminrpm = 2800
 	Engine65V12C.peakmaxrpm = 8800
-	Engine65V12C.limitprm = 9000
+	Engine65V12C.limitrpm = 9000
 	if ( CLIENT ) then
 		Engine65V12C.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine65V12C.guiupdate = function() return end
@@ -1090,7 +1090,7 @@ local Engine16I4E1 = {}
 	Engine16I4E1.flywheelmass = 0.03		--in Meter/Kg
 	Engine16I4E1.peakminrpm = 3900
 	Engine16I4E1.peakmaxrpm = 6500
-	Engine16I4E1.limitprm = 8000
+	Engine16I4E1.limitrpm = 8000
 	if ( CLIENT ) then
 		Engine16I4E1.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine16I4E1.guiupdate = function() return end
@@ -1115,7 +1115,7 @@ local Engine16I4E2 = {}
 	Engine16I4E2.flywheelmass = 0.03		--in Meter/Kg
 	Engine16I4E2.peakminrpm = 3900
 	Engine16I4E2.peakmaxrpm = 6500
-	Engine16I4E2.limitprm = 8000
+	Engine16I4E2.limitrpm = 8000
 	if ( CLIENT ) then
 		Engine16I4E2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine16I4E2.guiupdate = function() return end
@@ -1140,7 +1140,7 @@ local Engine20I4E1 = {}
 	Engine20I4E1.flywheelmass = 0.05		--in Meter/Kg
 	Engine20I4E1.peakminrpm = 3500
 	Engine20I4E1.peakmaxrpm = 6000
-	Engine20I4E1.limitprm = 7500
+	Engine20I4E1.limitrpm = 7500
 	if ( CLIENT ) then
 		Engine20I4E1.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine20I4E1.guiupdate = function() return end
@@ -1165,7 +1165,7 @@ local Engine20I4E2 = {}
 	Engine20I4E2.flywheelmass = 0.05		--in Meter/Kg
 	Engine20I4E2.peakminrpm = 3500
 	Engine20I4E2.peakmaxrpm = 6000
-	Engine20I4E2.limitprm = 7500
+	Engine20I4E2.limitrpm = 7500
 	if ( CLIENT ) then
 		Engine20I4E2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine20I4E2.guiupdate = function() return end
@@ -1191,7 +1191,7 @@ Engine58V8.flywheelmass = 0.25
 Engine58V8.idlerpm = 1150--in Rotations Per Minute
 Engine58V8.peakminrpm = 2800
 Engine58V8.peakmaxrpm = 5800
-Engine58V8.limitprm = 6800
+Engine58V8.limitrpm = 6800
 if ( CLIENT ) then
 Engine58V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 Engine58V8.guiupdate = function() return end
@@ -1215,7 +1215,7 @@ Engine572V8.flywheelmass = 0.65
 Engine572V8.idlerpm = 700--in Rotations Per Minute
 Engine572V8.peakminrpm = 1650
 Engine572V8.peakmaxrpm = 5890
-Engine572V8.limitprm = 6800
+Engine572V8.limitrpm = 6800
 if ( CLIENT ) then
 Engine572V8.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 Engine572V8.guiupdate = function() return end
@@ -1241,7 +1241,7 @@ Engine66I6.flywheelmass = 0.9
 Engine66I6.idlerpm = 950--in Rotations Per Minute
 Engine66I6.peakminrpm = 1400
 Engine66I6.peakmaxrpm = 4400
-Engine66I6.limitprm = 4700
+Engine66I6.limitrpm = 4700
 if ( CLIENT ) then
 Engine66I6.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 Engine66I6.guiupdate = function() return end
@@ -1267,7 +1267,7 @@ local Engine22I4E1 = {}
 	Engine22I4E1.idlerpm = 900--in Rotations Per Minute
 	Engine22I4E1.peakminrpm = 2500
 	Engine22I4E1.peakmaxrpm = 6500
-	Engine22I4E1.limitprm = 7200
+	Engine22I4E1.limitrpm = 7200
 	if ( CLIENT ) then
 		Engine22I4E1.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine22I4E1.guiupdate = function() return end
@@ -1291,7 +1291,7 @@ local Engine10I4E2 = {}
 	Engine10I4E2.flywheelmass = 0.02		--in Meter/Kg
 	Engine10I4E2.peakminrpm = 3900
 	Engine10I4E2.peakmaxrpm = 8500
-	Engine10I4E2.limitprm = 9000
+	Engine10I4E2.limitrpm = 9000
 	if ( CLIENT ) then
 		Engine10I4E2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine10I4E2.guiupdate = function() return end
@@ -1314,7 +1314,7 @@ local Engine11I4E2 = {}
 	Engine11I4E2.flywheelmass = 0.021		--in Meter/Kg
 	Engine11I4E2.peakminrpm = 3800
 	Engine11I4E2.peakmaxrpm = 8400
-	Engine11I4E2.limitprm = 8500
+	Engine11I4E2.limitrpm = 8500
 	if ( CLIENT ) then
 		Engine11I4E2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine11I4E2.guiupdate = function() return end
@@ -1337,7 +1337,7 @@ local Engine12I2E2 = {}
 	Engine12I2E2.flywheelmass = 0.03		--in Meter/Kg
 	Engine12I2E2.peakminrpm = 3300
 	Engine12I2E2.peakmaxrpm = 5400
-	Engine12I2E2.limitprm = 6000
+	Engine12I2E2.limitrpm = 6000
 	if ( CLIENT ) then
 		Engine12I2E2.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine12I2E2.guiupdate = function() return end
@@ -1362,7 +1362,7 @@ local Engine16I4E3 = {}
 	Engine16I4E3.flywheelmass = 0.025		--in Meter/Kg
 	Engine16I4E3.peakminrpm = 3500
 	Engine16I4E3.peakmaxrpm = 7300
-	Engine16I4E3.limitprm = 7500
+	Engine16I4E3.limitrpm = 7500
 	if ( CLIENT ) then
 		Engine16I4E3.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine16I4E3.guiupdate = function() return end
@@ -1387,7 +1387,7 @@ local Engine14I4E3 = {}
 	Engine14I4E3.flywheelmass = 0.045		--in Meter/Kg
 	Engine14I4E3.peakminrpm = 3300
 	Engine14I4E3.peakmaxrpm = 5800
-	Engine14I4E3.limitprm = 6000
+	Engine14I4E3.limitrpm = 6000
 	if ( CLIENT ) then
 		Engine14I4E3.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine14I4E3.guiupdate = function() return end
@@ -1410,7 +1410,7 @@ local Engine18I4E3 = {}
 	Engine18I4E3.flywheelmass = 0.03		--in Meter/Kg
 	Engine18I4E3.peakminrpm = 3500
 	Engine18I4E3.peakmaxrpm = 6600
-	Engine18I4E3.limitprm = 6800
+	Engine18I4E3.limitrpm = 6800
 	if ( CLIENT ) then
 		Engine18I4E3.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine18I4E3.guiupdate = function() return end
@@ -1434,7 +1434,7 @@ Engine63I62.flywheelmass = 0.12
 Engine63I62.idlerpm = 950--in Rotations Per Minute
 Engine63I62.peakminrpm = 2400
 Engine63I62.peakmaxrpm = 6400
-Engine63I62.limitprm = 6500
+Engine63I62.limitrpm = 6500
 if ( CLIENT ) then
 	Engine63I62.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 	Engine63I62.guiupdate = function() return end
@@ -1458,7 +1458,7 @@ Engine41I62.flywheelmass = 0.13
 Engine41I62.idlerpm = 930--in Rotations Per Minute
 Engine41I62.peakminrpm = 2300
 Engine41I62.peakmaxrpm = 6500
-Engine41I62.limitprm = 6600
+Engine41I62.limitrpm = 6600
 if ( CLIENT ) then
 	Engine41I62.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 	Engine41I62.guiupdate = function() return end
@@ -1482,7 +1482,7 @@ local Engine32V62 = {}
 	Engine32V62.idlerpm = 850	--in Rotations Per Minute
 	Engine32V62.peakminrpm = 2200
 	Engine32V62.peakmaxrpm = 5500
-	Engine32V62.limitprm = 6500
+	Engine32V62.limitrpm = 6500
 	if ( CLIENT ) then
 		Engine32V62.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine32V62.guiupdate = function() return end
@@ -1506,7 +1506,7 @@ Engine56V82.flywheelmass = 0.23
 Engine56V82.idlerpm = 1000--in Rotations Per Minute
 Engine56V82.peakminrpm = 2700
 Engine56V82.peakmaxrpm = 6200
-Engine56V82.limitprm = 6700
+Engine56V82.limitrpm = 6700
 if ( CLIENT ) then
 Engine56V82.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 Engine56V82.guiupdate = function() return end
@@ -1530,7 +1530,7 @@ Engine60V82.flywheelmass = 0.28
 Engine60V82.idlerpm = 1100--in Rotations Per Minute
 Engine60V82.peakminrpm = 2500
 Engine60V82.peakmaxrpm = 6100
-Engine60V82.limitprm = 6800
+Engine60V82.limitrpm = 6800
 if ( CLIENT ) then
 Engine60V82.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 Engine60V82.guiupdate = function() return end
@@ -1554,7 +1554,7 @@ Engine53V82.flywheelmass = 0.24
 Engine53V82.idlerpm = 1050--in Rotations Per Minute
 Engine53V82.peakminrpm = 1800
 Engine53V82.peakmaxrpm = 6700
-Engine53V82.limitprm = 7000
+Engine53V82.limitrpm = 7000
 if ( CLIENT ) then
 Engine53V82.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 Engine53V82.guiupdate = function() return end
@@ -1578,7 +1578,7 @@ local Engine48V122 = {}
 	Engine48V122.idlerpm = 1100	--in Rotations Per Minute
 	Engine48V122.peakminrpm = 1300
 	Engine48V122.peakmaxrpm = 6500
-	Engine48V122.limitprm = 7500
+	Engine48V122.limitrpm = 7500
 	if ( CLIENT ) then
 		Engine48V122.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine48V122.guiupdate = function() return end
@@ -1602,7 +1602,7 @@ local Engine54V122 = {}
 	Engine54V122.idlerpm = 1000	--in Rotations Per Minute
 	Engine54V122.peakminrpm = 1300
 	Engine54V122.peakmaxrpm = 6700
-	Engine54V122.limitprm = 7300
+	Engine54V122.limitrpm = 7300
 	if ( CLIENT ) then
 		Engine54V122.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine54V122.guiupdate = function() return end
@@ -1626,7 +1626,7 @@ local Engine56V122 = {}
 	Engine56V122.idlerpm = 1100	--in Rotations Per Minute
 	Engine56V122.peakminrpm = 1300
 	Engine56V122.peakmaxrpm = 6500
-	Engine56V122.limitprm = 7400
+	Engine56V122.limitrpm = 7400
 	if ( CLIENT ) then
 		Engine56V122.guicreate = (function( Panel, Table ) ACFEngineGUICreate( Table ) end or nil)
 		Engine56V122.guiupdate = function() return end
