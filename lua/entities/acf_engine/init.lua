@@ -541,7 +541,7 @@ end
 
 function ENT:Link( Target )
 
-	if not IsValid( Target ) or Target:GetClass() ~= "acf_gearbox" and Target:GetClass() ~= "acf_gearbox2" and Target:GetClass() ~= "acf_gearbox3" then
+	if not IsValid( Target ) or ( Target:GetClass() ~= "acf_gearbox" and Target:GetClass() ~= "acf_gearbox2" and Target:GetClass() ~= "acf_gearbox3" ) then
 		return false, "Can only link to gearboxes!"
 	end
 	
