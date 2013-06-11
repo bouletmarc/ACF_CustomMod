@@ -100,6 +100,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	
 	
 	return true, "Vtec updated successfully!"
+end
 
 function ENT:TriggerInput( iname , value )
 	if (iname == "RPM") then
