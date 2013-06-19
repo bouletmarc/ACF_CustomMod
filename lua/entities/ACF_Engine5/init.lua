@@ -41,7 +41,7 @@ function MakeACF_Engine5(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 
-	local Engine5 = ents.Create( "acf_engine" )
+	local Engine5 = ents.Create( "acf_engine5" )
 	if not IsValid( Engine5 ) then return false end
 	
 	local List = list.Get("ACFEnts")
@@ -654,7 +654,7 @@ end
 
 function ENT:Link( Target )
 
-	if not IsValid( Target ) or ( Target:GetClass() ~= "acf_gearbox" and Target:GetClass() ~= "acf_gearbox2" and Target:GetClass() ~= "acf_gearbox3" ) then
+	if not IsValid( Target ) or Target:GetClass() ~= "acf_gearbox" and Target:GetClass() ~= "acf_gearbox2" and Target:GetClass() ~= "acf_gearbox3" then
 		return false, "Can only link to gearboxes!"
 	end
 	

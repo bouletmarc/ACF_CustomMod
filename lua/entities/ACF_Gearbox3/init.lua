@@ -55,7 +55,7 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
-	local Gearbox3 = ents.Create("ACF_Gearbox3")
+	local Gearbox3 = ents.Create("acf_gearbox3")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not IsValid( Gearbox3 ) then return false end

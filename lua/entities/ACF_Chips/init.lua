@@ -22,7 +22,7 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
-	local Chips = ents.Create("ACF_Chips")
+	local Chips = ents.Create("acf_chips")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Chips:IsValid() then return false end

@@ -31,7 +31,7 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
-	local Nos = ents.Create("ACF_Nos")
+	local Nos = ents.Create("acf_nos")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Nos:IsValid() then return false end

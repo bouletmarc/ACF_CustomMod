@@ -22,7 +22,7 @@ function MakeACF_Vtec(Owner, Pos, Angle, Id, Data1)
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
-	local Vtec = ents.Create("ACF_Vtec")
+	local Vtec = ents.Create("acf_vtec")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
 	if not Vtec:IsValid() then return false end
