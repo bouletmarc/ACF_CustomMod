@@ -69,7 +69,7 @@ local function CreateSoundBrowser()
 		HelpCustom:SetText("Help me with Custom ACF -SOON-")
 		HelpCustom:SetTextColor(Color(0,0,255,255))
 		HelpCustom:SetPos( 20, 270 )
-		LoadEng:SetDisabled( true )--disabled
+		HelpCustom:SetDisabled( true )--disabled
 		HelpCustom:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
 		HelpCustom:SetTall( 60 )
 		HelpCustom.DoClick = function()
