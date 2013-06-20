@@ -56,7 +56,7 @@ local function CreateSoundBrowser()
 		HelpHormal = ButtonsSidePanel:Add("DButton") // The play button.
 		HelpHormal:SetText("Help me with Normal ACF -SOON-")
 		HelpHormal:SetTextColor(Color(0,0,255,255))
-		HelpHormal:SetPos( 20, 180 )
+		HelpHormal:SetPos( 20, 170 )
 		HelpHormal:SetDisabled( true )--disabled
 		HelpHormal:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
 		HelpHormal:SetTall( 60 )
@@ -68,7 +68,7 @@ local function CreateSoundBrowser()
 		HelpCustom = ButtonsSidePanel:Add("DButton") // The play button.
 		HelpCustom:SetText("Help me with Custom ACF -SOON-")
 		HelpCustom:SetTextColor(Color(0,0,255,255))
-		HelpCustom:SetPos( 20, 270 )
+		HelpCustom:SetPos( 20, 240 )
 		HelpCustom:SetDisabled( true )--disabled
 		HelpCustom:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
 		HelpCustom:SetTall( 60 )
@@ -77,7 +77,14 @@ local function CreateSoundBrowser()
 			StartBrowserPanel:Close()
 		end
 		
+		BMText1 = ButtonsSidePanel:Add("DLabel")
+		BMText1:SetText("Made by Bouletmarc\n      (B0ul3Tm@rc)")
+		BMText1:SetTextColor(Color(0,255,0,255))
+		BMText1:SetPos(60,320)
+		BMText1:SetFont( "DefaultBold" )
+		BMText1:SizeToContents()
 		
+		--############
 
 	StartBrowserPanel.OnClose = function() // Set effects back and mute when closing.
 		--###

@@ -415,6 +415,13 @@ function ACFHomeGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
 	-- end version
 	
+	VersionCustom = vgui.Create( "DLabel" )
+	VersionCustom:SetText("Custom Version: "..ACF.VersionCustom.."\n")
+	VersionCustom:SetTextColor(Color(0,0,250,255))
+	VersionCustom:SetFont( "DefaultBold" )
+	VersionCustom:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( VersionCustom )
+	
 	------##### HELP CUSTOM MENU
 	HelpText1 = vgui.Create( "DButton" )
 	HelpText1:SetText("Help")
