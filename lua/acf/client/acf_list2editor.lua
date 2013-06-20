@@ -359,7 +359,7 @@ function PANEL:Init()
 	self.SplitPanel:SetRight(self.FilesPanel)
 	self.SplitPanel:SetLeftWidth(150)
 	self.SplitPanel:SetLeftMin(150)
-	self.SplitPanel:SetRightMin(300)
+	self.SplitPanel:SetRightMin(250)
 	self.SplitPanel:SetDividerWidth(3)
 	
 	self:SetRootPath("wirelists")

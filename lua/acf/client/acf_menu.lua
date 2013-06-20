@@ -367,7 +367,7 @@ local function CreateSoundBrowser(path)
 
 	SoundBrowserPanel:SetSizable(true)
 	SoundBrowserPanel:SetDeleteOnClose( false )
-	SoundBrowserPanel:SetTitle("Engine Menu V4.2")
+	SoundBrowserPanel:SetTitle("Engine Menu V4.2 Advanced")
 	SoundBrowserPanel:SetVisible(false)
 	SoundBrowserPanel:SetCookieName( "wire_sound_browser" )
 	SoundBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
@@ -748,8 +748,8 @@ local function CreateSoundBrowser(path)
 	
 	--#################
 	
-	file.CreateDir("engineslists")
-	TabFavourites2:SetRootPath("engineslists")
+	file.CreateDir("engineslists/created")
+	TabFavourites2:SetRootPath("engineslists/created")
 
 	TabFavourites2.DoClick = function(parent, item, data)
 		local newString = ""
