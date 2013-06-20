@@ -5,7 +5,7 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 382 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.Version2 = 51
+ACF.Version2 = 61
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -57,12 +57,19 @@ AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 AddCSLuaFile( "acf/client/cl_acfrender.lua" )
 AddCSLuaFile( "acf/client/acf_menu.lua" )
+AddCSLuaFile( "acf/client/acf_menustart.lua" )
+AddCSLuaFile( "acf/client/acf_menuengine.lua" )
+AddCSLuaFile( "acf/client/acf_menuengine2.lua" )
+AddCSLuaFile( "acf/client/acf_menuengine3.lua" )
+AddCSLuaFile( "acf/client/acf_menuengine4.lua" )
 AddCSLuaFile( "acf/client/acf_filebrowser.lua" )
 AddCSLuaFile( "acf/client/acf_listeditor.lua" )
 AddCSLuaFile( "acf/client/acf_modelbrowser.lua" )
 AddCSLuaFile( "acf/client/acf_list2editor.lua" )
-
-
+AddCSLuaFile( "acf/client/acf_menuengineloadcustom.lua" )
+AddCSLuaFile( "acf/client/acf_menuengineload.lua" )
+AddCSLuaFile( "acf/client/acf_menuengineloaded.lua" )
+AddCSLuaFile( "acf/client/acf_menuhelp.lua" )
 
 if (SERVER) then
 	util.AddNetworkString( "ACF_KilledByACF" )
@@ -79,10 +86,19 @@ elseif (CLIENT) then
 	include("acf/client/cl_acfballistics.lua")
 	include("acf/client/cl_acfrender.lua")
 	include("acf/client/acf_menu.lua")
+	include("acf/client/acf_menustart.lua")
+	include("acf/client/acf_menuengine.lua")
+	include("acf/client/acf_menuengine2.lua")
+	include("acf/client/acf_menuengine3.lua")
+	include("acf/client/acf_menuengine4.lua")
 	include("acf/client/acf_filebrowser.lua")
 	include("acf/client/acf_listeditor.lua")
 	include("acf/client/acf_modelbrowser.lua")
 	include("acf/client/acf_list2editor.lua")
+	include("acf/client/acf_menuengineloadcustom.lua")
+	include("acf/client/acf_menuengineload.lua")
+	include("acf/client/acf_menuengineloaded.lua")
+	include("acf/client/acf_menuhelp.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
