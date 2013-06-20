@@ -408,12 +408,25 @@ function ACFHomeGUICreate( Table )
 		color2 = Color(225,0,0,255)
 	end
 	
-	VersionT3:SetText("ACF Custom Is "..versionstring2.."!\n\n\n\n")
+	VersionT3:SetText("ACF Custom Is "..versionstring2.."!\n")
 	VersionT3:SetColor(color2) 
 	VersionT3:SetFont( "DefaultBold" )
 	VersionT3:SizeToContents() 
 	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
 	-- end version
+	
+	------##### HELP CUSTOM MENU
+	HelpText1 = vgui.Create( "DButton" )
+	HelpText1:SetText("Help")
+	HelpText1:SetTextColor(Color(255,0,0,255))
+	HelpText1:SetWide(70)
+	HelpText1:SetTall(50)
+	HelpText1.DoClick = function()
+		RunConsoleCommand("acf_help_browser_open")
+	end
+	acfmenupanel.CustomDisplay:AddItem( HelpText1 )
+	
+	--#########
 	
 	--acfmenupanel:CPanelText("Header", "Changelog")
 	TextLog= vgui.Create( "DLabel" )
