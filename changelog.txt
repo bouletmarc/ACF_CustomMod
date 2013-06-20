@@ -1,4 +1,6 @@
-V7.1
+r01
+Version 7.1
+
 General Change's :
 
 --Added Easy Menu and Advanced Menu
@@ -18,7 +20,9 @@ Fix :
 --Fixed Vtec chips error
 --Converted all Custom engine to new value "Limitrpm"
 
-*V7.11
+*r02
+Version 7.11
+
 General Change's :
 --Added Custom Version Text to the Menu
 --Added Custom Changelog
