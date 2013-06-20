@@ -87,7 +87,7 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 	Open:SetTall(30)
 	Open:SetVisible(true)
 		Open.DoClick = function()
-			RunConsoleCommand("acf_sound_browser_open",acfmenupanel["CData"][Mod]:GetValue())
+			RunConsoleCommand("acf_start_browser_open",acfmenupanel["CData"][Mod]:GetValue())
 		end
 	acfmenupanel.CustomDisplay:AddItem(Open)
 	
