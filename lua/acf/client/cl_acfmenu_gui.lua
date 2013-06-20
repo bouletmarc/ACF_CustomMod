@@ -492,7 +492,7 @@ function ACFChangelogHTTPCallBack(contents , size)
 	acfmenupanel:UpdateDisplay( Table )
 
 end
-http.Fetch("http://acf.googlecode.com/svn/trunk/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/trunk/changelog.txt", ACFChangelogHTTPCallBack, function() end)
 
 function PANEL:AmmoSelect( Blacklist )
 	
