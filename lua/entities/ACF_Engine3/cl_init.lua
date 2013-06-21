@@ -47,7 +47,7 @@ function ENT:GetOverlayText()
 	return txt
 end
 
-function ACFEngineGUICreate( Table )
+function ACFEngine4GUICreate( Table )
 	--#######################
 	--acfmenupanel:CPanelText("Name", Table.name)
 	TextName = vgui.Create( "DLabel" )
