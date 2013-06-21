@@ -60,6 +60,7 @@ function MakeACF_Engine2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Engine2.iselec = List["Mobility2"][Id]["iselec"]
 	Engine2.elecpower = List["Mobility2"][Id]["elecpower"]
 	Engine2.FlywheelOverride = List["Mobility2"][Id]["flywheeloverride"]
+	Engine2.IsTrans = List["Mobility2"][Id]["istrans"] -- driveshaft outputs to the side
 	
 	Engine2.ModTable = List["Mobility2"][Id]["modtable"]
 		Engine2.ModTable[1] = Data1
@@ -113,7 +114,7 @@ function MakeACF_Engine2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Engine2:SetNetworkedBeamInt("Torque",Engine2.PeakTorque)	
 	-- add in the variable to check if its an electric motor
 	if (Engine2.iselec == true )then
-		Engine2:SetNetworkedBeamInt("Power",Engine2.elecpower) -- add in the value from the elecpower
+		Engine2:SetNetworkedBeamInt("Power",math.floor(Engine.PeakTorque * Engine.LimitRPM / (4*9548.8))) --elecs and turbines peak power is at limitrpm/2, and has peaktorque/2 nm at that rpm
 	else
 		Engine2:SetNetworkedBeamInt("Power",math.floor(Engine2.PeakTorque * Engine2.PeakMaxRPM / 9548.8))
 	end
@@ -161,6 +162,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		self.iselec = List["Mobility2"][Id]["iselec"] -- is the engine electric?
 		self.elecpower = List["Mobility2"][Id]["elecpower"] -- how much power does it output
 		self.FlywheelOverride = List["Mobility2"][Id]["flywheeloverride"] -- how much power does it output
+		self.IsTrans = List["Mobility2"][Id]["istrans"]
 	end
 	
 	self.ModTable[1] = ArgsTable[5]
@@ -206,7 +208,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Torque",self.PeakTorque)
 	-- add in the variable to check if its an electric motor
 	if (self.iselec == true)  then
-		self:SetNetworkedBeamInt("Power",self.elecpower) -- add in the value from the elecpower
+		self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.LimitRPM / (4*9548.8))) --elecs and turbines peak power is at limitrpm/2, and has peak torque/2 at that rpm
 	else
 		self:SetNetworkedBeamInt("Power",math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
 	end
@@ -555,7 +557,9 @@ function ENT:CheckRopes()
 			self:Unlink( Ent )
 		end
 
-		local DrvAngle = (self:LocalToWorld(self.Out) - Ent:LocalToWorld(Ent.In)):GetNormalized():DotProduct( self:GetForward() )
+		local Direction
+		if self.IsTrans then Direction = -self:GetRight() else Direction = self:GetForward() end
+		local DrvAngle = (self:LocalToWorld(self.Out) - Ent:LocalToWorld(Ent.In)):GetNormalized():DotProduct((Direction))
 		if ( DrvAngle < 0.7 ) then
 			self:Unlink( Ent )
 		end
@@ -579,7 +583,9 @@ function ENT:Link( Target )
 
 	local InPos = Target:LocalToWorld(Target.In)
 	local OutPos = self:LocalToWorld(self.Out)
-	local DrvAngle = ( OutPos - InPos ):GetNormalized():DotProduct( self:GetForward() )
+	local Direction
+	if self.IsTrans then Direction = -self:GetRight() else Direction = self:GetForward() end
+	local DrvAngle = (OutPos - InPos):GetNormalized():DotProduct((Direction))
 	if DrvAngle < 0.7 then
 		return false, "Cannot link due to excessive driveshaft angle!"
 	end

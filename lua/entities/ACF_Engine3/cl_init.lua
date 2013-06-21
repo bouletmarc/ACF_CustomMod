@@ -74,9 +74,10 @@ function ACFEngineGUICreate( Table )
 	
 	--####################
 	if (Table.iselec == true )then
+		local peakkw = math.floor(Table.torque * Table.limitrpm / (4*9548.8))
 		--acfmenupanel:CPanelText("Power", "Peak Power : "..Table.elecpower.." kW / "..math.Round(Table.elecpower*1.34).." HP @ "..(Table.peakmaxrpm).." RPM")
 		TextPower = vgui.Create( "DLabel" )
-			TextPower:SetText( "Peak Power : "..Table.elecpower.." kW / "..math.Round(Table.elecpower*1.34).." HP @ "..(Table.peakmaxrpm).." RPM")
+			TextPower:SetText( "Peak Power : "..peakkw.." kW / "..math.Round(peakkw*1.34).." HP @ "..(Table.limitrpm/2).." RPM")
 			TextPower:SetTextColor(Color(0,0,200,255))
 			TextPower:SetFont( "DefaultBold" )
 		acfmenupanel.CustomDisplay:AddItem( TextPower )
