@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	"$basetexture"		"gui/silkicons/application_form_magnify"
+	"$ignorez"			1
+	"$vertexcolor" 		1
+	"$vertexalpha" 		1
+	"$nolod" 			1
+}
