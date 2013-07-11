@@ -95,6 +95,7 @@ function ACF_VtecSlider(Mod, Value, ID, Desc)
 	if Mod and not acfmenupanel["CData"][Mod] then	
 		acfmenupanel["CData"][Mod] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel["CData"][Mod]:SetText( Desc or "Kick Rpm "..Mod )
+			acfmenupanel["CData"][Mod].Label:SizeToContents()
 			acfmenupanel["CData"][Mod]:SetMin( 1500 )
 			acfmenupanel["CData"][Mod]:SetMax( 8000 )
 			acfmenupanel["CData"][Mod]:SetDecimals( 0 )

@@ -2,11 +2,11 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 397 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
+ACF.Version = 401 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 7.13
-ACF.Version2 = 73
+ACF.VersionCustom = 7.14
+ACF.Version2 = 74
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -263,7 +263,6 @@ function ACF_UpdateChecking( )
 	end, function() end)
 end
 ACF_UpdateChecking( )
-
 
 function ACF_ChatVersionPrint(ply)
 	if not ACF.Version or ACF.Version < ACF.CurrentVersion then

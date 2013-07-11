@@ -115,7 +115,6 @@ function PANEL:Init( )
 	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
 		local NodeAdd = Mobility
-		
 		if MobilityTable.ent == "acf_engine" then
 			NodeAdd = Engines
 			if(MobilityTable.category) then
@@ -298,7 +297,7 @@ function PANEL:UpdateDisplay( Table )
 	end
 	--Create the space to display the custom data
 	acfmenupanel.CustomDisplay = vgui.Create( "DPanelList", acfmenupanel )	
-		acfmenupanel.CustomDisplay:SetSpacing( 5 )
+		acfmenupanel.CustomDisplay:SetSpacing( 10 )
 		acfmenupanel.CustomDisplay:EnableHorizontal( false ) 
 		acfmenupanel.CustomDisplay:EnableVerticalScrollbar( false ) 
 		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() )
@@ -415,12 +414,12 @@ function ACFHomeGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
 	-- end version
 	
-	VersionCustom = vgui.Create( "DLabel" )
-	VersionCustom:SetText("Custom Version: "..ACF.VersionCustom.."\n")
-	VersionCustom:SetTextColor(Color(0,0,250,255))
-	VersionCustom:SetFont( "DefaultBold" )
-	VersionCustom:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( VersionCustom )
+	VersionCustomText = vgui.Create( "DLabel" )
+	VersionCustomText:SetText("Custom Version: "..ACF.VersionCustom.."\n")
+	VersionCustomText:SetTextColor(Color(0,0,250,255))
+	VersionCustomText:SetFont( "DefaultBold" )
+	VersionCustomText:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( VersionCustomText )
 	
 	------##### HELP CUSTOM MENU
 	HelpText1 = vgui.Create( "DButton" )
@@ -442,28 +441,54 @@ function ACFHomeGUICreate( Table )
 		TextLog:SetFont( "DefaultBold" )
 	acfmenupanel.CustomDisplay:AddItem( TextLog )
 	
-	acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
-	for Rev,Changes in pairs(acfmenupanel.Changelog) do
+	--#################
+	if acfmenupanel.Changelog2 then
+		acfmenupanel["CData"]["Changelist2"] = vgui.Create( "DTree" )
+		for Rev2,Changes in pairs(acfmenupanel.Changelog2) do
+			
+			local Node = acfmenupanel["CData"]["Changelist2"]:AddNode( "Rev "..Rev2 )
+			Node.mytable = {}
+				Node.mytable["rev2"] = Rev2
+			function Node:DoClick()
+				acfmenupanel:UpdateAttribs( Node.mytable )
+			end
+			Node.Icon:SetImage( "gui/silkicons/newspaper" )
+			
+		end	
+		acfmenupanel.CData.Changelist2:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
 		
-		local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
-		Node.mytable = {}
-			Node.mytable["rev"] = Rev
-		function Node:DoClick()
-			acfmenupanel:UpdateAttribs( Node.mytable )
-		end
-		Node.Icon:SetImage( "gui/silkicons/newspaper" )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist2"] )
 		
-	end	
-	acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+		acfmenupanel.CustomDisplay:PerformLayout()
+		
+		acfmenupanel:UpdateAttribs( {Rev2 = table.maxn(acfmenupanel.Changelog2)} )
+	end
+	--#################
 	
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
-	
-	acfmenupanel.CustomDisplay:PerformLayout()
-	
-	acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
+	if acfmenupanel.Changelog then
+		acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
+		for Rev,Changes in pairs(acfmenupanel.Changelog) do
+			
+			local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
+			Node.mytable = {}
+				Node.mytable["rev"] = Rev
+			function Node:DoClick()
+				acfmenupanel:UpdateAttribs( Node.mytable )
+			end
+			Node.Icon:SetImage( "gui/silkicons/newspaper" )
+			
+		end	
+		acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+		
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
+		
+		acfmenupanel.CustomDisplay:PerformLayout()
+		
+		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
+	end
 	
 end
-
+	
 function ACFHomeGUIUpdate( Table )
 	
 	--acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
@@ -475,14 +500,55 @@ function ACFHomeGUIUpdate( Table )
 	acfmenupanel.CustomDisplay:AddItem( TextLog2 )
 	acfmenupanel.CustomDisplay:PerformLayout()
 	
+	TextLog3 = vgui.Create( "DLabel" )
+		TextLog3:SetText( acfmenupanel.Changelog[Table["rev2"]])
+		TextLog3:SetTextColor(Color(0,0,200,255))
+		TextLog3:SetFont( "DefaultBold" )
+		TextLog3:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( TextLog3 )
+	acfmenupanel.CustomDisplay:PerformLayout()
+	
+	local color
+	local versionstring
+	if ACF.Version >= ACF.CurrentVersion then
+		versionstring = "Up To Date"
+		color = Color(0,225,0,255)
+	else
+		versionstring = "Out Of Date"
+		color = Color(225,0,0,255)
+
+	end
+	
+	acfmenupanel["CData"]["VersionText"]:SetText("\nACF Is "..versionstring.."!")
+	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
+	acfmenupanel["CData"]["VersionText"]:SetFont( "DefaultBold" )
+	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
+	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionText"] )
+	
+	local color2
+	local versionstring2
+	if ACF.Version2 >= ACF.CurrentVersion2 then
+		versionstring2 = "Up To Date"
+		color2 = Color(0,225,0,255)
+	else
+		versionstring2 = "Out Of Date"
+		color2 = Color(225,0,0,255)
+	end
+	
+	VersionT3:SetText("ACF Custom Is "..versionstring2.."!\n")
+	VersionT3:SetColor(color2) 
+	VersionT3:SetFont( "DefaultBold" )
+	VersionT3:SizeToContents() 
+	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
+	
 end
 
 function ACFChangelogHTTPCallBack(contents , size)
-	
 	local Temp = string.Explode( "*", contents )
+	
 	acfmenupanel.Changelog = {}
 	for Key,String in pairs(Temp) do
-		acfmenupanel.Changelog[tonumber(string.sub(String,2,3))] = string.Trim(string.sub(String, 5))
+		acfmenupanel.Changelog[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
 	end
 	table.SortByKey(acfmenupanel.Changelog,true)
 	
@@ -492,7 +558,24 @@ function ACFChangelogHTTPCallBack(contents , size)
 	acfmenupanel:UpdateDisplay( Table )
 
 end
-http.Fetch("http://acf.googlecode.com/svn/trunk/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+
+function ACFChangelog2HTTPCallBack(contents , size)
+	local Temp2 = string.Explode( "*", contents )
+	
+	acfmenupanel.Changelog2 = {}
+	for Key,String in pairs(Temp2) do
+		acfmenupanel.Changelog2[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
+	end
+	table.SortByKey(acfmenupanel.Changelog2,true)
+	
+	local Table = {}
+		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	acfmenupanel:UpdateDisplay( Table )
+
+end
+http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelog2HTTPCallBack, function() end)
 
 function PANEL:AmmoSelect( Blacklist )
 	
@@ -541,10 +624,16 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-			acfmenupanel["CData"][Name]:SetText( Title )
+			acfmenupanel["CData"][Name].Label:SetSize( 0 ) --Note : this is intentional 
+			acfmenupanel["CData"][Name]:SetTall( 50 ) -- make the slider taller to fit the new label
 			acfmenupanel["CData"][Name]:SetMin( 0 )
 			acfmenupanel["CData"][Name]:SetMax( 1000 )
 			acfmenupanel["CData"][Name]:SetDecimals( Decimals )
+		acfmenupanel["CData"][Name.."_label"] = vgui.Create( "DLabel", acfmenupanel["CData"][Name]) -- recreating the label
+			acfmenupanel["CData"][Name.."_label"]:SetPos( 0,0 )
+			acfmenupanel["CData"][Name.."_label"]:SetText( Title )
+			acfmenupanel["CData"][Name.."_label"]:SizeToContents()
+			acfmenupanel["CData"][Name.."_label"]:SetDark( true )
 			if acfmenupanel.AmmoData[Name] then
 				acfmenupanel["CData"][Name]:SetValue(acfmenupanel.AmmoData[Name])
 			end
@@ -563,6 +652,8 @@ function PANEL:AmmoSlider(Name, Value, Min, Max, Decimals, Title, Desc) --Variab
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
+			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
+			acfmenupanel["CData"][Name.."_text"]:SetTall( 20 )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
@@ -576,6 +667,7 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	if not acfmenupanel["CData"][Name] then
 		acfmenupanel["CData"][Name] = vgui.Create( "DCheckBoxLabel" )
 			acfmenupanel["CData"][Name]:SetText( Title or "" )
+			acfmenupanel["CData"][Name]:SetDark( true )
 			acfmenupanel["CData"][Name]:SizeToContents()
 			if acfmenupanel.AmmoData[Name] != nil then
 				acfmenupanel["CData"][Name]:SetChecked(acfmenupanel.AmmoData[Name])
@@ -594,6 +686,7 @@ function PANEL:AmmoCheckbox(Name, Title, Desc) --Variable name in the table, sli
 	if not acfmenupanel["CData"][Name.."_text"] and Desc then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
+			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
 			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )
 	end
 	acfmenupanel["CData"][Name.."_text"]:SetText( Desc )
@@ -607,6 +700,7 @@ function PANEL:CPanelText(Name, Desc)
 	if not acfmenupanel["CData"][Name.."_text"] then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
+			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
 			acfmenupanel["CData"][Name.."_text"]:SetWrap(true)
 			acfmenupanel["CData"][Name.."_text"]:SetAutoStretchVertical( true )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )

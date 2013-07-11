@@ -97,6 +97,7 @@ function ACF_NosSlider1(Mod, Value, ID, Desc)
 	if Mod and not acfmenupanel["CData"][Mod] then	
 		acfmenupanel["CData"][Mod] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 			acfmenupanel["CData"][Mod]:SetText( Desc or "Torque Adding "..Mod )
+			acfmenupanel["CData"][Mod].Label:SizeToContents()
 			acfmenupanel["CData"][Mod]:SetMin( 20 )
 			acfmenupanel["CData"][Mod]:SetMax( 200 )
 			acfmenupanel["CData"][Mod]:SetDecimals( 0 )
