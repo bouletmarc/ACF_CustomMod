@@ -117,6 +117,21 @@ function ENT:TriggerInput( iname , value )
 
 end
 
+function ENT:PreEntityCopy()
+	//Wire dupe info
+	local DupeInfo = WireLib.BuildDupeInfo( self )
+	if DupeInfo then
+		duplicator.StoreEntityModifier( self, "WireDupeInfo", DupeInfo )
+	end
+
+end
+
+function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
+	//Wire dupe info
+	if(Ent.EntityMods and Ent.EntityMods.WireDupeInfo) then
+		WireLib.ApplyDupeInfo(Player, Ent, Ent.EntityMods.WireDupeInfo, function(id) return CreatedEntities[id] end)
+	end
+end
 
 function ENT:OnRemove()
 	Wire_Remove(self)

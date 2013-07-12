@@ -9,3 +9,6 @@ r73
 --Updated ChangeLog Custom
 --Quick cl_menu fix
 -->BUG : SetText got a nil value
+
+*r76
+--Fixed Chips Wires Duping
