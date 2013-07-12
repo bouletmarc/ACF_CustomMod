@@ -492,8 +492,11 @@ end
 function ACFHomeGUIUpdate( Table )
 	
 	--acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
-	TextLog2 = vgui.Create( "DLabel" )
-		TextLog2:SetText( acfmenupanel.Changelog[Table["rev"]])
+	acfmenupanel:CPanelText("Changelog2", acfmenupanel.Changelog2[Table["rev2"]])
+	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
+	acfmenupanel.CustomDisplay:PerformLayout()
+	/*TextLog2 = vgui.Create( "DLabel" )
+		TextLog2:SetText( acfmenupanel.Changelog2[Table["rev2"]])
 		TextLog2:SetTextColor(Color(0,0,200,255))
 		TextLog2:SetFont( "DefaultBold" )
 		TextLog2:SizeToContents()
@@ -501,12 +504,12 @@ function ACFHomeGUIUpdate( Table )
 	acfmenupanel.CustomDisplay:PerformLayout()
 	
 	TextLog3 = vgui.Create( "DLabel" )
-		TextLog3:SetText( acfmenupanel.Changelog[Table["rev2"]])
+		TextLog3:SetText( acfmenupanel.Changelog[Table["rev"]])
 		TextLog3:SetTextColor(Color(0,0,200,255))
 		TextLog3:SetFont( "DefaultBold" )
 		TextLog3:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextLog3 )
-	acfmenupanel.CustomDisplay:PerformLayout()
+	acfmenupanel.CustomDisplay:PerformLayout()*/
 	
 	local color
 	local versionstring
@@ -543,6 +546,23 @@ function ACFHomeGUIUpdate( Table )
 	
 end
 
+function ACFChangelog2HTTPCallBack(contents , size)
+	local Temp = string.Explode( "*", contents )
+	
+	acfmenupanel.Changelog2 = {}
+	for Key,String in pairs(Temp) do
+		acfmenupanel.Changelog2[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
+	end
+	table.SortByKey(acfmenupanel.Changelog2,true)
+	
+	local Table = {}
+		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	acfmenupanel:UpdateDisplay( Table )
+
+end
+http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelog2HTTPCallBack, function() end)
+
 function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	
@@ -559,23 +579,6 @@ function ACFChangelogHTTPCallBack(contents , size)
 
 end
 http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
-
-function ACFChangelog2HTTPCallBack(contents , size)
-	local Temp2 = string.Explode( "*", contents )
-	
-	acfmenupanel.Changelog2 = {}
-	for Key,String in pairs(Temp2) do
-		acfmenupanel.Changelog2[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
-	end
-	table.SortByKey(acfmenupanel.Changelog2,true)
-	
-	local Table = {}
-		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
-		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
-	acfmenupanel:UpdateDisplay( Table )
-
-end
-http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelog2HTTPCallBack, function() end)
 
 function PANEL:AmmoSelect( Blacklist )
 	

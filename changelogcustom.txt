@@ -4,3 +4,8 @@ r73
 *r74
 --Updated to Rev.401
 --Added Custom Changlog
+
+*r75
+--Updated ChangeLog Custom
+--Quick cl_menu fix
+-->BUG : SetText got a nil value

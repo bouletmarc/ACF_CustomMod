@@ -5,8 +5,8 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 401 -- Make sure to change this as the version goes up or the update check is for nothing! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 7.14
-ACF.Version2 = 74
+ACF.VersionCustom = 7.15
+ACF.Version2 = 75
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -233,7 +233,7 @@ function ACF_UpdateChecking( )
 	print("[ACF] Checking for updates....")
 	
 	http.Fetch("https://github.com/nrlulz/ACF",function(contents,size)
-		local rev = tonumber(string.match( contents, "([0-9]+) commits" ))
+		local rev = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
 		if rev and ACF.Version >= rev then
 			print("[ACF] ACF Is Up To Date, Latest Version: "..rev)
 			
@@ -248,7 +248,7 @@ function ACF_UpdateChecking( )
 	end, function() end)
 	
 	http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/",function(contents,size)
-		local rev2 = tonumber(string.match( contents, "([0-9]+) commits" ))
+		local rev2 = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
 		if rev2 and ACF.Version2 >= rev2 then
 			print("[ACF] ACF Custom Is Up To Date, Latest Version: "..rev2)
 			
