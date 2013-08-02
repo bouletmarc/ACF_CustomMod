@@ -25,7 +25,16 @@ r73
 -->Fixed Auto, Cvt, chips, nos Code's
 -->Fixed Fat and Custom engine was inverted
 -->Fixed Engine2 Client Menu on Click
-**BUG**
+---->BUG
 -->Engine Maker are not Usable, still updating code's
 -->Engine's Client Menu bug
 -->Main Menu SetText() error
+
+*r78
+-7.53
+-->quick Client Side menu Update
+
+*r79
+-7.54
+-->Another quick Client side Update
+-->Changelog Update
