@@ -93,6 +93,18 @@ function PANEL:Init( )
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
 	local Engines = Mobility:AddNode( "Engines" )
 	local Gearboxes = Mobility:AddNode( "Gearboxes" )
+	local FuelTanks = Mobility:AddNode( "Fuel Tanks" )
+	--###################
+	local EnginesMaker = Mobility:AddNode( "Engines Maker Menu" )
+	local EnginesLittle = Mobility:AddNode( "Customizable Little Engines" )
+	local EnginesFat = Mobility:AddNode( "Customizable Fat Engines" )
+	local Engines2 = Mobility:AddNode( "Engines Custom" )
+	local CVT = Mobility:AddNode( "CVT Gearbox" )
+	local Automatic = Mobility:AddNode( "Automatic Gearbox" )
+	local Chips = Mobility:AddNode( "Chips" )
+	local Vtec = Mobility:AddNode( "Chips Vtec" )
+	local Nos = Mobility:AddNode( "Nos Bottle" )
+	--###################
 	local EngineSubcats = {}
 	for _, MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		NodeAdd = Mobility
@@ -100,7 +112,28 @@ function PANEL:Init( )
 			NodeAdd = Engines
 		elseif ( MobilityTable.ent == "acf_gearbox" ) then
 			NodeAdd = Gearboxes
+		elseif ( MobilityTable.ent == "acf_fueltank" ) then
+			NodeAdd = FuelTanks
+		elseif ( MobilityTable.ent == "acf_engine5" ) then
+			NodeAdd = EnginesMaker
+		elseif( MobilityTable.ent == "acf_engine2" ) then
+			NodeAdd = EnginesLittle
+		elseif ( MobilityTable.ent == "acf_engine4" ) then
+			NodeAdd = EnginesFat
+		elseif ( MobilityTable.ent == "acf_engine3" ) then
+			NodeAdd = Engines2
+		elseif ( MobilityTable.ent == "acf_gearbox2" ) then
+			NodeAdd = CVT
+		elseif ( MobilityTable.ent == "acf_gearbox3" ) then
+			NodeAdd = Automatic
+		elseif ( MobilityTable.ent == "acf_chips" ) then
+			NodeAdd = Chips
+		elseif ( MobilityTable.ent == "acf_vtec" ) then
+			NodeAdd = Vtec
+		elseif ( MobilityTable.ent == "acf_nos" ) then
+			NodeAdd = Nos
 		end
+		--###############
 		--if((EngineSubcats["misce"] == nil) and (EngineSubcats["miscg"] == nil) ) then
 		--	EngineSubcats["misce"] = Engines:AddNode( "Miscellaneous" )
 		--	EngineSubcats["miscg"] = Gearboxes:AddNode( "Miscellaneous" )
@@ -129,7 +162,58 @@ function PANEL:Init( )
 			--else
 			--	NodeAdd = EngineSubcats["miscg"]
 			end
+		elseif MobilityTable.ent == "acf_fueltank" then
+			NodeAdd = FuelTanks
+			if (MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_engine5" then
+			NodeAdd = EnginesMaker
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_engine2" then
+			NodeAdd = EnginesLittle
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_engine4" then
+			NodeAdd = EnginesFat
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_engine3" then
+			NodeAdd = Engines2
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_gearbox2" then
+			NodeAdd = CVT
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_gearbox3" then
+			NodeAdd = Automatic
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_chips" then
+			NodeAdd = Chips
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_vtec" then
+			NodeAdd = Vtec
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_nos" then
+			NodeAdd = Nos
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
 		end
+		--###############
 		
 		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
 		EndNode.mytable = MobilityTable
@@ -141,7 +225,7 @@ function PANEL:Init( )
 
 	end
 	--#########################################################################################################
-		--Creating New menu
+	/*	--Creating New menu
 	local Mobility2 = self.WeaponSelect:AddNode( "Custom ACF Mod" )		-->menu name
 		--Creating SubCategories
 	local EnginesMaker = Mobility2:AddNode( "Engines Maker Menu" )
@@ -155,95 +239,95 @@ function PANEL:Init( )
 	local Nos = Mobility2:AddNode( "Nos Bottle" )
 	
 	local Engine2Subcats = {}
-	for _, Mobility2Table in pairs(self.WeaponDisplay["Mobility2"]) do
+	for _, MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		NodeAdd = Mobility2
-		if ( Mobility2Table.ent == "acf_engine5" ) then
+		if ( MobilityTable.ent == "acf_engine5" ) then
 			NodeAdd = EnginesMaker
-		elseif( Mobility2Table.ent == "acf_engine2" ) then
+		elseif( MobilityTable.ent == "acf_engine2" ) then
 			NodeAdd = EnginesLittle
-		elseif ( Mobility2Table.ent == "acf_engine4" ) then
+		elseif ( MobilityTable.ent == "acf_engine4" ) then
 			NodeAdd = EnginesFat
-		elseif ( Mobility2Table.ent == "acf_engine3" ) then
+		elseif ( MobilityTable.ent == "acf_engine3" ) then
 			NodeAdd = Engines2
-		elseif ( Mobility2Table.ent == "acf_gearbox2" ) then
+		elseif ( MobilityTable.ent == "acf_gearbox2" ) then
 			NodeAdd = CVT
-		elseif ( Mobility2Table.ent == "acf_gearbox3" ) then
+		elseif ( MobilityTable.ent == "acf_gearbox3" ) then
 			NodeAdd = Automatic
-		elseif ( Mobility2Table.ent == "acf_chips" ) then
+		elseif ( MobilityTable.ent == "acf_chips" ) then
 			NodeAdd = Chips
-		elseif ( Mobility2Table.ent == "acf_vtec" ) then
+		elseif ( MobilityTable.ent == "acf_vtec" ) then
 			NodeAdd = Vtec
-		elseif ( Mobility2Table.ent == "acf_nos" ) then
+		elseif ( MobilityTable.ent == "acf_nos" ) then
 			NodeAdd = Nos
 		end
 		
-		if(Mobility2Table.category) then
-			if(!Engine2Subcats[Mobility2Table.category]) then
-				Engine2Subcats[Mobility2Table.category] = NodeAdd:AddNode( Mobility2Table.category )
+		if(MobilityTable.category) then
+			if(!Engine2Subcats[MobilityTable.category]) then
+				Engine2Subcats[MobilityTable.category] = NodeAdd:AddNode( MobilityTable.category )
 			end
 		end
 	end
 	
-	for Mobility2ID,Mobility2Table in pairs(self.WeaponDisplay["Mobility2"]) do
+	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		
 		local NodeAdd = Mobility2
 		--#########################################################
-		if Mobility2Table.ent == "acf_engine5" then
+		if MobilityTable.ent == "acf_engine5" then
 			NodeAdd = EnginesMaker
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_engine2" then
+		elseif MobilityTable.ent == "acf_engine2" then
 			NodeAdd = EnginesLittle
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_engine4" then
+		elseif MobilityTable.ent == "acf_engine4" then
 			NodeAdd = EnginesFat
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_engine3" then
+		elseif MobilityTable.ent == "acf_engine3" then
 			NodeAdd = Engines2
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_gearbox2" then
+		elseif MobilityTable.ent == "acf_gearbox2" then
 			NodeAdd = CVT
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_gearbox3" then
+		elseif MobilityTable.ent == "acf_gearbox3" then
 			NodeAdd = Automatic
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_chips" then
+		elseif MobilityTable.ent == "acf_chips" then
 			NodeAdd = Chips
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_vtec" then
+		elseif MobilityTable.ent == "acf_vtec" then
 			NodeAdd = Vtec
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
-		elseif Mobility2Table.ent == "acf_nos" then
+		elseif MobilityTable.ent == "acf_nos" then
 			NodeAdd = Nos
-			if(Mobility2Table.category) then
-				NodeAdd = Engine2Subcats[Mobility2Table.category]
+			if(MobilityTable.category) then
+				NodeAdd = Engine2Subcats[MobilityTable.category]
 			end
 		end
 		
-		local EndNode = NodeAdd:AddNode( Mobility2Table.name or "No Name" )
-		EndNode.mytable = Mobility2Table
+		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
+		EndNode.mytable = MobilityTable
 		function EndNode:DoClick()
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
 		EndNode.Icon:SetImage( "gui/silkicons/wrench" )
 
-	end
+	end*/
 	
 	--#########################################################################################################
 	--#########################################################################################################
@@ -442,29 +526,29 @@ function ACFHomeGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( TextLog )
 	
 	--#################
-	if acfmenupanel.Changelog2 then
-		acfmenupanel["CData"]["Changelist2"] = vgui.Create( "DTree" )
-		for Rev2,Changes in pairs(acfmenupanel.Changelog2) do
+	if acfmenupanel.Changelog then
+		acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
+		for Rev,Changes in pairs(acfmenupanel.Changelog) do
 			
-			local Node = acfmenupanel["CData"]["Changelist2"]:AddNode( "Rev "..Rev2 )
+			local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
 			Node.mytable = {}
-				Node.mytable["rev2"] = Rev2
+				Node.mytable["rev"] = Rev
 			function Node:DoClick()
 				acfmenupanel:UpdateAttribs( Node.mytable )
 			end
 			Node.Icon:SetImage( "gui/silkicons/newspaper" )
 			
 		end	
-		acfmenupanel.CData.Changelist2:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+		acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
 		
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist2"] )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
-		acfmenupanel:UpdateAttribs( {Rev2 = table.maxn(acfmenupanel.Changelog2)} )
+		acfmenupanel:UpdateAttribs( {Rev = table.maxn(acfmenupanel.Changelog)} )
 	end
 	--#################
-	
+	/*
 	if acfmenupanel.Changelog then
 		acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
 		for Rev,Changes in pairs(acfmenupanel.Changelog) do
@@ -485,14 +569,12 @@ function ACFHomeGUICreate( Table )
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
 		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
-	end
+	end*/
 	
 end
 	
 function ACFHomeGUIUpdate( Table )
 	
-	--acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
-	acfmenupanel:CPanelText("Changelog2", acfmenupanel.Changelog2[Table["rev2"]])
 	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
 	acfmenupanel.CustomDisplay:PerformLayout()
 	/*TextLog2 = vgui.Create( "DLabel" )
@@ -546,23 +628,6 @@ function ACFHomeGUIUpdate( Table )
 	
 end
 
-function ACFChangelog2HTTPCallBack(contents , size)
-	local Temp = string.Explode( "*", contents )
-	
-	acfmenupanel.Changelog2 = {}
-	for Key,String in pairs(Temp) do
-		acfmenupanel.Changelog2[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
-	end
-	table.SortByKey(acfmenupanel.Changelog2,true)
-	
-	local Table = {}
-		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
-		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
-	acfmenupanel:UpdateDisplay( Table )
-
-end
-http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelog2HTTPCallBack, function() end)
-
 function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	
@@ -578,7 +643,24 @@ function ACFChangelogHTTPCallBack(contents , size)
 	acfmenupanel:UpdateDisplay( Table )
 
 end
-http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("http://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelogHTTPCallBack, function() end)
+
+/*function ACFChangelogHTTPCallBack(contents , size)
+	local Temp = string.Explode( "*", contents )
+	
+	acfmenupanel.Changelog = {}
+	for Key,String in pairs(Temp) do
+		acfmenupanel.Changelog[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
+	end
+	table.SortByKey(acfmenupanel.Changelog,true)
+	
+	local Table = {}
+		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
+		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
+	acfmenupanel:UpdateDisplay( Table )
+
+end
+http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)*/
 
 function PANEL:AmmoSelect( Blacklist )
 	

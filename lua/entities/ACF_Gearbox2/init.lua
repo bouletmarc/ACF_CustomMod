@@ -64,13 +64,13 @@ function MakeACF_Gearbox2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Gearbox2:SetPlayer(Owner)
 	Gearbox2.Owner = Owner
 	Gearbox2.Id = Id
-	Gearbox2.Model = List["Mobility2"][Id]["model"]
-	Gearbox2.Mass = List["Mobility2"][Id]["weight"]
-	Gearbox2.SwitchTime = List["Mobility2"][Id]["switch"]
-	Gearbox2.MaxTorque = List["Mobility2"][Id]["maxtq"]
-	Gearbox2.Gears = List["Mobility2"][Id]["gears"]
-	Gearbox2.Dual = List["Mobility2"][Id]["doubleclutch"]
-	Gearbox2.GearTable = List["Mobility2"][Id]["geartable"]
+	Gearbox2.Model = List["Mobility"][Id]["model"]
+	Gearbox2.Mass = List["Mobility"][Id]["weight"]
+	Gearbox2.SwitchTime = List["Mobility"][Id]["switch"]
+	Gearbox2.MaxTorque = List["Mobility"][Id]["maxtq"]
+	Gearbox2.Gears = List["Mobility"][Id]["gears"]
+	Gearbox2.Dual = List["Mobility"][Id]["doubleclutch"]
+	Gearbox2.GearTable = List["Mobility"][Id]["geartable"]
 		Gearbox2.GearTable["Final"] = Data10
 		Gearbox2.GearTable[1] = Data1
 		Gearbox2.GearTable[2] = Data2
@@ -146,7 +146,7 @@ function MakeACF_Gearbox2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	--timer.Simple(0.5, function() Gearbox:UpdateHUD() end ) 
 	
 	--##############################################
-	Gearbox2:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	Gearbox2:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	Gearbox2:SetNetworkedBeamInt("Final",Gearbox2.GearFinal*1000)
 	Gearbox2:SetNetworkedBeamInt("Weight",Gearbox2.Mass)
 	Gearbox2:SetNetworkedBeamInt("Gear1Over",Gearbox2.Gear1*1000)
@@ -173,7 +173,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 	
-	if List["Mobility2"][Id]["model"] ~= self.Model then
+	if List["Mobility"][Id]["model"] ~= self.Model then
 		return false, "The new gearbox must have the same model!"
 	end
 		
@@ -190,11 +190,11 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		end
 		
 		self.Id = Id
-		self.Mass = List["Mobility2"][Id]["weight"]
-		self.SwitchTime = List["Mobility2"][Id]["switch"]
-		self.MaxTorque = List["Mobility2"][Id]["maxtq"]
-		self.Gears = List["Mobility2"][Id]["gears"]
-		self.Dual = List["Mobility2"][Id]["doubleclutch"]
+		self.Mass = List["Mobility"][Id]["weight"]
+		self.SwitchTime = List["Mobility"][Id]["switch"]
+		self.MaxTorque = List["Mobility"][Id]["maxtq"]
+		self.Gears = List["Mobility"][Id]["gears"]
+		self.Dual = List["Mobility"][Id]["doubleclutch"]
 		
 		self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
 		
@@ -237,7 +237,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	--self:UpdateHUD()
 	
 	--##############################################
-	self:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	self:SetNetworkedBeamInt("Final",self.GearFinal*1000)
 	self:SetNetworkedBeamInt("Weight",self.Mass)
 	self:SetNetworkedBeamInt("Gear1Over",self.Gear1*1000)

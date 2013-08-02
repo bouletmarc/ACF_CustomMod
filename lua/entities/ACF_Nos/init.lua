@@ -42,11 +42,11 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Nos:SetPlayer(Owner)
 	Nos.Owner = Owner
 	Nos.Id = Id
-	Nos.Model = List["Mobility2"][Id]["model"]
-	Nos.Weight = List["Mobility2"][Id]["weight"]
-	Nos.SoundPath = List["Mobility2"][Id]["sound"]
-	Nos.RpmAdd = List["Mobility2"][Id]["rpmadd"]
-	Nos.ModTable = List["Mobility2"][Id]["modtable"]
+	Nos.Model = List["Mobility"][Id]["model"]
+	Nos.Weight = List["Mobility"][Id]["weight"]
+	Nos.SoundPath = List["Mobility"][Id]["sound"]
+	Nos.RpmAdd = List["Mobility"][Id]["rpmadd"]
+	Nos.ModTable = List["Mobility"][Id]["modtable"]
 		Nos.ModTable[1] = Data1
 		Nos.TorqueAdd2 = Data1
 	
@@ -80,7 +80,7 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Wire_TriggerOutput(Nos.Entity, "Usable", Nos.UsableNos)
 	Wire_TriggerOutput(Nos.Entity, "Active", Nos.ActiveChips2)
 	--Send to GUI
-	Nos:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	Nos:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	Nos:SetNetworkedBeamInt("TorqueAdd",Nos.TorqueAdd2)
 	Nos:SetNetworkedBeamInt("Usable",Nos.UsableNos)
 	Nos:SetNetworkedBeamInt("Weight",Nos.Weight)
@@ -111,16 +111,16 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 
-	if List["Mobility2"][Id]["model"] ~= self.Model then
+	if List["Mobility"][Id]["model"] ~= self.Model then
 		return false, "The new nos bottle must have the same model!"
 	end
 	
 	if self.Id != Id then
 		self.Id = Id
-		self.Model = List["Mobility2"][Id]["model"]
-		self.Weight = List["Mobility2"][Id]["weight"]
-		self.SoundPath = List["Mobility2"][Id]["sound"]
-		self.RpmAdd = List["Mobility2"][Id]["rpmadd"]
+		self.Model = List["Mobility"][Id]["model"]
+		self.Weight = List["Mobility"][Id]["weight"]
+		self.SoundPath = List["Mobility"][Id]["sound"]
+		self.RpmAdd = List["Mobility"][Id]["rpmadd"]
 		self.TorqueAdd3 = 0
 		self.UsableNos = 1
 		self.RpmAddFinal = 0
@@ -140,7 +140,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	Wire_TriggerOutput(self, "Usable", self.UsableNos)
 	Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 	--Send to GUI
-	self:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	self:SetNetworkedBeamInt("TorqueAdd",self.TorqueAdd2)
 	self:SetNetworkedBeamInt("Usable",self.UsableNos)
 	self:SetNetworkedBeamInt("Weight",self.Weight)

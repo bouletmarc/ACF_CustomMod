@@ -128,7 +128,7 @@ function MakeACF_Gun(Owner, Pos, Angle, Id)
 	
 	Owner:AddCount("_acf_gun", Gun)
 	Owner:AddCleanup( "acfmenu", Gun )
-	
+	ACF_Activate(Gun, 0)
 	return Gun
 end
 list.Set( "ACFCvars", "acf_gun" , {"id"} )
@@ -384,7 +384,12 @@ function ENT:FireShell()
 		
 			local MuzzlePos = self:LocalToWorld(self.Muzzle)
 			local MuzzleVec = self:GetForward()
-			local Inaccuracy = VectorRand() / 360 * self.Inaccuracy
+			local SpreadScale = ACF.SpreadScale
+			local IaccMult = 1
+			if (self.ACF.Health and self.ACF.MaxHealth) then
+				IaccMult = math.Clamp(((1 - SpreadScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, 1, SpreadScale)
+			end
+			local Inaccuracy = (VectorRand() / 360 * self.Inaccuracy) * IaccMult
 			
 			self:MuzzleEffect( MuzzlePos , MuzzleVec )
 			

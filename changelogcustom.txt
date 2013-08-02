@@ -12,3 +12,20 @@ r73
 
 *r76
 --Fixed Chips Wires Duping
+
+*r77
+-7.50
+-->Updated with Fuel tank Base
+-->Big change in code's
+-7.51
+-->Updated with new Wankel Model's
+-->Removed Custom Menu Tab
+-->Added Custom stuff to mobility Tab
+-->Fixed Original Engine Running Error
+-->Fixed Auto, Cvt, chips, nos Code's
+-->Fixed Fat and Custom engine was inverted
+-->Fixed Engine2 Client Menu on Click
+**BUG**
+-->Engine Maker are not Usable, still updating code's
+-->Engine's Client Menu bug
+-->Main Menu SetText() error

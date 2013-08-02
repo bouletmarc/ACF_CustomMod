@@ -33,9 +33,9 @@ function MakeACF_Vtec(Owner, Pos, Angle, Id, Data1)
 	Vtec:SetPlayer(Owner)
 	Vtec.Owner = Owner
 	Vtec.Id = Id
-	Vtec.Model = List["Mobility2"][Id]["model"]
-	Vtec.Weight = List["Mobility2"][Id]["weight"]
-	Vtec.ModTable = List["Mobility2"][Id]["modtable"]
+	Vtec.Model = List["Mobility"][Id]["model"]
+	Vtec.Weight = List["Mobility"][Id]["weight"]
+	Vtec.ModTable = List["Mobility"][Id]["modtable"]
 		Vtec.ModTable[1] = Data1
 		Vtec.KickRpm = Data1
 	
@@ -53,7 +53,7 @@ function MakeACF_Vtec(Owner, Pos, Angle, Id, Data1)
 		phys:SetMass( Vtec.Weight ) 
 	end
 	
-	Vtec:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	Vtec:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	Vtec:SetNetworkedBeamInt("Kicking",Vtec.KickRpm)
 	Vtec:SetNetworkedBeamInt("Weight",Vtec.Weight)
 	
@@ -79,14 +79,14 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 
-	if List["Mobility2"][Id]["model"] ~= self.Model then
+	if List["Mobility"][Id]["model"] ~= self.Model then
 		return false, "The new vtec must have the same model!"
 	end
 	
 	if self.Id != Id then
 		self.Id = Id
-		self.Model = List["Mobility2"][Id]["model"]
-		self.Weight = List["Mobility2"][Id]["weight"]
+		self.Model = List["Mobility"][Id]["model"]
+		self.Weight = List["Mobility"][Id]["weight"]
 		self.KickActive = 0
 	end
 	
@@ -94,7 +94,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.KickRpm = ArgsTable[5]
 	self.Kickv = tonumber(self.KickRpm)
 	
-	self:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	self:SetNetworkedBeamInt("Kicking",self.KickRpm)
 	self:SetNetworkedBeamInt("Weight",self.Weight)
 	

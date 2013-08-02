@@ -33,9 +33,9 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 	Chips:SetPlayer(Owner)
 	Chips.Owner = Owner
 	Chips.Id = Id
-	Chips.Model = List["Mobility2"][Id]["model"]
-	Chips.Weight = List["Mobility2"][Id]["weight"]
-	Chips.ModTable = List["Mobility2"][Id]["modtable"]
+	Chips.Model = List["Mobility"][Id]["model"]
+	Chips.Weight = List["Mobility"][Id]["weight"]
+	Chips.ModTable = List["Mobility"][Id]["modtable"]
 		Chips.ModTable[1] = Data1
 		Chips.ModTable[2] = Data2
 		Chips.ModTable[3] = Data3
@@ -58,7 +58,7 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 		phys:SetMass( Chips.Weight ) 
 	end
 	
-	Chips:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	Chips:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	Chips:SetNetworkedBeamInt("TorqueAdd",Chips.TorqueAdd2)
 	Chips:SetNetworkedBeamInt("MaxRPMAdd",Chips.MaxRPMAdd2)
 	Chips:SetNetworkedBeamInt("LimitRPMAdd",Chips.LimitRPMAdd2)
@@ -90,14 +90,14 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 
-	if List["Mobility2"][Id]["model"] ~= self.Model then
+	if List["Mobility"][Id]["model"] ~= self.Model then
 		return false, "The new chip must have the same model!"
 	end
 	
 	if self.Id != Id then
 		self.Id = Id
-		self.Model = List["Mobility2"][Id]["model"]
-		self.Weight = List["Mobility2"][Id]["weight"]
+		self.Model = List["Mobility"][Id]["model"]
+		self.Weight = List["Mobility"][Id]["weight"]
 		self.TorqueAdd3 = 0
 		self.MaxRPMAdd3 = 0
 		self.LimitRPMAdd3 = 0
@@ -110,7 +110,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.MaxRPMAdd2 = ArgsTable[6]
 	self.LimitRPMAdd2 = ArgsTable[7]
 	
-	self:SetNetworkedBeamString("Type",List["Mobility2"][Id]["name"])
+	self:SetNetworkedBeamString("Type",List["Mobility"][Id]["name"])
 	self:SetNetworkedBeamInt("TorqueAdd",self.TorqueAdd2)
 	self:SetNetworkedBeamInt("MaxRPMAdd",self.MaxRPMAdd2)
 	self:SetNetworkedBeamInt("LimitRPMAdd",self.LimitRPMAdd2)

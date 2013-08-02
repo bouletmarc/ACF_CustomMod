@@ -85,29 +85,43 @@ function ACFEngineGUICreate( Table )
 	acfmenupanel.CustomDisplay:AddItem( Check1 )*/
 	
 	--####################
-	if (Table.iselec == true )then
-		local peakkw = math.floor(Table.torque * Table.limitrpm / (4*9548.8))
-		--acfmenupanel:CPanelText("Power", "Peak Power : "..Table.elecpower.." kW / "..math.Round(Table.elecpower*1.34).." HP @ "..(Table.peakmaxrpm).." RPM")
-		TextPower = vgui.Create( "DLabel" )
-			TextPower:SetText( "Peak Power : "..peakkw.." kW / "..math.Round(peakkw*1.34).." HP @ "..(Table.limitrpm/2).." RPM")
-			TextPower:SetTextColor(Color(0,0,200,255))
-			TextPower:SetFont( "DefaultBold" )
-		acfmenupanel.CustomDisplay:AddItem( TextPower )
+	local peakkw
+	local peakkwrpm
+	if (Table.iselec == true )then --elecs and turbs get peak power in middle of rpm range
+		peakkw = Table.torque * Table.limitrpm / (4*9548.8)
+		peakkwrpm = math.floor(Table.limitrpm / 2)
 	else	
-		--acfmenupanel:CPanelText("Power", "Peak Power : "..(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)).." kW / "..math.Round(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)*1.34).." HP @ "..(Table.peakmaxrpm).." RPM")
+		peakkw = Table.torque * Table.peakmaxrpm / 9548.8
+		peakkwrpm = Table.peakmaxrpm
+	end
+	if Table.requiresfuel then --if fuel required, show max power with fuel at top, no point in doing it twice
+		--acfmenupanel:CPanelText("Power", "\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
 		TextPower = vgui.Create( "DLabel" )
-			TextPower:SetText( "Peak Power : "..(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)).." kW / "..math.Round(math.floor(Table.torque * Table.peakmaxrpm / 9548.8)*1.34).." HP @ "..(Table.peakmaxrpm).." RPM")
+			TextPower:SetText( "Peak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
 			TextPower:SetTextColor(Color(0,0,200,255))
 			TextPower:SetFont( "DefaultBold" )
 		acfmenupanel.CustomDisplay:AddItem( TextPower )
+		--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
+		TextTorque = vgui.Create( "DLabel" )
+			TextTorque:SetText( "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
+			TextTorque:SetTextColor(Color(0,0,200,255))
+			TextTorque:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextTorque )
+	else
+		--acfmenupanel:CPanelText("Power", "\nPeak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM")
+		TextPower = vgui.Create( "DLabel" )
+			TextPower:SetText( "Peak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM")
+			TextPower:SetTextColor(Color(0,0,200,255))
+			TextPower:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextPower )
+		--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
+		TextTorque = vgui.Create( "DLabel" )
+			TextTorque:SetText( "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
+			TextTorque:SetTextColor(Color(0,0,200,255))
+			TextTorque:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextTorque )
 	end
-
-	--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
-	TextTorque = vgui.Create( "DLabel" )
-		TextTorque:SetText( "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
-		TextTorque:SetTextColor(Color(0,0,200,255))
-		TextTorque:SetFont( "DefaultBold" )
-	acfmenupanel.CustomDisplay:AddItem( TextTorque )
+	--#################
 	--acfmenupanel:CPanelText("RPM", "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitrpm).." RPM")
 	TextRPM = vgui.Create( "DLabel" )
 		TextRPM:SetText( "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitrpm).." RPM")
@@ -127,6 +141,67 @@ function ACFEngineGUICreate( Table )
 		TextFly:SetTextColor(Color(0,0,200,255))
 		TextFly:SetFont( "DefaultBold" )
 	acfmenupanel.CustomDisplay:AddItem( TextFly )
+	--acfmenupanel:CPanelText("FuelType", "\nFuel Type : "..(Table.fuel))
+	TextFuelType = vgui.Create( "DLabel" )
+		TextFuelType:SetText( "Fuel Type : "..(Table.fuel))
+		TextFuelType:SetTextColor(Color(0,0,200,255))
+		TextFuelType:SetFont( "DefaultBold" )
+	acfmenupanel.CustomDisplay:AddItem( TextFuelType )
+	
+	if Table.fuel == "Electric" then
+		local cons = ACF.ElecRate * peakkw / ACF.Efficiency[Table.enginetype]
+		--acfmenupanel:CPanelText("FuelCons", "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
+		TextFuelCons = vgui.Create( "DLabel" )
+			TextFuelCons:SetText( "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
+			TextFuelCons:SetTextColor(Color(0,0,200,255))
+			TextFuelCons:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFuelCons )
+	elseif Table.fuel == "Any" then
+		local petrolcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
+		local dieselcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
+		--acfmenupanel:CPanelText("FuelConsP", "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
+		TextFuelConsP = vgui.Create( "DLabel" )
+			TextFuelConsP:SetText( "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
+			TextFuelConsP:SetTextColor(Color(0,0,200,255))
+			TextFuelConsP:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFuelConsP )
+		--acfmenupanel:CPanelText("FuelConsD", "Diesel Use at "..peakkwrpm.." rpm : "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min")
+		TextFuelConsD = vgui.Create( "DLabel" )
+			TextFuelConsD:SetText( "Diesel Use at "..peakkwrpm.." rpm : "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min")
+			TextFuelConsD:SetTextColor(Color(0,0,200,255))
+			TextFuelConsD:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFuelConsD )
+	else
+		local fuelcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[Table.fuel])
+		--acfmenupanel:CPanelText("FuelCons", (Table.fuel).." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
+		TextFuelCons = vgui.Create( "DLabel" )
+			TextFuelCons:SetText( (Table.fuel).." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
+			TextFuelCons:SetTextColor(Color(0,0,200,255))
+			TextFuelCons:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFuelCons )
+	end
+	
+	if Table.requiresfuel then
+		--acfmenupanel:CPanelText("Fuelreq", "REQUIRES FUEL")
+		TextFuelreq = vgui.Create( "DLabel" )
+			TextFuelreq:SetText( "REQUIRES FUEL")
+			TextFuelreq:SetTextColor(Color(0,200,0,255))
+			TextFuelreq:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFuelreq )
+	else
+		--acfmenupanel:CPanelText("FueledPower", "\nWhen supplied with fuel:\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
+		TextFueledPower = vgui.Create( "DLabel" )
+			TextFueledPower:SetText( "When supplied with fuel:\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
+			TextFueledPower:SetTextColor(Color(200,0,0,255))
+			TextFueledPower:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFueledPower )
+		--acfmenupanel:CPanelText("FueledTorque", "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
+		TextFueledTorque = vgui.Create( "DLabel" )
+			TextFueledTorque:SetText( "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
+			TextFueledTorque:SetTextColor(Color(200,0,0,255))
+			TextFueledTorque:SetFont( "DefaultBold" )
+		acfmenupanel.CustomDisplay:AddItem( TextFueledTorque )
+	end
 	
 	acfmenupanel.CustomDisplay:PerformLayout()
 	

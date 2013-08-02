@@ -66,13 +66,13 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	Gearbox3:SetPlayer(Owner)
 	Gearbox3.Owner = Owner
 	Gearbox3.Id = Id
-	Gearbox3.Model = List["Mobility2"][Id]["model"]
-	Gearbox3.Mass = List["Mobility2"][Id]["weight"]
-	Gearbox3.SwitchTime = List["Mobility2"][Id]["switch"]
-	Gearbox3.MaxTorque = List["Mobility2"][Id]["maxtq"]
-	Gearbox3.Gears = List["Mobility2"][Id]["gears"]
-	Gearbox3.Dual = List["Mobility2"][Id]["doubleclutch"]
-	Gearbox3.GearTable = List["Mobility2"][Id]["geartable"]
+	Gearbox3.Model = List["Mobility"][Id]["model"]
+	Gearbox3.Mass = List["Mobility"][Id]["weight"]
+	Gearbox3.SwitchTime = List["Mobility"][Id]["switch"]
+	Gearbox3.MaxTorque = List["Mobility"][Id]["maxtq"]
+	Gearbox3.Gears = List["Mobility"][Id]["gears"]
+	Gearbox3.Dual = List["Mobility"][Id]["doubleclutch"]
+	Gearbox3.GearTable = List["Mobility"][Id]["geartable"]
 		Gearbox3.GearTable["Final"] = Data10
 		Gearbox3.GearTable[1] = Data1
 		Gearbox3.GearTable[2] = Data2
@@ -175,7 +175,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 	
-	if List["Mobility2"][Id]["model"] ~= self.Model then
+	if List["Mobility"][Id]["model"] ~= self.Model then
 		return false, "The new gearbox must have the same model!"
 	end
 		
@@ -192,11 +192,11 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		end
 		
 		self.Id = Id
-		self.Mass = List["Mobility2"][Id]["weight"]
-		self.SwitchTime = List["Mobility2"][Id]["switch"]
-		self.MaxTorque = List["Mobility2"][Id]["maxtq"]
-		self.Gears = List["Mobility2"][Id]["gears"]
-		self.Dual = List["Mobility2"][Id]["doubleclutch"]
+		self.Mass = List["Mobility"][Id]["weight"]
+		self.SwitchTime = List["Mobility"][Id]["switch"]
+		self.MaxTorque = List["Mobility"][Id]["maxtq"]
+		self.Gears = List["Mobility"][Id]["gears"]
+		self.Dual = List["Mobility"][Id]["doubleclutch"]
 		
 		self.Inputs = Wire_CreateInputs( self.Entity, Inputs )
 		
