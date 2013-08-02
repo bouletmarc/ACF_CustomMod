@@ -643,7 +643,7 @@ function ACFChangelogHTTPCallBack(contents , size)
 	acfmenupanel:UpdateDisplay( Table )
 
 end
-http.Fetch("http://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelogHTTPCallBack, function() end)
 
 /*function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
