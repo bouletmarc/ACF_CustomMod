@@ -38,3 +38,9 @@ r73
 -7.54
 -->Another quick Client side Update
 -->Changelog Update
+
+*r80
+-7.55
+-->Client Menu Fix
+-->Changlog Fix
+--> SetText Fix

@@ -545,7 +545,7 @@ function ACFHomeGUICreate( Table )
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
-		acfmenupanel:UpdateAttribs( {Rev = table.maxn(acfmenupanel.Changelog)} )
+		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
 	end
 	--#################
 	/*
@@ -575,15 +575,15 @@ end
 	
 function ACFHomeGUIUpdate( Table )
 	
-	acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
+	/*acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
 	acfmenupanel.CustomDisplay:PerformLayout()
-	/*TextLog2 = vgui.Create( "DLabel" )
+	TextLog2 = vgui.Create( "DLabel" )
 		TextLog2:SetText( acfmenupanel.Changelog2[Table["rev2"]])
 		TextLog2:SetTextColor(Color(0,0,200,255))
 		TextLog2:SetFont( "DefaultBold" )
 		TextLog2:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextLog2 )
-	acfmenupanel.CustomDisplay:PerformLayout()
+	acfmenupanel.CustomDisplay:PerformLayout()*/
 	
 	TextLog3 = vgui.Create( "DLabel" )
 		TextLog3:SetText( acfmenupanel.Changelog[Table["rev"]])
@@ -591,7 +591,7 @@ function ACFHomeGUIUpdate( Table )
 		TextLog3:SetFont( "DefaultBold" )
 		TextLog3:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextLog3 )
-	acfmenupanel.CustomDisplay:PerformLayout()*/
+	acfmenupanel.CustomDisplay:PerformLayout()
 	
 	local color
 	local versionstring
@@ -605,10 +605,8 @@ function ACFHomeGUIUpdate( Table )
 	end
 	
 	acfmenupanel["CData"]["VersionText"]:SetText("\nACF Is "..versionstring.."!")
-	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
-	acfmenupanel["CData"]["VersionText"]:SetFont( "DefaultBold" )
-	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionText"] )
+	acfmenupanel["CData"]["VersionText"]:SetColor(color)
+	acfmenupanel["CData"]["VersionText"]:SizeToContents()
 	
 	local color2
 	local versionstring2
@@ -621,10 +619,8 @@ function ACFHomeGUIUpdate( Table )
 	end
 	
 	VersionT3:SetText("ACF Custom Is "..versionstring2.."!\n")
-	VersionT3:SetColor(color2) 
-	VersionT3:SetFont( "DefaultBold" )
-	VersionT3:SizeToContents() 
-	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
+	VersionT3:SetColor(color2)
+	VersionT3:SizeToContents()
 	
 end
 
