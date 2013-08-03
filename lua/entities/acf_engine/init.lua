@@ -107,6 +107,21 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	else
 		Engine.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * peakkw / (60 * 60)
 	end
+	
+	--############
+	--calculate Fuel Usage for Gui
+	local GuiFuelText = ""
+	if Engine.FuelType == "Electric" then
+		local cons = ACF.ElecRate * peakkw / ACF.Efficiency[Engine.EngineType]
+		GuiFuelText = "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min"
+	elseif Engine.FuelType == "Any" then
+		local petrolcons = ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
+		local dieselcons = ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
+		GuiFuelText = "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min \nDiesel Use at "..peakkwrpm.." rpm : "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min"
+	else
+		local fuelcons = ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[Engine.FuelType])
+		GuiFuelText = Engine.FuelType.." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min"
+	end
 
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	
@@ -136,6 +151,7 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine:SetNetworkedBeamInt("Idle",Engine.IdleRPM)
 	Engine:SetNetworkedBeamInt("Weight",Engine.Weight)
 	Engine:SetNetworkedBeamInt("Rpm",Engine.FlyRPM)
+	Engine:SetNetworkedBeamInt("Consumption",0)
 	--####################################################
 
 	Owner:AddCount("_acf_engine", Engine)
@@ -243,6 +259,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Idle",self.IdleRPM)
 	self:SetNetworkedBeamInt("Weight",self.Weight)
 	self:SetNetworkedBeamInt("Rpm",self.FlyRPM)
+	self:SetNetworkedBeamInt("Consumption",0)
 	--################################################
 	
 	ACF_Activate( self, 1 )
@@ -274,6 +291,23 @@ function ENT:TriggerInput( iname , value )
 				self.Sound = CreateSound(self, self.SoundPath)
 				self.Sound:PlayEx(0.5,100)
 				self:ACFInit()
+			end
+		elseif (value > 0) then
+			local HasFuel
+			if not self.RequiresFuel then
+				HasFuel = true
+			else 
+				for _,fueltank in pairs(self.FuelLink) do
+					if fueltank.Fuel <= 0 or not fueltank.Active then HasFuel = false break end
+				end
+			end
+			if not HasFuel then
+				self:TriggerInput( "Active" , 0 )
+				self.Active = false
+				Wire_TriggerOutput( self, "RPM", 0 )
+				Wire_TriggerOutput( self, "Torque", 0 )
+				Wire_TriggerOutput( self, "Power", 0 )
+				Wire_TriggerOutput( self, "Fuel Use", 0 )
 			end
 		elseif (value <= 0 and self.Active) then
 			self.Active = false
@@ -500,9 +534,13 @@ function ENT:CalcRPM()
 	local boost = 1
 	for _,fueltank in pairs(self.FuelLink) do
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
+		if fueltank.Fuel <= 0 or not fueltank.Active then Tank = false break end
 	end
 	if (not Tank) and self.RequiresFuel then  --make sure we've got a tank with fuel if needed
-		self:TriggerInput( "Active" , 0 ) return self.FlyRPM
+		self:TriggerInput( "Active" , 0 )
+	end
+	if not Tank then
+		self:TriggerInput( "Active" , 0 )
 	end
 	
 	--calculate fuel usage
@@ -517,8 +555,10 @@ function ENT:CalcRPM()
 		Tank.Fuel = math.max(Tank.Fuel - Consumption,0)
 		boost = ACF.TorqueBoost
 		Wire_TriggerOutput(self, "Fuel Use", math.Round(60*Consumption/DeltaTime,3))
+		self:SetNetworkedBeamInt("Consumption", math.Round(60*Consumption/DeltaTime,3))
 	else
 		Wire_TriggerOutput(self, "Fuel Use", 0)
+		self:SetNetworkedBeamInt("Consumption",0)
 	end
 	
 	-- Calculate the current torque from flywheel RPM

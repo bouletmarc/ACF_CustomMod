@@ -44,3 +44,9 @@ r73
 -->Client Menu Fix
 -->Changlog Fix
 --> SetText Fix
+
+*r81
+-7.56
+-->Fixed engine Working without tank BUG
+-->Fixed engine Stop while running out of gaz
+-->Added Consumption in Gui

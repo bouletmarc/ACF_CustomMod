@@ -273,6 +273,23 @@ function ENT:TriggerInput( iname , value )
 				self.Sound:PlayEx(0.5,100)
 				self:ACFInit()
 			end
+		elseif (value > 0) then
+			local HasFuel
+			if not self.RequiresFuel then
+				HasFuel = true
+			else 
+				for _,fueltank in pairs(self.FuelLink) do
+					if fueltank.Fuel <= 0 or not fueltank.Active then HasFuel = false break end
+				end
+			end
+			if not HasFuel then
+				self:TriggerInput( "Active" , 0 )
+				self.Active = false
+				Wire_TriggerOutput( self, "RPM", 0 )
+				Wire_TriggerOutput( self, "Torque", 0 )
+				Wire_TriggerOutput( self, "Power", 0 )
+				Wire_TriggerOutput( self, "Fuel Use", 0 )
+			end
 		elseif (value <= 0 and self.Active) then
 			self.Active = false
 			Wire_TriggerOutput( self, "RPM", 0 )
@@ -497,9 +514,13 @@ function ENT:CalcRPM()
 	local boost = 1
 	for _,fueltank in pairs(self.FuelLink) do
 		if fueltank.Fuel > 0 and fueltank.Active then Tank = fueltank break end
+		if fueltank.Fuel <= 0 or not fueltank.Active then Tank = false break end
 	end
 	if (not Tank) and self.RequiresFuel then  --make sure we've got a tank with fuel if needed
-		self:TriggerInput( "Active" , 0 ) return self.FlyRPM
+		self:TriggerInput( "Active" , 0 )
+	end
+	if not Tank then
+		self:TriggerInput( "Active" , 0 )
 	end
 	
 	--calculate fuel usage
@@ -514,8 +535,10 @@ function ENT:CalcRPM()
 		Tank.Fuel = math.max(Tank.Fuel - Consumption,0)
 		boost = ACF.TorqueBoost
 		Wire_TriggerOutput(self, "Fuel Use", math.Round(60*Consumption/DeltaTime,3))
+		self:SetNetworkedBeamInt("Consumption", math.Round(60*Consumption/DeltaTime,3))
 	else
 		Wire_TriggerOutput(self, "Fuel Use", 0)
+		self:SetNetworkedBeamInt("Consumption",0)
 	end
 
 	//local ClutchRatio = math.min(Clutch/math.max(TorqueDiff,0.05),1)
