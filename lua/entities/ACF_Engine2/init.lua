@@ -148,6 +148,7 @@ function MakeACF_Engine2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Engine2:SetNetworkedBeamInt("Idle",Engine2.IdleRPM)
 	Engine2:SetNetworkedBeamInt("Weight",Engine2.Weight)
 	Engine2:SetNetworkedBeamInt("Rpm",Engine2.FlyRPM)
+	Engine2:SetNetworkedBeamInt("Consumption",0)
 	--####################################################
 
 	Owner:AddCount("_acf_engine2", Engine2)
@@ -269,6 +270,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("Idle",self.IdleRPM)
 	self:SetNetworkedBeamInt("Weight",self.Weight)
 	self:SetNetworkedBeamInt("Rpm",self.FlyRPM)
+	self:SetNetworkedBeamInt("Consumption",0)
 	--################################################
 	
 	ACF_Activate( self, 1 )
@@ -334,12 +336,33 @@ function ENT:TriggerInput( iname , value )
 			--self.PeakTorque3 = self.PeakTorque2+value
 			self:SetNetworkedBeamInt("Torque",self.PeakTorque)
 			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+			--Reupdating Consumption #############
+			local peakkw
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
+				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+			else
+				peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+			end
+			if self.EngineType == "Electric" then else
+				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
+			end
+			--####################################
 		elseif (value == 0 ) then
 			self.TqAdd = false
 			self.PeakTorque = self.PeakTorque2
 			--self.PeakTorque3 = self.PeakTorque2
 			self:SetNetworkedBeamInt("Torque",self.PeakTorque)
 			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+			--Reupdating Consumption #############
+			local peakkw
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
+				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+			else
+				peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+			end
+			if self.EngineType == "Electric" then else
+				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
+			end
 		end
 	elseif (iname == "MaxRpmAdd") then
 		if (value ~= 0 ) then
@@ -352,11 +375,29 @@ function ENT:TriggerInput( iname , value )
 			end
 			self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
 			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+			--Reupdating Consumption #############
+			local peakkw
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then else
+				peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+				self.PeakKwRPM = self.PeakMaxRPM
+			end
+			if self.EngineType == "Electric" then else
+				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
+			end
 		elseif (value == 0 ) then
 			self.MaxRpmAdd = false
 			self.PeakMaxRPM = self.PeakMaxRPM2
 			self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
 			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+			--Reupdating Consumption #############
+			local peakkw
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then else
+				peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+				self.PeakKwRPM = self.PeakMaxRPM
+			end
+			if self.EngineType == "Electric" then else
+				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
+			end
 		end
 	elseif (iname == "LimitRpmAdd") then
 		if (value ~= 0 ) then
@@ -365,12 +406,24 @@ function ENT:TriggerInput( iname , value )
 			self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
 			self.CutValue = self.LimitRPM / 40
 			self.CutRpm = self.LimitRPM - 100
+			--Reupdating Consumption #############
+			local peakkw
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
+				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+				self.PeakKwRPM = math.floor(self.LimitRPM / 2)
+			end
 		elseif (value == 0 ) then
 			self.LimitRpmAdd = false
 			self.LimitRPM = self.LimitRPM2
 			self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
 			self.CutValue = self.LimitRPM / 40
 			self.CutRpm = self.LimitRPM - 100
+			--Reupdating Consumption #############
+			local peakkw
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
+				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+				self.PeakKwRPM = math.floor(self.LimitRPM / 2)
+			end
 		end
 	elseif (iname == "FlywheelMass") then
 		if (value > 0 ) then

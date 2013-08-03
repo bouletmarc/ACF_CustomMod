@@ -40,7 +40,7 @@ local function CreateSoundBrowser()
 		CreateEng:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
 		CreateEng:SetTall( 40 )
 		CreateEng.DoClick = function()
-			RunConsoleCommand("acf_engine_browser_open")
+			RunConsoleCommand("acf_enginefuel_browser_open")
 			StartBrowserPanel:Close()
 		end
 		

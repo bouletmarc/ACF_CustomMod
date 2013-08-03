@@ -68,6 +68,31 @@ function ACFEngine5GUICreate( Table )
 	for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
 		if ID == 1 then
 			ACF_ModingSound(1, Value, Table.id)
+			RunConsoleCommand( "acfmenu_data1", Value )
+		elseif ID == 2 then
+			RunConsoleCommand( "acfmenu_data2", Value )
+		elseif ID == 3 then
+			RunConsoleCommand( "acfmenu_data3", Value )
+		elseif ID == 4 then
+			RunConsoleCommand( "acfmenu_data4", Value )
+		elseif ID == 5 then
+			RunConsoleCommand( "acfmenu_data5", Value )
+		elseif ID == 6 then
+			RunConsoleCommand( "acfmenu_data6", Value )
+		elseif ID == 7 then
+			RunConsoleCommand( "acfmenu_data7", Value )
+		elseif ID == 8 then
+			RunConsoleCommand( "acfmenu_data8", Value )
+		elseif ID == 9 then
+			RunConsoleCommand( "acfmenu_data9", Value )
+		elseif ID == 10 then
+			RunConsoleCommand( "acfmenu_data10", Value )
+		elseif ID == 11 then
+			RunConsoleCommand( "acfmenu_data11", Value )
+		elseif ID == 12 then
+			RunConsoleCommand( "acfmenu_data12", Value )
+		elseif ID == 13 then
+			RunConsoleCommand( "acfmenu_data12", Value )
 		end
 	end
 
@@ -102,7 +127,7 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 	
 	if Mod and not acfmenupanel["CData"][Mod] then	
 		acfmenupanel["CData"][Mod] = vgui.Create("DTextEntry", acfmenupanel.CustomDisplay)
-		acfmenupanel["CData"][Mod]:SetText("")
+		acfmenupanel["CData"][Mod]:SetText(GetConVarString("acfmenu_data1"))
 		acfmenupanel["CData"][Mod]:SetWide(wide)
 		acfmenupanel["CData"][Mod]:SetTall(20)
 		acfmenupanel["CData"][Mod]:SetMultiline(false)
@@ -111,10 +136,6 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 		acfmenupanel["CData"][Mod]:SetTextColor(Color(0,0,150,255))
 		acfmenupanel["CData"][Mod]["Mod"] = Mod
 		acfmenupanel["CData"][Mod]["ID"] = ID
-		Value = GetConVarString("wire_soundemitter_sound")
-		RunConsoleCommand("wire_soundemitter_sound", Value )
-		acfmenupanel["CData"][Mod]:SetConVar( "wire_soundemitter_sound" )
-		RunConsoleCommand( "acfmenu_data1", Value )
 		acfmenupanel["CData"][Mod].ConVarChanged = function( sound, Value )
 			acfmenupanel["CData"][Mod]:SetConVar( "wire_soundemitter_sound" )
 			Value = GetConVarString("wire_soundemitter_sound")
@@ -134,7 +155,7 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 	
 	if Mod1 and not acfmenupanel["CData"][Mod1] then	
 		acfmenupanel["CData"][Mod1] = vgui.Create("DTextEntry", acfmenupanel.CustomDisplay)
-		acfmenupanel["CData"][Mod1]:SetText("")
+		acfmenupanel["CData"][Mod1]:SetText(GetConVarString("acfmenu_data2"))
 		acfmenupanel["CData"][Mod1]:SetWide(wide)
 		acfmenupanel["CData"][Mod1]:SetTall(20)
 		acfmenupanel["CData"][Mod1]:SetMultiline(false)
@@ -143,10 +164,6 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 		acfmenupanel["CData"][Mod1]:SetTextColor(Color(0,0,150,255))
 		acfmenupanel["CData"][Mod1]["Mod1"] = Mod1
 		acfmenupanel["CData"][Mod1]["ID"] = ID
-		Value = GetConVarString("wire_soundemitter_model")
-		RunConsoleCommand("wire_soundemitter_model", Value )
-		acfmenupanel["CData"][Mod1]:SetConVar( "wire_soundemitter_model" )
-		RunConsoleCommand( "acfmenu_data2", Value )
 		acfmenupanel["CData"][Mod1].ConVarChanged = function( sound, Value )
 			acfmenupanel["CData"][Mod1]:SetConVar( "wire_soundemitter_model" )
 			Value = GetConVarString("wire_soundemitter_model")
@@ -242,22 +259,15 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 		acfmenupanel.CustomDisplay:AddItem( TextWeight )
 		
 		--####
-		local peakkw = GetConVar("acfmenu_data3") * GetConVar("acfmenu_data6") / 9548.8
-		local peakkwrpm = GetConVar("acfmenu_data6")
+		/*local peakkw = GetConVarNumber("acfmenu_data3") * GetConVarNumber("acfmenu_data6") / 9548.8
+		local peakkwrpm = GetConVarNumber("acfmenu_data6")
 		--####
-		if (GetConVar("acfmenu_data12") == 1) then --if fuel required, show max power with fuel at top, no point in doing it twice
-			--acfmenupanel:CPanelText("Power", "\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
+		if GetConVarNumber("acfmenu_data12") == 1 then --if fuel required, show max power with fuel at top, no point in doing it twice
 			TextPower = vgui.Create( "DLabel" )
 				TextPower:SetText( "Peak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
 				TextPower:SetTextColor(Color(0,0,200,255))
 				TextPower:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextPower )
-			--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
-			TextTorque = vgui.Create( "DLabel" )
-				TextTorque:SetText( "Peak Torque : "..(GetConVar("acfmenu_data3")*ACF.TorqueBoost).." n/m  / "..math.Round(GetConVar("acfmenu_data3")*ACF.TorqueBoost*0.73).." ft-lb")
-				TextTorque:SetTextColor(Color(0,0,200,255))
-				TextTorque:SetFont( "DefaultBold" )
-			acfmenupanel.CustomDisplay:AddItem( TextTorque )
 			
 			TextFuelreq = vgui.Create( "DLabel" )
 				TextFuelreq:SetText( "REQUIRES FUEL")
@@ -265,33 +275,20 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 				TextFuelreq:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextFuelreq )
 		else
-			--acfmenupanel:CPanelText("Power", "\nPeak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM")
 			TextPower = vgui.Create( "DLabel" )
 				TextPower:SetText( "Peak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM")
 				TextPower:SetTextColor(Color(0,0,200,255))
 				TextPower:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextPower )
-			--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
-			TextTorque = vgui.Create( "DLabel" )
-				TextTorque:SetText( "Peak Torque : "..GetConVar("acfmenu_data3").." n/m  / "..math.Round(GetConVar("acfmenu_data3")*0.73).." ft-lb")
-				TextTorque:SetTextColor(Color(0,0,200,255))
-				TextTorque:SetFont( "DefaultBold" )
-			acfmenupanel.CustomDisplay:AddItem( TextTorque )
-			--acfmenupanel:CPanelText("FueledPower", "\nWhen supplied with fuel:\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
+			
 			TextFueledPower = vgui.Create( "DLabel" )
 				TextFueledPower:SetText( "When supplied with fuel:\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
 				TextFueledPower:SetTextColor(Color(200,0,0,255))
 				TextFueledPower:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextFueledPower )
-			--acfmenupanel:CPanelText("FueledTorque", "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
-			TextFueledTorque = vgui.Create( "DLabel" )
-				TextFueledTorque:SetText( "Peak Torque : "..(GetConVar("acfmenu_data3")*ACF.TorqueBoost).." n/m  / "..math.Round(GetConVar("acfmenu_data3")*ACF.TorqueBoost*0.73).." ft-lb")
-				TextFueledTorque:SetTextColor(Color(200,0,0,255))
-				TextFueledTorque:SetFont( "DefaultBold" )
-			acfmenupanel.CustomDisplay:AddItem( TextFueledTorque )
 		end
 		--###################
-		if (GetConVar("acfmenu_data11") == "Electric") then
+		if GetConVarString("acfmenu_data11") == "Electric" then
 			local cons = ACF.ElecRate * peakkw / ACF.Efficiency[GetConVar("acfmenu_data13")]
 			--acfmenupanel:CPanelText("FuelCons", "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
 			TextFuelCons = vgui.Create( "DLabel" )
@@ -299,9 +296,9 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 				TextFuelCons:SetTextColor(Color(0,0,200,255))
 				TextFuelCons:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextFuelCons )
-		elseif (GetConVar("acfmenu_data11") == "Any") then
-			local petrolcons = ACF.FuelRate * ACF.Efficiency[GetConVar("acfmenu_data13")] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
-			local dieselcons = ACF.FuelRate * ACF.Efficiency[GetConVar("acfmenu_data13")] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
+		elseif GetConVarString("acfmenu_data11") == "Any" then
+			local petrolcons = ACF.FuelRate * ACF.Efficiency[GetConVarString("acfmenu_data13")] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
+			local dieselcons = ACF.FuelRate * ACF.Efficiency[GetConVarString("acfmenu_data13")] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
 			--acfmenupanel:CPanelText("FuelConsP", "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
 			TextFuelConsP = vgui.Create( "DLabel" )
 				TextFuelConsP:SetText( "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
@@ -315,14 +312,14 @@ function ACF_ModingSound( Mod, Mod1, Value, ID )
 				TextFuelConsD:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextFuelConsD )
 		else
-			local fuelcons = ACF.FuelRate * ACF.Efficiency[GetConVar("acfmenu_data13")] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[GetConVar("acfmenu_data11")])
+			local fuelcons = ACF.FuelRate * ACF.Efficiency[GetConVarString("acfmenu_data13")] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[GetConVarString("acfmenu_data11")])
 			--acfmenupanel:CPanelText("FuelCons", (Table.fuel).." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
 			TextFuelCons = vgui.Create( "DLabel" )
-				TextFuelCons:SetText( GetConVar("acfmenu_data11").." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
+				TextFuelCons:SetText( GetConVarString("acfmenu_data11").." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
 				TextFuelCons:SetTextColor(Color(0,0,200,255))
 				TextFuelCons:SetFont( "DefaultBold" )
 			acfmenupanel.CustomDisplay:AddItem( TextFuelCons )
-		end
+		end*/
 		--###################
 		
 	UpdateAll = vgui.Create("DButton")

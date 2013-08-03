@@ -50,3 +50,14 @@ r73
 -->Fixed engine Working without tank BUG
 -->Fixed engine Stop while running out of gaz
 -->Added Consumption in Gui
+
+*r82
+-7.57
+-->Consumption update while changing value's
+-->Customizable Engine's Menu Fix
+-->Added Fuel menu for Engine Maker
+-->Engine Maker Client Menu Fix
+-->Wankel Fix for Engine Maker
+-->Added Value's in Engine Maker Save Menu
+-->Engine Maker Update Engine Model Fix
+-->Fixed Consumption on engine's created

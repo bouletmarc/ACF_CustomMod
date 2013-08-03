@@ -105,8 +105,9 @@ function ACFEngine2GUICreate( Table )
 	--####
 	local peakkw = TorqueVal * PeakRpmval / 9548.8
 	local peakkwrpm = PeakRpmval
-	local TorqueValueTrue = TorqueVal
-	local PeakValueTrue = PeakRpmval
+	--menu updating value's
+	RunConsoleCommand( "acfmenu_data8", Table.fuel )
+	RunConsoleCommand( "acfmenu_data9", Table.enginetype )
 	--####
 	if Table.requiresfuel then --if fuel required, show max power with fuel at top, no point in doing it twice
 		--acfmenupanel:CPanelText("Power", "\nPeak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
@@ -326,13 +327,26 @@ function ACF_ModingSlider5(Mod, Value, ID, Desc)
 end
 
 function ACF_UpdatingPanel()
-	local TorqueValueTrue = tonumber(GetConVar("acfmenu_data1")) or 10
-	local PeakValueTrue = tonumber(GetConVar("acfmenu_data4")) or 10
-	local peakkw = TorqueValueTrue * PeakValueTrue / 9548.8
-	local peakkwrpm = PeakValueTrue
+	--Get Value's
+	local TorqueVal = GetConVarNumber("acfmenu_data1")
+	local PeakRpmval = GetConVarNumber("acfmenu_data4")
+	local FuelTypeText = GetConVar("acfmenu_data8")
+	local EngineTypeText = GetConVar("acfmenu_data9")
+	--Set Value's
+	local peakkw = TorqueVal * PeakRpmval / 9548.8
+	local peakkwrpm = PeakRpmval
 	TextPower:SetText( "Peak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM")
-	local petrolcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
-	local dieselcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
-	TextFuelConsP:SetText( "Petrol Use at "..peakkwrpm.." rpm \n "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
-	TextFuelConsD:SetText( "Diesel Use at "..peakkwrpm.." rpm \n "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min")
+	if FuelTypeText == "Electric" then
+		local cons = ACF.ElecRate * peakkw / ACF.Efficiency[EngineTypeText]
+		TextFuelCons:SetText( "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
+	elseif FuelTypeText == "Any" then
+		local petrolcons = ACF.FuelRate * ACF.Efficiency[EngineTypeText] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
+		local dieselcons = ACF.FuelRate * ACF.Efficiency[EngineTypeText] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
+		TextFuelConsP:SetText( "Petrol Use at "..peakkwrpm.." rpm \n "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
+		TextFuelConsD:SetText( "Diesel Use at "..peakkwrpm.." rpm \n "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min")
+	else
+		local fuelcons = ACF.FuelRate * ACF.Efficiency[EngineTypeText] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[FuelTypeText])
+		TextFuelCons:SetText( FuelTypeText.." Use at "..peakkwrpm.." rpm \n "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
+	end
+	
 end

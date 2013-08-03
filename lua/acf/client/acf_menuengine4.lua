@@ -60,6 +60,9 @@ local function CreateSoundBrowser(path)
 		TabFavourites2:AddItem("7. Limit : "..GetConVarString("acfmenu_data7"), "number")
 		TabFavourites2:AddItem("8. Flywheel : "..GetConVarString("acfmenu_data8"), "number")
 		TabFavourites2:AddItem("9. Weight : "..GetConVarString("acfmenu_data9"), "number")
+		TabFavourites2:AddItem("10. Fuel : "..GetConVarString("acfmenu_data11"), "string")
+		TabFavourites2:AddItem("11. Use Fuel : "..GetConVarString("acfmenu_data12"), "number")
+		TabFavourites2:AddItem("12. EngineType : "..GetConVarString("acfmenu_data13"), "string")
 
 	--Button Panel
 	local ButtonsSidePanel = SoundBrowserPanel:Add("DPanel") // The buttons.

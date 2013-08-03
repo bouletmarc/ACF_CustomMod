@@ -5,8 +5,8 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 415 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 7.56
-ACF.Version2 = 81
+ACF.VersionCustom = 7.57
+ACF.Version2 = 82
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -86,6 +86,7 @@ AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 AddCSLuaFile( "acf/client/cl_acfrender.lua" )
 AddCSLuaFile( "acf/client/acf_menu.lua" )
 AddCSLuaFile( "acf/client/acf_menustart.lua" )
+AddCSLuaFile( "acf/client/acf_menuenginefuel.lua" )
 AddCSLuaFile( "acf/client/acf_menuengine.lua" )
 AddCSLuaFile( "acf/client/acf_menuengine2.lua" )
 AddCSLuaFile( "acf/client/acf_menuengine3.lua" )

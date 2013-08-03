@@ -11,7 +11,7 @@ AccessorFunc( PANEL, "m_strFile", 			"File" ) // sounds listed in list files
 AccessorFunc( PANEL, "m_bUnsaved", 			"Unsaved" ) // edited list file Saved?
 
 local max_char_count = 200 //File length limit
-local max_item_count = 10 //Item count limit
+local max_item_count = 12 //Item count limit
 
 local invalid_filename_chars = {
 	["*"] = "",

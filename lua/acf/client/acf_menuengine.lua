@@ -127,6 +127,9 @@ local function CreateSoundBrowser()
 				if Eng2 == "small" then Eng2 = "s" end
 				if Eng2 == "med" then Eng2 = "m" end
 				if Eng2 == "large" then Eng2 = "l" end
+				if Eng2 == "2_small" then Eng2 = "s" end
+				if Eng2 == "2_med" then Eng2 = "m" end
+				if Eng2 == "3_med" then Eng2 = "l" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -149,6 +152,9 @@ local function CreateSoundBrowser()
 				if Eng2 == "small" then Eng2 = "s" end
 				if Eng2 == "med" then Eng2 = "m" end
 				if Eng2 == "large" then Eng2 = "l" end
+				if Eng2 == "2_small" then Eng2 = "s" end
+				if Eng2 == "2_med" then Eng2 = "m" end
+				if Eng2 == "3_med" then Eng2 = "l" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -171,6 +177,9 @@ local function CreateSoundBrowser()
 				if Eng2 == "s" then Eng2 = "small" end
 				if Eng2 == "m" then Eng2 = "med" end
 				if Eng2 == "l" then Eng2 = "large" end
+				if Eng2 == "2_small" then Eng2 = "small" end
+				if Eng2 == "2_med" then Eng2 = "med" end
+				if Eng2 == "3_med" then Eng2 = "large" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -193,6 +202,9 @@ local function CreateSoundBrowser()
 				if Eng2 == "small" then Eng2 = "s" end
 				if Eng2 == "med" then Eng2 = "m" end
 				if Eng2 == "large" then Eng2 = "l" end
+				if Eng2 == "2_small" then Eng2 = "s" end
+				if Eng2 == "2_med" then Eng2 = "m" end
+				if Eng2 == "3_med" then Eng2 = "l" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -215,6 +227,9 @@ local function CreateSoundBrowser()
 				if Eng2 == "small" then Eng2 = "s" end
 				if Eng2 == "med" then Eng2 = "m" end
 				if Eng2 == "large" then Eng2 = "l" end
+				if Eng2 == "2_small" then Eng2 = "s" end
+				if Eng2 == "2_med" then Eng2 = "m" end
+				if Eng2 == "3_med" then Eng2 = "l" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -232,11 +247,14 @@ local function CreateSoundBrowser()
 			CheckBoxEng6:SetTextColor(Color(0,0,200,255))
 			CheckBoxEng6:SetChecked( false )
 			CheckBoxEng6.OnChange = function( )
-				Eng1 = "wankel"
+				Eng1 = "wankel_"
 				CheckBoxSize3:SetDisabled( false )
-				if Eng2 == "s" then Eng2 = "small" end
-				if Eng2 == "m" then Eng2 = "med" end
-				if Eng2 == "l" then Eng2 = "large" end
+				if Eng2 == "s" then Eng2 = "2_small" end
+				if Eng2 == "m" then Eng2 = "2_med" end
+				if Eng2 == "l" then Eng2 = "3_med" end
+				if Eng2 == "small" then Eng2 = "2_small" end
+				if Eng2 == "med" then Eng2 = "2_med" end
+				if Eng2 == "large" then Eng2 = "3_med" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -259,11 +277,13 @@ local function CreateSoundBrowser()
 				CheckBoxSize3:SetDisabled( true )
 				if Eng2 == "s" then Eng2 = "small" end
 				if Eng2 == "m" then Eng2 = "med" end
-				if Eng2 == "l" or Eng2 == "large" then 
+				if Eng2 == "l" or Eng2 == "large" or "3_med" then 
 					Eng2 = "med" 
 					CheckBoxSize3:SetChecked( false )
 					CheckBoxSize2:SetChecked( true )
 				end --change to medium
+				if Eng2 == "2_small" then Eng2 = "small" end
+				if Eng2 == "2_med" then Eng2 = "med" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -287,6 +307,9 @@ local function CreateSoundBrowser()
 				if Eng2 == "s" then Eng2 = "small" end
 				if Eng2 == "m" then Eng2 = "med" end
 				if Eng2 == "l" then Eng2 = "large" end
+				if Eng2 == "2_small" then Eng2 = "small" end
+				if Eng2 == "2_med" then Eng2 = "med" end
+				if Eng2 == "3_med" then Eng2 = "large" end
 				
 				SetupModelText(Eng1, Eng2, CheckBoxEng, CheckBoxEng2, CheckBoxEng3, CheckBoxEng4, CheckBoxEng5, CheckBoxEng6, CheckBoxEng7, CheckBoxEng8, EngineModel, DisplayModel)
 				
@@ -319,6 +342,8 @@ local function CreateSoundBrowser()
 			CheckBoxSize.OnChange = function( )
 				if Eng1 == "v8" or Eng1 == "v12" or Eng1 == "inline4" or Eng1 == "inline6" then
 					Eng2 = "s"
+				elseif Eng1 == "wankel_" then
+					Eng2 = "2_small"
 				else
 					Eng2 = "small"
 				end
@@ -338,6 +363,8 @@ local function CreateSoundBrowser()
 			CheckBoxSize2.OnChange = function( )
 				if Eng1 == "v8" or Eng1 == "v12" or Eng1 == "inline4" or Eng1 == "inline6" then
 					Eng2 = "m"
+				elseif Eng1 == "wankel_" then
+					Eng2 = "2_med"
 				else
 					Eng2 = "med"
 				end
@@ -357,6 +384,8 @@ local function CreateSoundBrowser()
 			CheckBoxSize3.OnChange = function( )
 				if Eng1 == "v8" or Eng1 == "v12" or Eng1 == "inline4" or Eng1 == "inline6" then
 					Eng2 = "l"
+				elseif Eng1 == "wankel_" then
+					Eng2 = "3_med"
 				else
 					Eng2 = "large"
 				end
@@ -409,7 +438,7 @@ local function CreateSoundBrowser()
 		BackButton:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.8)
 		BackButton:SetTall( 40 )
 		BackButton.DoClick = function()
-			RunConsoleCommand("acf_start_browser_open")
+			RunConsoleCommand("acf_enginefuel_browser_open")
 			StartBrowserPanel:Close()
 		end
 			
