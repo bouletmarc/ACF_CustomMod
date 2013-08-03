@@ -68,9 +68,10 @@ function ACFEngine3GUICreate( Table )
 		
 	--acfmenupanel:CPanelText("Desc", Table.desc)
 	TextDesc = vgui.Create( "DLabel" )
-		TextDesc:SetText( "Desc : "..Table.desc)
+		TextDesc:SetText( "\nDesc : "..Table.desc)
 		TextDesc:SetTextColor(Color(0,0,200,255))
 		TextDesc:SetFont( "DefaultBold" )
+		TextDesc:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextDesc )
 	
 	--####################

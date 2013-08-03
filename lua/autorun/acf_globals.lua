@@ -2,11 +2,11 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 415 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 416 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 7.57
-ACF.Version2 = 82
+ACF.VersionCustom = 7.58
+ACF.Version2 = 83
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -51,6 +51,7 @@ ACF.CuIToLiter = 0.0163871 -- cubic inches to liters
 ACF.FuelDensity = {}
 ACF.FuelDensity["Diesel"] = 0.832  --kg/liter
 ACF.FuelDensity["Petrol"] = 0.745
+ACF.FuelDensity["PlanePetrol"] = 0.795
 ACF.FuelDensity["Electric"] = 3.89 -- li-ion
 
 ACF.Efficiency = {} --how efficient various engine types are
@@ -99,6 +100,7 @@ AddCSLuaFile( "acf/client/acf_menuengineloadcustom.lua" )
 AddCSLuaFile( "acf/client/acf_menuengineload.lua" )
 AddCSLuaFile( "acf/client/acf_menuengineloaded.lua" )
 AddCSLuaFile( "acf/client/acf_menuhelp.lua" )
+AddCSLuaFile( "acf/client/acf_menuhelporiginal.lua" )
 
 if (SERVER) then
 	util.AddNetworkString( "ACF_KilledByACF" )
@@ -117,6 +119,7 @@ elseif (CLIENT) then
 	include("acf/client/acf_menu.lua")
 	include("acf/client/acf_menustart.lua")
 	include("acf/client/acf_menuengine.lua")
+	include("acf/client/acf_menuenginefuel.lua")
 	include("acf/client/acf_menuengine2.lua")
 	include("acf/client/acf_menuengine3.lua")
 	include("acf/client/acf_menuengine4.lua")
@@ -128,6 +131,7 @@ elseif (CLIENT) then
 	include("acf/client/acf_menuengineload.lua")
 	include("acf/client/acf_menuengineloaded.lua")
 	include("acf/client/acf_menuhelp.lua")
+	include("acf/client/acf_menuhelporiginal.lua")
 	--include("ACF/Client/cl_ACFMenu_GUI.lua")
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )

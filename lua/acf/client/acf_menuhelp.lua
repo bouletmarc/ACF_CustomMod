@@ -54,10 +54,9 @@ local function CreateSoundBrowser()
 		end
 		
 		HelpHormal = ButtonsSidePanel:Add("DButton") // The play button.
-		HelpHormal:SetText("Help me with Normal ACF -SOON-")
+		HelpHormal:SetText("Help me with Normal ACF")
 		HelpHormal:SetTextColor(Color(0,0,255,255))
 		HelpHormal:SetPos( 20, 170 )
-		HelpHormal:SetDisabled( true )--disabled
 		HelpHormal:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
 		HelpHormal:SetTall( 60 )
 		HelpHormal.DoClick = function()

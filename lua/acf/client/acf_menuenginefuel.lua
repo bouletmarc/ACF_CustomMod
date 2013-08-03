@@ -13,7 +13,7 @@ local function CreateSoundBrowser()
 	StartBrowserPanel:SetMinHeight(400)
 	
 	StartBrowserPanel:SetDeleteOnClose( false )
-	StartBrowserPanel:SetTitle("Engine Menu V3.3 - SETUP MENU SUITE")
+	StartBrowserPanel:SetTitle("Engine Menu V3.3 - FUEL MENU")
 	StartBrowserPanel:SetVisible(false)
 	StartBrowserPanel:SetCookieName( "wire_sound_browser" )
 	StartBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.

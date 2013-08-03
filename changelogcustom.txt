@@ -8,7 +8,7 @@ r73
 *r75
 --Updated ChangeLog Custom
 --Quick cl_menu fix
--->BUG : SetText got a nil value
+---->BUG : SetText got a nil value
 
 *r76
 --Fixed Chips Wires Duping
@@ -43,7 +43,7 @@ r73
 -7.55
 -->Client Menu Fix
 -->Changlog Fix
---> SetText Fix
+-->SetText Fix
 
 *r81
 -7.56
@@ -61,3 +61,13 @@ r73
 -->Added Value's in Engine Maker Save Menu
 -->Engine Maker Update Engine Model Fix
 -->Fixed Consumption on engine's created
+
+*r83
+-7.58
+-->Updated to Revision 416
+-->Quick Engine Fix
+-->Engine Maker Fuel Menu Renamed
+-->Help menu for Original ACF Created
+-->All Engine's or Almost might Require Fuel
+-->Turbine Engine's Require PlanePetrol
+-->Customizable Engine Menu Fix

@@ -107,21 +107,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	else
 		Engine.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * peakkw / (60 * 60)
 	end
-	
-	--############
-	--calculate Fuel Usage for Gui
-	local GuiFuelText = ""
-	if Engine.FuelType == "Electric" then
-		local cons = ACF.ElecRate * peakkw / ACF.Efficiency[Engine.EngineType]
-		GuiFuelText = "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min"
-	elseif Engine.FuelType == "Any" then
-		local petrolcons = ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Petrol"])
-		local dieselcons = ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity["Diesel"])
-		GuiFuelText = "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min \nDiesel Use at "..peakkwrpm.." rpm : "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min"
-	else
-		local fuelcons = ACF.FuelRate * ACF.Efficiency[Engine.EngineType] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[Engine.FuelType])
-		GuiFuelText = Engine.FuelType.." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min"
-	end
 
 	Engine.FlyRPM = 0
 	Engine:SetModel( Engine.Model )	

@@ -77,24 +77,25 @@ function ACFEngine2GUICreate( Table )
 		
 	--acfmenupanel:CPanelText("Desc", Table.desc)
 	TextDesc = vgui.Create( "DLabel" )
-		TextDesc:SetText( "Desc : "..Table.desc)
+		TextDesc:SetText( "\nDesc : "..Table.desc)
 		TextDesc:SetTextColor(Color(0,0,200,255))
 		TextDesc:SetFont( "DefaultBold" )
+		TextDesc:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextDesc )
 	
-	local TorqueVal = 0
-	local PeakRpmval = 0
+	--local TorqueVal = 0
+	--local PeakRpmval = 0
 	for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
 		if ID == 1 then
 			ACF_ModingSlider1(1, Value, Table.id, "Torque")
-			TorqueVal = Value
+			--TorqueVal = Value
 		elseif ID == 2 then
 			ACF_ModingSlider2(2, Value, Table.id, "Idle Rpm")
 		elseif ID == 3 then
 			ACF_ModingSlider3(3, Value, Table.id, "Peak Minimum Rpm")
 		elseif ID == 4 then
 			ACF_ModingSlider4(4, Value, Table.id, "Peak Maximum Rpm")
-			PeakRpmval = Value
+			--PeakRpmval = Value
 		elseif ID == 5 then
 			ACF_ModingSlider4(5, Value, Table.id, "Limit Rpm")
 		elseif ID == 6 then
@@ -103,7 +104,7 @@ function ACFEngine2GUICreate( Table )
 	end
 	
 	--####
-	local peakkw = TorqueVal * PeakRpmval / 9548.8
+	/*local peakkw = TorqueVal * PeakRpmval / 9548.8
 	local peakkwrpm = PeakRpmval
 	--menu updating value's
 	RunConsoleCommand( "acfmenu_data8", Table.fuel )
@@ -117,11 +118,11 @@ function ACFEngine2GUICreate( Table )
 			TextPower:SetFont( "DefaultBold" )
 		acfmenupanel.CustomDisplay:AddItem( TextPower )
 		--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
-		/*TextTorque = vgui.Create( "DLabel" )
+		TextTorque = vgui.Create( "DLabel" )
 			TextTorque:SetText( "Peak Torque : "..(TorqueVal*ACF.TorqueBoost).." n/m  / "..math.Round(TorqueVal*ACF.TorqueBoost*0.73).." ft-lb")
 			TextTorque:SetTextColor(Color(0,0,200,255))
 			TextTorque:SetFont( "DefaultBold" )
-		acfmenupanel.CustomDisplay:AddItem( TextTorque )*/
+		acfmenupanel.CustomDisplay:AddItem( TextTorque )
 	else
 		--acfmenupanel:CPanelText("Power", "\nPeak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM")
 		TextPower = vgui.Create( "DLabel" )
@@ -130,12 +131,12 @@ function ACFEngine2GUICreate( Table )
 			TextPower:SetFont( "DefaultBold" )
 		acfmenupanel.CustomDisplay:AddItem( TextPower )
 		--acfmenupanel:CPanelText("Torque", "Peak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
-		/*TextTorque = vgui.Create( "DLabel" )
+		TextTorque = vgui.Create( "DLabel" )
 			TextTorque:SetText( "Peak Torque : "..TorqueVal.." n/m  / "..math.Round(TorqueVal*0.73).." ft-lb")
 			TextTorque:SetTextColor(Color(0,0,200,255))
 			TextTorque:SetFont( "DefaultBold" )
-		acfmenupanel.CustomDisplay:AddItem( TextTorque )*/
-	end
+		acfmenupanel.CustomDisplay:AddItem( TextTorque )
+	end*/
 	--acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 	TextWeight = vgui.Create( "DLabel" )
 		TextWeight:SetText( "Weight : "..(Table.weight).." kg")
@@ -149,7 +150,7 @@ function ACFEngine2GUICreate( Table )
 		TextFuelType:SetFont( "DefaultBold" )
 	acfmenupanel.CustomDisplay:AddItem( TextFuelType )
 	
-	if Table.fuel == "Electric" then
+	/*if Table.fuel == "Electric" then
 		local cons = ACF.ElecRate * peakkw / ACF.Efficiency[Table.enginetype]
 		--acfmenupanel:CPanelText("FuelCons", "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
 		TextFuelCons = vgui.Create( "DLabel" )
@@ -180,7 +181,7 @@ function ACFEngine2GUICreate( Table )
 			TextFuelCons:SetTextColor(Color(0,0,200,255))
 			TextFuelCons:SetFont( "DefaultBold" )
 		acfmenupanel.CustomDisplay:AddItem( TextFuelCons )
-	end
+	end*/
 	
 	if Table.requiresfuel then
 		--acfmenupanel:CPanelText("Fuelreq", "REQUIRES FUEL")
@@ -228,7 +229,7 @@ function ACF_ModingSlider1(Mod, Value, ID, Desc, TorqueValueTrue)
 			acfmenupanel["CData"][Mod].OnValueChanged = function( slider, val )
 				acfmenupanel.ModData[slider.ID]["ModTable"][slider.Mod] = val
 				RunConsoleCommand( "acfmenu_data"..Mod, val )
-				ACF_UpdatingPanel()
+				--ACF_UpdatingPanel()
 			end
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Mod] )
 	end
@@ -295,9 +296,9 @@ function ACF_ModingSlider4(Mod, Value, ID, Desc, PeakValueTrue)
 			acfmenupanel["CData"][Mod].OnValueChanged = function( slider, val )
 				acfmenupanel.ModData[slider.ID]["ModTable"][slider.Mod] = val
 				RunConsoleCommand( "acfmenu_data"..Mod, val )
-				if Mod == 4 then
+				/*if Mod == 4 then
 					ACF_UpdatingPanel()
-				end
+				end*/
 			end
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Mod] )
 	end
@@ -326,7 +327,7 @@ function ACF_ModingSlider5(Mod, Value, ID, Desc)
 
 end
 
-function ACF_UpdatingPanel()
+/*function ACF_UpdatingPanel()
 	--Get Value's
 	local TorqueVal = GetConVarNumber("acfmenu_data1")
 	local PeakRpmval = GetConVarNumber("acfmenu_data4")
@@ -349,4 +350,4 @@ function ACF_UpdatingPanel()
 		TextFuelCons:SetText( FuelTypeText.." Use at "..peakkwrpm.." rpm \n "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
 	end
 	
-end
+end*/

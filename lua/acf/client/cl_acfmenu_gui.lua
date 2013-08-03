@@ -516,8 +516,6 @@ function ACFHomeGUICreate( Table )
 	end
 	acfmenupanel.CustomDisplay:AddItem( HelpText1 )
 	
-	--#########
-	
 	--acfmenupanel:CPanelText("Header", "Changelog")
 	TextLog= vgui.Create( "DLabel" )
 		TextLog:SetText( "Changelog")
@@ -548,27 +546,26 @@ function ACFHomeGUICreate( Table )
 		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
 	end
 	--#################
-	/*
-	if acfmenupanel.Changelog then
-		acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
-		for Rev,Changes in pairs(acfmenupanel.Changelog) do
+	/*if acfmenupanel.Changelog2 then
+		acfmenupanel["CData"]["Changelist2"] = vgui.Create( "DTree" )
+		for Rev2,Changes in pairs(acfmenupanel.Changelog2) do
 			
-			local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
+			local Node = acfmenupanel["CData"]["Changelist2"]:AddNode( "Rev2 "..Rev2 )
 			Node.mytable = {}
-				Node.mytable["rev"] = Rev
+				Node.mytable["rev2"] = Rev2
 			function Node:DoClick()
 				acfmenupanel:UpdateAttribs( Node.mytable )
 			end
 			Node.Icon:SetImage( "gui/silkicons/newspaper" )
 			
 		end	
-		acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
+		acfmenupanel.CData.Changelist2:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
 		
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
+		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist2"] )
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
-		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
+		acfmenupanel:UpdateAttribs( {rev2 = table.maxn(acfmenupanel.Changelog2)} )
 	end*/
 	
 end
@@ -585,13 +582,33 @@ function ACFHomeGUIUpdate( Table )
 	acfmenupanel.CustomDisplay:AddItem( TextLog2 )
 	acfmenupanel.CustomDisplay:PerformLayout()*/
 	
-	TextLog3 = vgui.Create( "DLabel" )
-		TextLog3:SetText( acfmenupanel.Changelog[Table["rev"]])
-		TextLog3:SetTextColor(Color(0,0,200,255))
+	TextLog1 = vgui.Create( "DLabel" )
+		TextLog1:SetText( "Custom Changlog :")
+		TextLog1:SetTextColor(Color(200,0,0,255))
+		TextLog1:SetFont( "DefaultBold" )
+		TextLog1:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( TextLog1 )
+	
+	TextLog2 = vgui.Create( "DLabel" )
+		TextLog2:SetText( acfmenupanel.Changelog[Table["rev"]])
+		TextLog2:SetTextColor(Color(0,0,200,255))
+		TextLog2:SetFont( "DefaultBold" )
+		TextLog2:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( TextLog2 )
+	
+	/*TextLog3 = vgui.Create( "DLabel" )
+		TextLog3:SetText( "Original Changlog :")
+		TextLog3:SetTextColor(Color(200,0,0,255))
 		TextLog3:SetFont( "DefaultBold" )
 		TextLog3:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextLog3 )
-	acfmenupanel.CustomDisplay:PerformLayout()
+	
+	TextLog4 = vgui.Create( "DLabel" )
+		TextLog4:SetText( acfmenupanel.Changelog2[Table["rev2"]])
+		TextLog4:SetTextColor(Color(0,0,200,255))
+		TextLog4:SetFont( "DefaultBold" )
+		TextLog4:SizeToContents()
+	acfmenupanel.CustomDisplay:AddItem( TextLog4 )*/
 	
 	local color
 	local versionstring
@@ -622,6 +639,7 @@ function ACFHomeGUIUpdate( Table )
 	VersionT3:SetColor(color2)
 	VersionT3:SizeToContents()
 	
+	acfmenupanel.CustomDisplay:PerformLayout()	
 end
 
 function ACFChangelogHTTPCallBack(contents , size)
@@ -641,14 +659,14 @@ function ACFChangelogHTTPCallBack(contents , size)
 end
 http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelogHTTPCallBack, function() end)
 
-/*function ACFChangelogHTTPCallBack(contents , size)
+/*function ACFChangelog2HTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	
-	acfmenupanel.Changelog = {}
+	acfmenupanel.Changelog2 = {}
 	for Key,String in pairs(Temp) do
-		acfmenupanel.Changelog[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
+		acfmenupanel.Changelog2[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
 	end
-	table.SortByKey(acfmenupanel.Changelog,true)
+	table.SortByKey(acfmenupanel.Changelog2,true)
 	
 	local Table = {}
 		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
@@ -656,7 +674,7 @@ http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcust
 	acfmenupanel:UpdateDisplay( Table )
 
 end
-http.Fetch("http://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)*/
+http.Fetch("https://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelog2HTTPCallBack, function() end)*/
 
 function PANEL:AmmoSelect( Blacklist )
 	

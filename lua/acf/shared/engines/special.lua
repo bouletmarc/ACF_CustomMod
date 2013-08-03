@@ -81,6 +81,7 @@ ACF_DefineEngine( "13.0-V12", {
 	category = "Special",
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
+	requiresfuel = true,
 	weight = 520,
 	torque = 600,
 	flywheelmass = 1,
