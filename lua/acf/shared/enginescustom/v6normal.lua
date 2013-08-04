@@ -7,7 +7,7 @@ ACF_DefineEngine4( "3.2-V62", {
 	model = "models/engines/v6small.mdl",
 	sound = "/engines/v6/newv6.wav",
 	category = "V6 series",
-	fuel = "Petrol",
+	fuel = "Petrol-94",
 	enginetype = "GenericPetrol",
 	requiresfuel = true,
 	weight = 110,

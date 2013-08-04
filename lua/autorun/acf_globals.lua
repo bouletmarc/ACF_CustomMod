@@ -5,8 +5,8 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 416 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 7.58
-ACF.Version2 = 83
+ACF.VersionCustom = 7.62
+ACF.Version2 = 84
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -51,6 +51,9 @@ ACF.CuIToLiter = 0.0163871 -- cubic inches to liters
 ACF.FuelDensity = {}
 ACF.FuelDensity["Diesel"] = 0.832  --kg/liter
 ACF.FuelDensity["Petrol"] = 0.745
+ACF.FuelDensity["Petrol-94"] = 0.755
+ACF.FuelDensity["Petrol-96"] = 0.765
+ACF.FuelDensity["VP_Racing-112"] = 0.779
 ACF.FuelDensity["PlanePetrol"] = 0.795
 ACF.FuelDensity["Electric"] = 3.89 -- li-ion
 

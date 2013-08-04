@@ -71,3 +71,26 @@ r73
 -->All Engine's or Almost might Require Fuel
 -->Turbine Engine's Require PlanePetrol
 -->Customizable Engine Menu Fix
+
+*r84
+-7.61
+-->Added Temperature Mod
+-7.62
+-->Temp Mod Power Affect
+-->Temp Mod Blow Fix
+-->Temp can decrease while engine Off
+-->Better Consumption Gui decimals
+-->Fuel Mod, More Tanks
+-->Petrol94, 96, VP Racing
+-->Changed Fuel type's on some's engine's
+-->Fixed Engine Updating
+
+-->Engine Temp are 88degree if not changed
+-->Engine Heat Above 109degree
+-->Engine Blow Above 125degree
+-->Engine Lost Health while heating
+-->Engine Lost Power with Health
+-->Engine can use Higher Fuel with RISK
+-->Higher fuel make heat faster
+-->Higher fuel make more power
+-->lower fuel make less power

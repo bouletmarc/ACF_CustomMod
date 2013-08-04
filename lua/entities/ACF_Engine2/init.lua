@@ -33,7 +33,7 @@ function ENT:Initialize()
 	--####################
 	
 	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
-	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL", "NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Temperature", "Health", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL", "NORMAL", "NORMAL", "NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Engine2"
 
@@ -102,6 +102,23 @@ function MakeACF_Engine2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 			
 		Engine2.Inertia = Engine2.FlywheelMass2*(3.1416)^2
 	--##################################################################################
+	Engine2.PowerFuelExtra = 1
+	--------------------
+	--#### Temperature MOD
+	Engine2.Temp = 0				--Temp at Spawn (Degree)
+	Engine2.TempMax = Lookup["tempmax"] or 88	--Normal Temp (Degree)
+	Engine2.TempWarm = 109			--Warm Temp, Engine take dommage if more than it (Degree)
+	Engine2.TempBlow = 125			--Auto Blow Temp, too high (Degree)
+	Engine2.EngineHealth = Lookup["enginehealth"] or 100	--Engine Health at Spawn
+	Engine2.Blowed = 0
+	--Getting Rpm High Temp
+	Engine2.TempRpmHighPercent = Engine2.LimitRPM * 0.9 --Getting 90% of the Rpm Band
+	if Engine2.TempRpmHighPercent <= Engine2.PeakMaxRPM then
+		Engine2.TempRpmHigh = Engine2.PeakMaxRPM
+	else
+		Engine2.TempRpmHigh = Engine2.LimitRPM * 0.9
+	end
+	--#####################
 	
 	--calculate boosted peak kw
 	local peakkw
@@ -145,10 +162,14 @@ function MakeACF_Engine2(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 	Engine2:SetNetworkedBeamInt("LimitRPM",Engine2.LimitRPM)
 	--####################################################
 	Engine2:SetNetworkedBeamInt("FlywheelMass2",Engine2.FlywheelMass3*1000)
-	Engine2:SetNetworkedBeamInt("Idle",Engine2.IdleRPM)
-	Engine2:SetNetworkedBeamInt("Weight",Engine2.Weight)
+	--Engine2:SetNetworkedBeamInt("Idle",Engine2.IdleRPM)
+	--Engine2:SetNetworkedBeamInt("Weight",Engine2.Weight)
 	Engine2:SetNetworkedBeamInt("Rpm",Engine2.FlyRPM)
 	Engine2:SetNetworkedBeamInt("Consumption",0)
+	Engine2:SetNetworkedBeamInt("Temp",Engine2.Temp)
+	Engine2:SetNetworkedBeamInt("Health",Engine2.EngineHealth)
+	Wire_TriggerOutput(Engine2.Entity, "Temperature", Engine2.Temp)
+	Wire_TriggerOutput(Engine2.Entity, "Health", Engine2.EngineHealth)
 	--####################################################
 
 	Owner:AddCount("_acf_engine2", Engine2)
@@ -232,6 +253,21 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 
 	self.Inertia = self.FlywheelMass2*(3.1416)^2
 	--##################################################################################
+	--#### Temperature MOD
+	self.Temp = 0				--Temp at Spawn (Degree)
+	self.TempMax = Lookup["tempmax"] or 88	--Normal Temp (Degree)
+	self.TempWarm = 109			--Warm Temp, Engine take dommage if more than it (Degree)
+	self.TempBlow = 125			--Auto Blow Temp, too high (Degree)
+	self.EngineHealth = Lookup["enginehealth"] or 100	--Engine Health at Spawn
+	self.Blowed = 0
+	--Getting Rpm High Temp
+	self.TempRpmHighPercent = 0.9*self.LimitRPM --Getting 90% of the Rpm Band
+	if self.TempRpmHighPercent <= self.PeakMaxRPM then
+		self.TempRpmHigh = self.PeakMaxRPM
+	else
+		self.TempRpmHigh = 0.9*self.LimitRPM
+	end
+	--#####################
 	
 	--calculate boosted peak kw
 	local peakkw
@@ -267,10 +303,14 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self:SetNetworkedBeamInt("LimitRPM",self.LimitRPM)
 	--################################################
 	self:SetNetworkedBeamInt("FlywheelMass2",self.FlywheelMass3*1000)
-	self:SetNetworkedBeamInt("Idle",self.IdleRPM)
-	self:SetNetworkedBeamInt("Weight",self.Weight)
+	--self:SetNetworkedBeamInt("Idle",self.IdleRPM)
+	--self:SetNetworkedBeamInt("Weight",self.Weight)
 	self:SetNetworkedBeamInt("Rpm",self.FlyRPM)
 	self:SetNetworkedBeamInt("Consumption",0)
+	self:SetNetworkedBeamInt("Temp",self.Temp)
+	self:SetNetworkedBeamInt("EngineHealth",self.EngineHealth)
+	Wire_TriggerOutput(self, "Temperature", self.Temp)
+	Wire_TriggerOutput(self, "Health", self.EngineHealth)
 	--################################################
 	
 	ACF_Activate( self, 1 )
@@ -332,16 +372,13 @@ function ENT:TriggerInput( iname , value )
 	elseif (iname == "TqAdd") then
 		if (value ~= 0 ) then
 			self.TqAdd = true
-			self.PeakTorque = self.PeakTorque2+value
-			--self.PeakTorque3 = self.PeakTorque2+value
-			self:SetNetworkedBeamInt("Torque",self.PeakTorque)
-			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+			self.PeakTorque3 = self.PeakTorque2+value
 			--Reupdating Consumption #############
 			local peakkw
 			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
-				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+				peakkw = self.PeakTorque3 * self.LimitRPM / (4 * 9548.8)
 			else
-				peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+				peakkw = self.PeakTorque3 * self.PeakMaxRPM / 9548.8
 			end
 			if self.EngineType == "Electric" then else
 				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
@@ -349,16 +386,13 @@ function ENT:TriggerInput( iname , value )
 			--####################################
 		elseif (value == 0 ) then
 			self.TqAdd = false
-			self.PeakTorque = self.PeakTorque2
-			--self.PeakTorque3 = self.PeakTorque2
-			self:SetNetworkedBeamInt("Torque",self.PeakTorque)
-			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
+			self.PeakTorque3 = self.PeakTorque2
 			--Reupdating Consumption #############
 			local peakkw
 			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
-				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+				peakkw = self.PeakTorque3 * self.LimitRPM / (4 * 9548.8)
 			else
-				peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+				peakkw = self.PeakTorque3 * self.PeakMaxRPM / 9548.8
 			end
 			if self.EngineType == "Electric" then else
 				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
@@ -367,14 +401,12 @@ function ENT:TriggerInput( iname , value )
 	elseif (iname == "MaxRpmAdd") then
 		if (value ~= 0 ) then
 			self.MaxRpmAdd = true
-			--self.PeakMaxRPM = self.PeakMaxRPM2+value
 			if( self.PeakMaxRPM2+value <= self.LimitRPM ) then
 				self.PeakMaxRPM = self.PeakMaxRPM2+value
 			elseif( self.PeakMaxRPM2+value > self.LimitRPM ) then
 				self.PeakMaxRPM = self.LimitRPM
 			end
 			self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
-			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
 			--Reupdating Consumption #############
 			local peakkw
 			if self.EngineType == "Turbine" or self.EngineType == "Electric" then else
@@ -388,7 +420,6 @@ function ENT:TriggerInput( iname , value )
 			self.MaxRpmAdd = false
 			self.PeakMaxRPM = self.PeakMaxRPM2
 			self:SetNetworkedBeamInt("MaxRPM",self.PeakMaxRPM)
-			self:SetNetworkedBeamInt("Power", math.floor(self.PeakTorque * self.PeakMaxRPM / 9548.8))
 			--Reupdating Consumption #############
 			local peakkw
 			if self.EngineType == "Turbine" or self.EngineType == "Electric" then else
@@ -439,11 +470,11 @@ function ENT:TriggerInput( iname , value )
 		if (value > 0 ) then
 			self.Idle = true
 			self.IdleRPM = value
-			self:SetNetworkedBeamInt("Idle",self.IdleRPM)
+			--self:SetNetworkedBeamInt("Idle",self.IdleRPM)
 		elseif (value <= 0 ) then
 			self.Idle = false
 			self.IdleRPM = self.Idling
-			self:SetNetworkedBeamInt("Idle",self.IdleRPM)
+			--self:SetNetworkedBeamInt("Idle",self.IdleRPM)
 		end
 	elseif (iname == "DisableCut") then
 		if (value > 0 ) then
@@ -530,6 +561,18 @@ function ENT:Think()
 			self.LastCheck = Time + math.Rand(5, 10)
 		end
 	end
+	
+	--#####
+	self:SetNetworkedBeamInt("Temp",self.Temp)
+	self:SetNetworkedBeamInt("EngineHealth",self.EngineHealth)
+	Wire_TriggerOutput(self, "Temperature", self.Temp)
+	Wire_TriggerOutput(self, "Health", self.EngineHealth)
+	if self.Active == false and self.Temp > 0 then
+		self.Temp = self.Temp-0.02
+	elseif self.Active == false and self.Temp == 0 then
+		self.Temp = 0
+	end
+	--####
 
 	self.LastThink = Time
 	self:NextThink( Time )
@@ -619,11 +662,60 @@ function ENT:CalcRPM()
 		Tank.Fuel = math.max(Tank.Fuel - Consumption,0)
 		boost = ACF.TorqueBoost
 		Wire_TriggerOutput(self, "Fuel Use", math.Round(60*Consumption/DeltaTime,3))
-		self:SetNetworkedBeamInt("Consumption", math.Round(60*Consumption/DeltaTime,3))
+		self:SetNetworkedBeamInt("Consumption", math.Round((60*Consumption/DeltaTime)*100,2))
 	else
 		Wire_TriggerOutput(self, "Fuel Use", 0)
 		self:SetNetworkedBeamInt("Consumption",0)
 	end
+	
+	--#####################
+	--## Temperature Mod ##
+	--Set Decreaser and Increaser Value
+	local HealthDecreaser = 0.1
+	local increaser = 0 --first load
+	if self.FlyRPM <= self.TempRpmHigh then
+		increaser = 0.05
+	elseif self.FlyRPM > self.TempRpmHigh then
+		increaser = 0.07
+	end
+	--## Set Temperature ##
+	--increase
+	if self.Temp <= (self.TempMax / 2) then
+		self.Temp = self.Temp+(increaser*2)
+	elseif self.Temp < (self.TempMax - 1) then
+		self.Temp = self.Temp+increaser
+	--Decrease while safe
+	elseif self.Temp > (self.TempMax + 1) and self.FlyRPM <= self.TempRpmHigh then
+		self.Temp = self.Temp-increaser
+	--Increase while not safe
+	elseif self.FlyRPM > self.TempRpmHigh and self.PowerFuelExtra == 0 then
+		self.Temp = self.Temp+increaser
+	elseif self.FlyRPM > self.TempRpmHigh and self.PowerFuelExtra == 1 then
+		self.Temp = self.Temp+(increaser+0.01)
+	elseif self.FlyRPM > self.TempRpmHigh and self.PowerFuelExtra == 2 then
+		self.Temp = self.Temp+(increaser+0.02)
+	elseif self.FlyRPM > self.TempRpmHigh and self.PowerFuelExtra == 3 then
+		self.Temp = self.Temp+(increaser+0.03)
+	elseif self.FlyRPM > self.TempRpmHigh and self.PowerFuelExtra == 4 then
+		self.Temp = self.Temp+(increaser+0.04)
+	end
+	--Apply Damage if at Dangerous Temp
+	if self.Temp > self.TempWarm and self.Temp < self.TempBlow then
+		self.EngineHealth = self.EngineHealth-HealthDecreaser
+	--Blowing Up
+	elseif self.Temp >= self.TempBlow then
+		self.EngineHealth = 0
+	end
+	if self.EngineHealth <= 0 then
+		self.Blowed = 1
+		self.Active = false
+		self:TriggerInput( "Active" , 0 )
+		self:TriggerInput( "Throttle" , 0 )
+	end
+	
+	--Apply Torque Decreaser with Engine Heatlh
+	TorqueDecreaser = -(((self.PeakTorque3/2)*(self.EngineHealth-100))/100) --Get Percent with Health
+	--####################
 	
 	-- Calculate the current torque from flywheel RPM
 	local TorqueScale = ACF.TorqueScale
@@ -631,7 +723,44 @@ function ENT:CalcRPM()
 	/*if (self.ACF.Health and self.ACF.MaxHealth) then
 		TorqueMult = math.Clamp(((1 - TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, TorqueScale, 1)
 	end*/
-	self.PeakTorque = self.PeakTorqueHeld * TorqueMult
+	--#### Temperature Mod &&& FUEL Mod FOR TORQUEEEEE
+	local PowerFuelAdding
+	if self.PowerFuelExtra == 0 then
+		PowerFuelAdding = 0
+	elseif self.PowerFuelExtra == -4 then
+		PowerFuelAdding = (self.PeakTorque3*40)/100 -- -40% more power
+	elseif self.PowerFuelExtra == -3 then
+		PowerFuelAdding = (self.PeakTorque3*30)/100 -- -30% more power
+	elseif self.PowerFuelExtra == -2 then
+		PowerFuelAdding = (self.PeakTorque3*20)/100 -- -20% more power
+	elseif self.PowerFuelExtra == -1 then
+		PowerFuelAdding = (self.PeakTorque3*10)/100 -- -10% more power
+	elseif self.PowerFuelExtra == 1 then
+		PowerFuelAdding = (self.PeakTorque3*10)/100 --10% more power
+	elseif self.PowerFuelExtra == 2 then
+		PowerFuelAdding = (self.PeakTorque3*15)/100 --20% more power
+	elseif self.PowerFuelExtra == 3 then
+		PowerFuelAdding = (self.PeakTorque3*25)/100 --30% more power
+	elseif self.PowerFuelExtra == 4 then
+		PowerFuelAdding = (self.PeakTorque3*35)/100 --40% more power
+	end
+	local peakkw
+	if self.PowerFuelExtra >= 0 then
+		self.PeakTorque = ((self.PeakTorque3 * TorqueMult)+PowerFuelAdding) - TorqueDecreaser
+	elseif self.PowerFuelExtra < 0 then
+		self.PeakTorque = ((self.PeakTorque3 * TorqueMult)-PowerFuelAdding) - TorqueDecreaser
+	end
+	if self.EngineType == "Turbine" or self.EngineType == "Electric" then
+		peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
+		self.PeakKwRPM = math.floor(self.LimitRPM / 2)
+	else
+		peakkw = self.PeakTorque * self.PeakMaxRPM / 9548.8
+		self.PeakKwRPM = self.PeakMaxRPM
+	end
+	self:SetNetworkedBeamInt("Torque",self.PeakTorque)
+	self:SetNetworkedBeamInt("Power",peakkw)
+	
+	--######
 	
 	local Drag
 	local TorqueDiff
@@ -751,9 +880,14 @@ function ENT:CalcRPM()
 	self:SetNetworkedBeamInt("Rpm",self.FlyRPM)
 	--##############################################################################################
 	
-	if self.Sound then
+	if self.Sound and self.Blowed == 0 then
 		self.Sound:ChangePitch( math.min( 20 + (SmoothRPM * self.SoundPitch) / 50, 255 ), 0 )
 		self.Sound:ChangeVolume( 0.25 + self.Throttle / 1.5, 0 )
+	end
+	--Blowed SOUND
+	if self.Sound and self.Blowed == 1 then
+		self.Sound:ChangePitch( math.min( 20 + (SmoothRPM * self.SoundPitch) / 50, 255 ), 0 )
+		self.Sound:ChangeVolume( 0.25 + 1 / 1.5, 0 )
 	end
 	
 	return RPM
@@ -834,11 +968,68 @@ function ENT:Link( Target )
 		table.insert( self.GearRope, RopeL )
 	else
 		--fuel tank linking
+		--######################
+		--FUEL MOD
+		local AllowableType = false
+		--Petrol To Other's
+		if self.FuelType == "Petrol" and Target.FuelType == "PlanePetrol" then 
+			AllowableType = true
+			self.PowerFuelExtra = 4
+		elseif self.FuelType == "Petrol" and Target.FuelType == "VP_Racing-112" then 
+			AllowableType = true
+			self.PowerFuelExtra = 3
+		elseif self.FuelType == "Petrol" and Target.FuelType == "Petrol-96" then 
+			AllowableType = true
+			self.PowerFuelExtra = 2
+		elseif self.FuelType == "Petrol" and Target.FuelType == "Petrol-94" then 
+			AllowableType = true
+			self.PowerFuelExtra = 1
+		--Petrol-94 to Other's
+		elseif self.FuelType == "Petrol-94" and Target.FuelType == "Petrol" then 
+			AllowableType = true
+			self.PowerFuelExtra = -1
+		elseif self.FuelType == "Petrol-94" and Target.FuelType == "Petrol-96" then 
+			AllowableType = true
+			self.PowerFuelExtra = 1
+		elseif self.FuelType == "Petrol-94" and Target.FuelType == "VP_Racing-112" then 
+			AllowableType = true
+			self.PowerFuelExtra = 2
+		elseif self.FuelType == "Petrol-94" and Target.FuelType == "PlanePetrol" then 
+			AllowableType = true
+			self.PowerFuelExtra = 3
+		--Petrol-96 to Other's
+		elseif self.FuelType == "Petrol-96" and Target.FuelType == "Petrol" then 
+			AllowableType = true
+			self.PowerFuelExtra = -2
+		elseif self.FuelType == "Petrol-96" and Target.FuelType == "Petrol-94" then 
+			AllowableType = true
+			self.PowerFuelExtra = -1
+		elseif self.FuelType == "Petrol-96" and Target.FuelType == "VP_Racing-112" then 
+			AllowableType = true
+			self.PowerFuelExtra = 1
+		elseif self.FuelType == "Petrol-96" and Target.FuelType == "PlanePetrol" then 
+			AllowableType = true
+			self.PowerFuelExtra = 2
+		--Plane Petrol to other's
+		elseif self.FuelType == "PlanePetrol" and Target.FuelType == "Petrol" then 
+			AllowableType = true
+			self.PowerFuelExtra = -4
+		elseif self.FuelType == "PlanePetrol" and Target.FuelType == "Petrol-94" then 
+			AllowableType = true
+			self.PowerFuelExtra = -3
+		elseif self.FuelType == "PlanePetrol" and Target.FuelType == "Petrol-96" then 
+			AllowableType = true
+			self.PowerFuelExtra = -2
+		elseif self.FuelType == "PlanePetrol" and Target.FuelType == "VP_Racing-112" then 
+			AllowableType = true
+			self.PowerFuelExtra = -1
+		end
 		if not (self.FuelType == "Any" and not (Target.FuelType == "Electric")) then
-			if not (self.FuelType == Target.FuelType) then
+			if not (self.FuelType == Target.FuelType or AllowableType == true) then
 				return false, "Cannot link because fuel type is incompatible."
 			end
 		end
+		--#######################
 		
 		if Target.NoLinks then
 			return false, "This fuel tank doesn\'t allow linking."

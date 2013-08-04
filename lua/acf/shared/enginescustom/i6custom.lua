@@ -27,7 +27,7 @@ ACF_DefineEngine2( "4.8-I6C", {
 	model = "models/engines/inline6m.mdl",
 	sound = "acf_engines/l6_petrolmedium.wav",
 	category = "Inline 6",
-	fuel = "Petrol",
+	fuel = "Petrol-94",
 	enginetype = "GenericPetrol",
 	requiresfuel = true,
 	weight = 350,

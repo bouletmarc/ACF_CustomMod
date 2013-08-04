@@ -9,7 +9,7 @@ ACF_DefineEngine( "5.7-V8", {
 	model = "models/engines/v8s.mdl",
 	sound = "acf_engines/v8_petrolsmall.wav",
 	category = "V8",
-	fuel = "Petrol",
+	fuel = "Petrol-94",
 	enginetype = "GenericPetrol",
 	requiresfuel = true,
 	weight = 260,

@@ -7,7 +7,7 @@ ACF_DefineEngine2( "2.8-B6C", {
 	model = "models/engines/b6small.mdl",
 	sound = "acf_engines/b6_petrolsmall.wav",
 	category = "Boxer 6",
-	fuel = "Petrol",
+	fuel = "Petrol-94",
 	enginetype = "GenericPetrol",
 	requiresfuel = true,
 	weight = 200,

@@ -29,12 +29,15 @@ function ENT:GetOverlayText()
 	local LimitRPM = self:GetNetworkedBeamInt("LimitRPM")
 	--##################################################################
 	local FlywheelMass = self:GetNetworkedBeamInt("FlywheelMass2")
-	local Idle = self:GetNetworkedBeamInt("Idle")
-	local Weight = self:GetNetworkedBeamInt("Weight")
+	--local Idle = self:GetNetworkedBeamInt("Idle")
+	--local Weight = self:GetNetworkedBeamInt("Weight")
 	local Rpm = self:GetNetworkedBeamInt("Rpm")
-	local Consumption = self:GetNetworkedBeamInt("Consumption")
+	local Consumption = (self:GetNetworkedBeamInt("Consumption"))/100
+	local Temp = self:GetNetworkedBeamInt("Temp")
+	local HealthV = self:GetNetworkedBeamInt("EngineHealth")
 	--##################################################################
-	local txt = Type.."\nMax Power : "..Power.."KW / "..math.Round(Power*1.34).."HP \nMax Torque : "..Torque.."N/m / "..math.Round(Torque*0.73).."ft-lb \nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM\nFlywheelMass : "..FlywheelMass.."Grams\nIdle : "..Idle.."RPM\nWeight : "..Weight.."Kg\nRpm : "..Rpm.."RPM\nConsumption : "..Consumption.." liters/min" or ""
+	local txt = Type.."\nMax Power : "..Power.."KW / "..math.Round(Power*1.34).."HP \nMax Torque : "..Torque.."N/m / "..math.Round(Torque*0.73).."ft-lb \nPowerband : "..MinRPM.." - "..MaxRPM.."RPM\nRedline : "..LimitRPM.."RPM\nFlywheelMass : "..FlywheelMass.."Grams\nRpm : "..Rpm.."RPM\nConsumption : "..Consumption.." liters/min\nTemp : "..Temp.."C\nHealth : "..HealthV.."%" or ""
+	
 	if (not game.SinglePlayer()) then
 		local PlayerName = self:GetPlayerName()
 		txt = txt .. "\n(" .. PlayerName .. ")"
