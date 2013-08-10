@@ -94,3 +94,15 @@ r73
 -->Higher fuel make heat faster
 -->Higher fuel make more power
 -->lower fuel make less power
+
+*r85
+-7.63
+-->Updated to Rev.420
+-->Fixed Gearbox's Gui
+-->Better Temperature Mod
+-->Temp increase bit less fast
+-->Temp Rpm Update while Updating
+-->Warm Temp changed to 112degree
+-->Fixed modded engine blow fast
+-->Added Flywheel in Fuel Mod
+-->Better throttle responce. Fuel Mod

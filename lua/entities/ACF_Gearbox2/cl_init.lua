@@ -1,8 +1,7 @@
 include("shared.lua")
 
 ENT.RenderGroup 		= RENDERGROUP_OPAQUE
-ENT.AutomaticFrameAdvance = true
-local maxtorque = 0  -- this is for the max torque output on the tooltip - Wrex
+
 function ENT:Draw()
 	self:DoNormalDraw()
 	self:DrawModel()
@@ -12,8 +11,9 @@ end
 function ENT:DoNormalDraw()
 	local e = self
 	if (LocalPlayer():GetEyeTrace().Entity == e and EyePos():Distance(e:GetPos()) < 256) then
-		if(self:GetOverlayText() ~= "") then
-			AddWorldTip(e:EntIndex(),self:GetOverlayText(),0.5,e:GetPos(),e)
+		local txt = self:GetOverlayText()
+		if txt ~= "" then
+			AddWorldTip( e:EntIndex(), txt, 0.5, e:GetPos(), e )
 		end
 	end
 end

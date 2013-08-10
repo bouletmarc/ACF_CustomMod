@@ -82,8 +82,8 @@ function MakeACF_Engine3(Owner, Pos, Angle, Id)
 	Engine3.PeakTorque3 = Lookup["torque"]
 	Engine3.PeakMaxRPM2 = Lookup["peakmaxrpm"]
 	Engine3.LimitRPM2 = Lookup["limitrpm"]
-	Engine3.FlywheelMass2 = Lookup["flywheelmass"]
-	Engine3.FlywheelMass3 = Engine3.FlywheelMass2
+	Engine3.FlywheelMassValue = Lookup["flywheelmass"]
+	Engine3.FlywheelMass3 = Lookup["flywheelmass"]
 	Engine3.Idling = Lookup["idlerpm"]
 	Engine3.CutValue = Engine3.LimitRPM / 40
 	Engine3.CutRpm = Engine3.LimitRPM - 100
@@ -92,7 +92,7 @@ function MakeACF_Engine3(Owner, Pos, Angle, Id)
 	--#### Temperature MOD
 	Engine3.Temp = 0				--Temp at Spawn (Degree)
 	Engine3.TempMax = Lookup["tempmax"] or 88	--Normal Temp (Degree)
-	Engine3.TempWarm = 109			--Warm Temp, Engine take dommage if more than it (Degree)
+	Engine3.TempWarm = 112			--Warm Temp, Engine take dommage if more than it (Degree)
 	Engine3.TempBlow = 125			--Auto Blow Temp, too high (Degree)
 	Engine3.EngineHealth = Lookup["enginehealth"] or 100	--Engine Health at Spawn
 	Engine3.Blowed = 0
@@ -216,8 +216,8 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.PeakTorque3 = Lookup["torque"]
 	self.PeakMaxRPM2 = Lookup["peakmaxrpm"]
 	self.LimitRPM2 = Lookup["limitrpm"]
-	self.FlywheelMass2 = Lookup["flywheelmass"]
-	self.FlywheelMass3 = self.FlywheelMass2
+	--self.FlywheelMass2 = Lookup["flywheelmass"]
+	self.FlywheelMass3 = Lookup["flywheelmass"]
 	self.Idling = Lookup["idlerpm"]
 	self.CutValue = self.LimitRPM / 40
 	self.CutRpm = self.LimitRPM - 100
@@ -225,7 +225,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	--#### Temperature MOD
 	self.Temp = 0				--Temp at Spawn (Degree)
 	self.TempMax = Lookup["tempmax"] or 88	--Normal Temp (Degree)
-	self.TempWarm = 109			--Warm Temp, Engine take dommage if more than it (Degree)
+	self.TempWarm = 112			--Warm Temp, Engine take dommage if more than it (Degree)
 	self.TempBlow = 125			--Auto Blow Temp, too high (Degree)
 	self.EngineHealth = Lookup["enginehealth"] or 100	--Engine Health at Spawn
 	self.Blowed = 0
@@ -385,6 +385,13 @@ function ENT:TriggerInput( iname , value )
 			if self.EngineType == "Electric" then else
 				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
 			end
+			--Reupdating Temp Mod
+			self.TempRpmHighPercent = 0.9*self.LimitRPM --Getting 90% of the Rpm Band
+			if self.TempRpmHighPercent <= self.PeakMaxRPM then
+				self.TempRpmHigh = self.PeakMaxRPM
+			else
+				self.TempRpmHigh = 0.9*self.LimitRPM
+			end
 		elseif (value == 0 ) then
 			self.MaxRpmAdd = false
 			self.PeakMaxRPM = self.PeakMaxRPM2
@@ -397,6 +404,13 @@ function ENT:TriggerInput( iname , value )
 			end
 			if self.EngineType == "Electric" then else
 				self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * peakkw / (60 * 60)
+			end
+			--Reupdating Temp Mod
+			self.TempRpmHighPercent = 0.9*self.LimitRPM --Getting 90% of the Rpm Band
+			if self.TempRpmHighPercent <= self.PeakMaxRPM then
+				self.TempRpmHigh = self.PeakMaxRPM
+			else
+				self.TempRpmHigh = 0.9*self.LimitRPM
 			end
 		end
 	elseif (iname == "LimitRpmAdd") then
@@ -412,6 +426,13 @@ function ENT:TriggerInput( iname , value )
 				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
 				self.PeakKwRPM = math.floor(self.LimitRPM / 2)
 			end
+			--Reupdating Temp Mod
+			self.TempRpmHighPercent = 0.9*self.LimitRPM --Getting 90% of the Rpm Band
+			if self.TempRpmHighPercent <= self.PeakMaxRPM then
+				self.TempRpmHigh = self.PeakMaxRPM
+			else
+				self.TempRpmHigh = 0.9*self.LimitRPM
+			end
 		elseif (value == 0 ) then
 			self.LimitRpmAdd = false
 			self.LimitRPM = self.LimitRPM2
@@ -424,16 +445,25 @@ function ENT:TriggerInput( iname , value )
 				peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
 				self.PeakKwRPM = math.floor(self.LimitRPM / 2)
 			end
+			--Reupdating Temp Mod
+			self.TempRpmHighPercent = 0.9*self.LimitRPM --Getting 90% of the Rpm Band
+			if self.TempRpmHighPercent <= self.PeakMaxRPM then
+				self.TempRpmHigh = self.PeakMaxRPM
+			else
+				self.TempRpmHigh = 0.9*self.LimitRPM
+			end
 		end
 	elseif (iname == "FlywheelMass") then
 		if (value > 0 ) then
 			self.FlywheelMass = true
-			self.Inertia = value*(3.1416)^2
-			self:SetNetworkedBeamInt("FlywheelMass2",value*1000)
+			self.FlywheelMassValue = value
+			--self.Inertia = value*(3.1416)^2
+			--self:SetNetworkedBeamInt("FlywheelMass2",value*1000)
 		elseif (value <= 0 ) then
 			self.FlywheelMass = false
-			self.Inertia = self.FlywheelMass3*(3.1416)^2
-			self:SetNetworkedBeamInt("FlywheelMass2",self.FlywheelMass3*1000)
+			self.FlywheelMassValue = self.FlywheelMass3
+			--self.Inertia = self.FlywheelMass3*(3.1416)^2
+			--self:SetNetworkedBeamInt("FlywheelMass2",self.FlywheelMass3*1000)
 		end
 	elseif (iname == "Idle") then
 		if (value > 0 ) then
@@ -641,9 +671,9 @@ function ENT:CalcRPM()
 	local HealthDecreaser = 0.1
 	local increaser = 0 --first load
 	if self.FlyRPM <= self.TempRpmHigh then
-		increaser = 0.05
+		increaser = 0.04
 	elseif self.FlyRPM > self.TempRpmHigh then
-		increaser = 0.07
+		increaser = 0.05
 	end
 	--## Set Temperature ##
 	--increase
@@ -692,31 +722,48 @@ function ENT:CalcRPM()
 	end*/
 	--#### Temperature Mod &&& FUEL Mod FOR TORQUEEEEE
 	local PowerFuelAdding
+	local FlywheelMassValueAdd
 	if self.PowerFuelExtra == 0 then
 		PowerFuelAdding = 0
+		FlywheelMassValueAdd = 0
 	elseif self.PowerFuelExtra == -4 then
 		PowerFuelAdding = (self.PeakTorque3*40)/100 -- -40% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*40)/100 -- +40% adding fly
 	elseif self.PowerFuelExtra == -3 then
 		PowerFuelAdding = (self.PeakTorque3*30)/100 -- -30% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*30)/100 -- +30% adding fly
 	elseif self.PowerFuelExtra == -2 then
 		PowerFuelAdding = (self.PeakTorque3*20)/100 -- -20% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*20)/100 -- +20% adding fly
 	elseif self.PowerFuelExtra == -1 then
 		PowerFuelAdding = (self.PeakTorque3*10)/100 -- -10% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*10)/100 -- +10% adding fly
 	elseif self.PowerFuelExtra == 1 then
 		PowerFuelAdding = (self.PeakTorque3*10)/100 --10% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*10)/100 -- -10% adding fly
 	elseif self.PowerFuelExtra == 2 then
 		PowerFuelAdding = (self.PeakTorque3*15)/100 --20% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*20)/100 -- -20% adding fly
 	elseif self.PowerFuelExtra == 3 then
 		PowerFuelAdding = (self.PeakTorque3*25)/100 --30% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*30)/100 -- -30% adding fly
 	elseif self.PowerFuelExtra == 4 then
 		PowerFuelAdding = (self.PeakTorque3*35)/100 --40% more power
+		FlywheelMassValueAdd = (self.FlywheelMassValue*40)/100 -- -40% adding fly
 	end
 	local peakkw
+	--Apply new value with fuel mod
 	if self.PowerFuelExtra >= 0 then
 		self.PeakTorque = ((self.PeakTorque3 * TorqueMult)+PowerFuelAdding) - TorqueDecreaser
+		self.Inertia = (self.FlywheelMassValue-FlywheelMassValueAdd)*(3.1416)^2
+		self:SetNetworkedBeamInt("FlywheelMass2",self.FlywheelMassValue-FlywheelMassValueAdd)
 	elseif self.PowerFuelExtra < 0 then
 		self.PeakTorque = ((self.PeakTorque3 * TorqueMult)-PowerFuelAdding) - TorqueDecreaser
+		self.Inertia = (self.FlywheelMassValue+FlywheelMassValueAdd)*(3.1416)^2
+		self:SetNetworkedBeamInt("FlywheelMass2",self.FlywheelMassValue+FlywheelMassValueAdd)
 	end
+	
+	
 	if self.EngineType == "Turbine" or self.EngineType == "Electric" then
 		peakkw = self.PeakTorque * self.LimitRPM / (4 * 9548.8)
 		self.PeakKwRPM = math.floor(self.LimitRPM / 2)

@@ -19,11 +19,13 @@ function ENT:DoNormalDraw()
 end
 
 function ENT:GetOverlayText()
-	local List = list.Get( "ACFEnts" )
+	local id = self:GetNetworkedBeamString( "ID" )
+	if not id then return "-- Waiting for networked data --" end
+	local lookup = (list.Get("ACFEnts"))["Mobility"][id]
 	
 	local name = self:GetNetworkedString( "WireName" )
 	local id = self:GetNetworkedBeamString( "ID" )
-	local txt = List["Mobility"][id]["name"].."\n"
+	local txt = lookup["name"].."\n"
 
 	local Weight = self:GetNetworkedBeamInt("Weight")
 	local Current = self:GetNetworkedBeamInt("Current")
@@ -34,12 +36,12 @@ function ENT:GetOverlayText()
 	local txt = txt .."Weight : "..Weight.."Kg\nCurrent Gear : "..Current.."\nDeclutch Rpm : "..Declutch.."RPM\nRpm Min : "..RpmMin.."RPM\nRpm Max : "..RpmMax.."RPM\n" or ""
 
 	
-	for i = 1, List["Mobility"][id]["gears"] do
+	for i = 1, lookup["gears"] do
 		local gear = math.Round( self:GetNetworkedBeamFloat( "Gear" .. i ), 3 )
 		txt = txt .. "Gear " .. i .. ": " .. tostring( gear ) .. "\n"
 	end	
 	
-	local maxtq = List["Mobility"][id]["maxtq"]
+	local maxtq = lookup["maxtq"]
 	txt = txt .. "Maximum Torque Rating: " .. tostring( maxtq ) .. "n-m / " .. tostring( math.Round( maxtq * 0.73 ) ) .. "ft-lb"
 	
 	if (not game.SinglePlayer()) then
