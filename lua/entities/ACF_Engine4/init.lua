@@ -30,9 +30,10 @@ function ENT:Initialize()
 	self.CutMode = 0
 	self.CutValue = 0
 	self.CutRpm = 0
+	self.DisableAutoClutch = 0
 	--####################
 	
-	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
+	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut", "Gearbox RPM"} )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Temperature", "Health", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL", "NORMAL", "NORMAL", "NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Engine4"
@@ -79,26 +80,26 @@ function MakeACF_Engine4(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		Engine4.ModTable[5] = Data5
 		Engine4.ModTable[6] = Data6
 			
-		Engine4.PeakTorque = Data1
-		Engine4.PeakTorqueHeld = Data1
-		Engine4.IdleRPM = Data2
-		Engine4.PeakMinRPM = Data3
-		Engine4.LimitRPM = Data5
+		Engine4.PeakTorque = tonumber(Data1)
+		Engine4.PeakTorqueHeld = tonumber(Data1)
+		Engine4.IdleRPM = tonumber(Data2)
+		Engine4.PeakMinRPM = tonumber(Data3)
+		Engine4.LimitRPM = tonumber(Data5)
 		if(Data4 <= Data5 ) then 
-			Engine4.PeakMaxRPM = Data4
+			Engine4.PeakMaxRPM = tonumber(Data4)
 		elseif(Data4 > Data5 ) then
-			Engine4.PeakMaxRPM = Data5
+			Engine4.PeakMaxRPM = tonumber(Data5)
 		end
-		Engine4.FlywheelMassValue = Data6
+		Engine4.FlywheelMassValue = tonumber(Data6)
 		Engine4.CutValue = Engine4.LimitRPM / 40
 		Engine4.CutRpm = Engine4.LimitRPM - 100
 			
-		Engine4.PeakTorque2 = Data1
-		Engine4.PeakTorque3 = Data1
-		Engine4.Idling = Data2
-		Engine4.PeakMaxRPM2 = Data4
-		Engine4.LimitRPM2 = Data5
-		Engine4.FlywheelMass3 = Data6
+		Engine4.PeakTorque2 = tonumber(Data1)
+		Engine4.PeakTorque3 = tonumber(Data1)
+		Engine4.Idling = tonumber(Data2)
+		Engine4.PeakMaxRPM2 = tonumber(Data4)
+		Engine4.LimitRPM2 = tonumber(Data5)
+		Engine4.FlywheelMass3 = tonumber(Data6)
 			
 		Engine4.Inertia = Engine4.FlywheelMassValue*(3.1416)^2
 	--##################################################################################
@@ -229,26 +230,26 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.ModTable[5] = ArgsTable[9]
 	self.ModTable[6] = ArgsTable[10]
 		
-	self.PeakTorque = ArgsTable[5]
-	self.PeakTorqueHeld = ArgsTable[5]
-	self.IdleRPM = ArgsTable[6]
-	self.PeakMaxRPM = ArgsTable[8]
+	self.PeakTorque = tonumber(ArgsTable[5])
+	self.PeakTorqueHeld = tonumber(ArgsTable[5])
+	self.IdleRPM = tonumber(ArgsTable[6])
+	self.PeakMaxRPM = tonumber(ArgsTable[8])
 	if(ArgsTable[7] <= ArgsTable[8] ) then 
-		self.PeakMinRPM = ArgsTable[7]
+		self.PeakMinRPM = tonumber(ArgsTable[7])
 	elseif(ArgsTable[7] > ArgsTable[8] ) then
-		self.PeakMinRPM = ArgsTable[8]
+		self.PeakMinRPM = tonumber(ArgsTable[8])
 	end
-	self.LimitRPM = ArgsTable[9]
-	--self.FlywheelMass2 = ArgsTable[10]
+	self.LimitRPM = tonumber(ArgsTable[9])
+	self.FlywheelMassValue = tonumber(ArgsTable[10])
 	self.CutValue = self.LimitRPM / 40
 	self.CutRpm = self.LimitRPM - 100
 		
-	self.PeakTorque2 = ArgsTable[5]
-	self.PeakTorque3 = ArgsTable[5]
-	self.Idling = ArgsTable[6]
-	self.PeakMaxRPM2 = ArgsTable[8]
-	self.LimitRPM2 = ArgsTable[9]
-	self.FlywheelMass3 = ArgsTable[10]
+	self.PeakTorque2 = tonumber(ArgsTable[5])
+	self.PeakTorque3 = tonumber(ArgsTable[5])
+	self.Idling = tonumber(ArgsTable[6])
+	self.PeakMaxRPM2 = tonumber(ArgsTable[8])
+	self.LimitRPM2 = tonumber(ArgsTable[9])
+	self.FlywheelMass3 = tonumber(ArgsTable[10])
 
 	self.Inertia = self.FlywheelMass3*(3.1416)^2
 	--##################################################################################
@@ -511,6 +512,15 @@ function ENT:TriggerInput( iname , value )
 		elseif (value <= 0 ) then
 			self.DisableCut = 0
 		end
+	--Disabling AutoClutch on Engine while Moving
+	elseif (iname == "Gearbox RPM") then
+		if ((value*0.8) > self.IdleRPM and self.Throttle == 0) then
+			self.DisableAutoClutch = 1
+			self.GearboxRpm = value
+		elseif (value <= self.IdleRPM or self.Throttle > 0 and self.DisableAutoClutch == 1) then
+			self.DisableAutoClutch = 0
+			self.GearboxRpm = 0
+		end
 	end
 
 end
@@ -623,6 +633,7 @@ function ENT:CalcMassRatio()
 		
 		-- gotta make sure the parenting addon is installed...
 		if v.GetChildren then table.Merge( AllEnts, v:GetChildren() ) end
+		--table.Merge( AllEnts, ACF_GetAllChildren( v ) )
 	
 	end
 	
@@ -733,6 +744,10 @@ function ENT:CalcRPM()
 	elseif self.Temp >= self.TempBlow then
 		self.EngineHealth = 0
 	end
+	--Apply Damage at Dangerous RPM without autoclutch
+	if self.DisableAutoClutch == 1 and self.FlyRPM > self.LimitRPM then
+		self.EngineHealth = self.EngineHealth-HealthDecreaser
+	end
 	if self.EngineHealth <= 0 then
 		self.Blowed = 1
 		self.Active = false
@@ -831,8 +846,12 @@ function ENT:CalcRPM()
 	
 	-- Let's accelerate the flywheel based on that torque
 	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-	-- This is the presently avaliable torque from the engine
-	TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
+	if self.DisableAutoClutch == 0 then
+		-- This is the presently avaliable torque from the engine
+		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
+	elseif self.DisableAutoClutch == 1 then
+		TorqueDiff = 0
+	end
 
 	end
 	
@@ -847,8 +866,7 @@ function ENT:CalcRPM()
 	-- Let's accelerate the flywheel based on that torque
 	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
 	-- This is the presently avaliable torque from the engine
-	TorqueDiff = math.max( self.FlyRPM - 0, 0 ) * self.Inertia
-	
+	TorqueDiff = 0
 	end
 	--##############
 	
@@ -871,12 +889,15 @@ function ENT:CalcRPM()
 		Gearbox:Act( MaxTqTable[Key] * AvailTq * self.MassRatio, DeltaTime )
 	end
 
-	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
+	if self.DisableAutoClutch == 0 then
+		self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
+	elseif self.DisableAutoClutch == 1 then
+		self.FlyRPM = self.GearboxRpm*0.8
+	end
 	
 	--#######################################
-	--if( self.CutOn == 1 ) then
 	if( self.DisableCut == 0 ) then
-		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 ) then
+		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 and self.DisableAutoClutch == 0 ) then
 			self.CutMode = 1
 			if self.Sound then
 				self.Sound:Stop()

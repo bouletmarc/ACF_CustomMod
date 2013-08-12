@@ -30,9 +30,10 @@ function ENT:Initialize()
 	self.CutMode = 0
 	self.CutValue = 0
 	self.CutRpm = 0
+	self.DisableAutoClutch = 0
 	--####################
 	
-	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut"} )
+	self.Inputs = Wire_CreateInputs( self, { "Active", "Throttle", "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "FlywheelMass", "Idle", "DisableCut", "Gearbox RPM"} )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Temperature", "Health", "Entity" , "Mass" , "Physical Mass" }, { "NORMAL" ,"NORMAL", "NORMAL", "NORMAL", "NORMAL" ,"NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Engine3"
@@ -216,7 +217,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.PeakTorque3 = Lookup["torque"]
 	self.PeakMaxRPM2 = Lookup["peakmaxrpm"]
 	self.LimitRPM2 = Lookup["limitrpm"]
-	--self.FlywheelMass2 = Lookup["flywheelmass"]
+	self.FlywheelMassValue = Lookup["flywheelmass"]
 	self.FlywheelMass3 = Lookup["flywheelmass"]
 	self.Idling = Lookup["idlerpm"]
 	self.CutValue = self.LimitRPM / 40
@@ -481,6 +482,15 @@ function ENT:TriggerInput( iname , value )
 		elseif (value <= 0 ) then
 			self.DisableCut = 0
 		end
+	--Disabling AutoClutch on Engine while Moving
+	elseif (iname == "Gearbox RPM") then
+		if ((value*0.8) > self.IdleRPM and self.Throttle == 0) then
+			self.DisableAutoClutch = 1
+			self.GearboxRpm = value
+		elseif (value <= self.IdleRPM or self.Throttle > 0 and self.DisableAutoClutch == 1) then
+			self.DisableAutoClutch = 0
+			self.GearboxRpm = 0
+		end
 	end
 
 end
@@ -593,6 +603,7 @@ function ENT:CalcMassRatio()
 		
 		-- gotta make sure the parenting addon is installed...
 		if v.GetChildren then table.Merge( AllEnts, v:GetChildren() ) end
+		--table.Merge( AllEnts, ACF_GetAllChildren( v ) )
 	
 	end
 	
@@ -703,6 +714,10 @@ function ENT:CalcRPM()
 	elseif self.Temp >= self.TempBlow then
 		self.EngineHealth = 0
 	end
+	--Apply Damage at Dangerous RPM without autoclutch
+	if self.DisableAutoClutch == 1 and self.FlyRPM > self.LimitRPM then
+		self.EngineHealth = self.EngineHealth-HealthDecreaser
+	end
 	if self.EngineHealth <= 0 then
 		self.Blowed = 1
 		self.Active = false
@@ -801,8 +816,12 @@ function ENT:CalcRPM()
 	
 	-- Let's accelerate the flywheel based on that torque
 	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-	-- This is the presently avaliable torque from the engine
-	TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
+	if self.DisableAutoClutch == 0 then
+		-- This is the presently avaliable torque from the engine
+		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
+	elseif self.DisableAutoClutch == 1 then
+		TorqueDiff = 0
+	end
 
 	end
 	
@@ -817,8 +836,7 @@ function ENT:CalcRPM()
 	-- Let's accelerate the flywheel based on that torque
 	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
 	-- This is the presently avaliable torque from the engine
-	TorqueDiff = math.max( self.FlyRPM - 0, 0 ) * self.Inertia
-	
+	TorqueDiff = 0
 	end
 	--##############
 	
@@ -841,12 +859,15 @@ function ENT:CalcRPM()
 		Gearbox:Act( MaxTqTable[Key] * AvailTq * self.MassRatio, DeltaTime )
 	end
 
-	self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
+	if self.DisableAutoClutch == 0 then
+		self.FlyRPM = self.FlyRPM - (math.min(TorqueDiff,MaxTq)/self.Inertia)
+	elseif self.DisableAutoClutch == 1 then
+		self.FlyRPM = self.GearboxRpm*0.8
+	end
 	
 	--#######################################
-	--if( self.CutOn == 1 ) then
 	if( self.DisableCut == 0 ) then
-		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 ) then
+		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 and self.DisableAutoClutch == 0 ) then
 			self.CutMode = 1
 			if self.Sound then
 				self.Sound:Stop()

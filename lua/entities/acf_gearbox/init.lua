@@ -107,8 +107,8 @@ function MakeACF_Gearbox(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data
 		table.insert(Inputs, "Brake")
 	end
 	
-    local Outputs = { "Ratio", "Entity" , "Current Gear" }
-    local OutputTypes = { "NORMAL" , "ENTITY" , "NORMAL" }
+    local Outputs = { "Ratio", "Entity" , "Current Gear", "Gearbox RPM" }
+    local OutputTypes = { "NORMAL" , "ENTITY" , "NORMAL", "NORMAL" }
     if Gearbox.CVT then
         table.insert(Outputs,"Min Target RPM")
         table.insert(Outputs,"Max Target RPM")
@@ -206,8 +206,8 @@ function ENT:Update( ArgsTable )
 			table.insert(Inputs, "Brake")
 		end
         
-        local Outputs = { "Ratio", "Entity" , "Current Gear" }
-        local OutputTypes = { "NORMAL" , "ENTITY" , "NORMAL" }
+        local Outputs = { "Ratio", "Entity" , "Current Gear", "Gearbox RPM" }
+		local OutputTypes = { "NORMAL" , "ENTITY" , "NORMAL", "NORMAL" }
         if self.CVT then
 			table.insert(Outputs,"Min Target RPM")
 			table.insert(Outputs,"Max Target RPM")
@@ -424,6 +424,8 @@ function ENT:Calc( InputRPM, InputInertia )
 				if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
                     self.WheelReqTq[Key] = math.min( Clutch, ( InputRPM - RPM ) * InputInertia )
                 end
+				--Calling RPM Ouputs Value's
+				Wire_TriggerOutput(self, "Gearbox RPM", RPM)
 			end
 			self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
 		else

@@ -106,3 +106,16 @@ r73
 -->Fixed modded engine blow fast
 -->Added Flywheel in Fuel Mod
 -->Better throttle responce. Fuel Mod
+
+*r86
+-7.64
+-->Updated to Rev.425
+-->Added GearboxRPM inputs/outputs
+-->Added Autoclutch Disable feature
+-->Wiring GearboxRPM from the
+...Engine to Gearbox disable
+...Autoclutch on engine.
+-
+-->Fixed Customizable engines
+-->Fixed Engine Maker
+

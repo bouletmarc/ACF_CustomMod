@@ -121,7 +121,7 @@ function MakeACF_Gearbox3(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Dat
 	end
 	
 	Gearbox3.Inputs = Wire_CreateInputs( Gearbox3.Entity, Inputs )
-	Gearbox3.Outputs = WireLib.CreateSpecialOutputs( Gearbox3.Entity, { "Ratio", "Entity" , "Current Gear" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	Gearbox3.Outputs = WireLib.CreateSpecialOutputs( Gearbox3.Entity, { "Ratio", "Entity" , "Current Gear", "Gearbox RPM" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL", "NORMAL" } )
 	Wire_TriggerOutput(Gearbox3.Entity, "Entity", Gearbox3.Entity)
 	Gearbox3.WireDebugName = "ACF Gearbox3"
 	
@@ -407,6 +407,8 @@ function ENT:Calc( InputRPM, InputInertia )
 				if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
                     self.WheelReqTq[Key] = math.min( Clutch, ( InputRPM - RPM ) * InputInertia )
                 end
+				--Calling RPM Ouputs Value's
+				Wire_TriggerOutput(self, "Gearbox RPM", RPM)
 			end
 			self.TotalReqTq = self.TotalReqTq + self.WheelReqTq[Key]
 		else
