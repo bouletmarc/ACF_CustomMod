@@ -6,7 +6,7 @@ ACF.Version = 483 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
 ACF.VersionCustom = 8.01
-ACF.Version2 = 88
+ACF.Version2 = 89
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
