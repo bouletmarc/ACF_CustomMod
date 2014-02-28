@@ -77,11 +77,9 @@ ACF.EngineHPMult = 1/8
 ACF.EnableDefaultDP = false -- Enable the inbuilt damage protection system.
 
 
-
 if file.Exists("acf/shared/acf_userconfig.lua", "LUA") then
 	include("acf/shared/acf_userconfig.lua")
 end
-
 
 CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
