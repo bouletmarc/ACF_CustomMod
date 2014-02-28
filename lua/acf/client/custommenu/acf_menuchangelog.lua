@@ -93,14 +93,14 @@ local function CreateSoundBrowser()
 		
 	ButtonsSidePanel:PerformLayout()
 	
-	if Changelog then
+	if ChangelogOriginal then
 		Changelist = vgui.Create( "DTree" )
-		for Rev,Changes in pairs(Changelog) do
+		for Rev,Changes in pairs(ChangelogOriginal) do
 			local Node = Changelist:AddNode( "Rev "..Rev )
 			Node.mytable = {}
 			Node.mytable["rev"] = Rev
 			function Node:DoClick() -- On Click
-					UpdateSoundBrowser( Node.mytable )
+					UpdateSoundBrowserOriginal( Node.mytable )
 					CustomDisplay:PerformLayout()
 			end
 			Node.Icon:SetImage( "icon16/newspaper.png" )
@@ -110,7 +110,7 @@ local function CreateSoundBrowser()
 		CustomDisplay:AddItem( Changelist )
 		CustomDisplay:PerformLayout()
 		
-		UpdateSoundBrowser( {rev = table.maxn(Changelog)} )
+		UpdateSoundBrowserOriginal( {rev = table.maxn(ChangelogOriginal)} )
 	end
 	--###############
 		
@@ -120,7 +120,7 @@ local function CreateSoundBrowser()
 	
 end
 --###########
-function UpdateSoundBrowser( Table )
+function UpdateSoundBrowserOriginal( Table )
 	--#######
 	--loading
 	local Redcolor = 0
@@ -152,7 +152,7 @@ function UpdateSoundBrowser( Table )
 	CustomDisplay:AddItem( TextLog1 )
 	
 	TextLog2 = vgui.Create( "DLabel" )
-		TextLog2:SetText( Changelog[Table["rev"]])
+		TextLog2:SetText( ChangelogOriginal[Table["rev"]])
 		TextLog2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 		TextLog2:SetFont( "DefaultBold" )
 		TextLog2:SetWrap(true)
@@ -162,15 +162,15 @@ function UpdateSoundBrowser( Table )
 	CustomDisplay:PerformLayout()
 end
 --###########
-function ACFChangelogHTTPCallBack(contents , size)
+local function ACFChangelogOriginalHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
-	Changelog = {}
+	ChangelogOriginal = {}
 	for Key,String in pairs(Temp) do
-		Changelog[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
+		ChangelogOriginal[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
 	end
-	table.SortByKey(Changelog,true)
+	table.SortByKey(ChangelogOriginal,true)
 end
-http.Fetch("https://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("https://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelogOriginalHTTPCallBack, function() end)
 --##########
 local function OpenSartBrowser(pl, cmd, args)
 	if (!IsValid(StartBrowserPanel)) then

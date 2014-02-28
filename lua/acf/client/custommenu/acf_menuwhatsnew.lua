@@ -2,10 +2,9 @@
 
 local StartBrowserPanel = nil
 
-function CreateSoundBrowser()
+local function CreateSoundBrowser()
 
 	StartBrowserPanel = vgui.Create("DFrame") // The main frame.
-	StartBrowserPanel:Center()
 	StartBrowserPanel:SetSize(350, 450)
 	--Set Center
 	StartBrowserPanel:SetPos(((ScrW()/2)-(StartBrowserPanel:GetWide()/2))+ScrW()/4,(ScrH()/2)-(StartBrowserPanel:GetTall()/2))
@@ -121,7 +120,7 @@ function UpdateSoundBrowser( Table )
 	CustomDisplay:PerformLayout()
 end
 --###########
-function ACFChangelogHTTPCallBack(contents , size)
+local function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	Changelog = {}
 	for Key,String in pairs(Temp) do
