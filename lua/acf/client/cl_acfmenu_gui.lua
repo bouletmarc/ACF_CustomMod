@@ -18,15 +18,14 @@ function PANEL:Init( )
 	end
 	--Check If the Client Saw the Whats New
 	if file.Exists("acf/revision.txt", "DATA") then
-		local RevisionFile = file.Read("acf/revision.txt")
+		local RevisionFile = file.Read("acf/revision.txt", "DATA")
 		local RevisionTable = {}
 		for w in string.gmatch(RevisionFile, "([^,]+)") do
 			table.insert(RevisionTable, w)
 		end
 		local RevisionNumber = tonumber(RevisionTable[1])
 		if RevisionNumber != ACF.Version2 then
-			file.CreateDir("acf")
-			file.Write("acf/revision.txt", tostring(RevisionNumber)..","..tostring(ACF.VersionCustom))
+			file.Write("acf/revision.txt", tostring(ACF.Version2)..","..tostring(ACF.VersionCustom))
 			RunConsoleCommand("acf_whatsnew_browser_open")
 		end
 	else

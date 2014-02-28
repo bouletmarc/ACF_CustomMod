@@ -2,10 +2,9 @@
 
 local StartBrowserPanel = nil
 
-function CreateSoundBrowser()
+local function CreateSoundBrowser()
 
 	StartBrowserPanel = vgui.Create("DFrame") // The main frame.
-	StartBrowserPanel:Center()
 	StartBrowserPanel:SetSize(350, 450)
 	--Set Center
 	StartBrowserPanel:SetPos((ScrW()/2)-(StartBrowserPanel:GetWide()/2),(ScrH()/2)-(StartBrowserPanel:GetTall()/2))

@@ -81,6 +81,11 @@ r84
     -Should be really better
       than original CVT
       with Powerful engine.
+
+*r90
+---CHANGELOG PART2---
+--TO SEE PART1 REFER TO REV 89--
+
 -->Fixed Engine Maker
 	-Now Save And Load
 	-Better Updating system
