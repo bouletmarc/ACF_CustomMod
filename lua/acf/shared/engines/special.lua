@@ -1,15 +1,32 @@
 
 -- Special engines
 
+ACF_DefineEngine( "1.0L-I4", {
+	name = "1.0L I4 Petrol",
+	desc = "Tiny I4 designed for racing bikes. Doesn't pack much torque, but revs ludicrously high.",
+	model = "models/engines/inline4s.mdl",
+	sound = "acf_extra/vehiclefx/engines/l4/mini_onhigh.wav",
+	pitch = 0.75,
+	category = "Special",
+	fuel = "Petrol",
+	enginetype = "GenericPetrol",
+	weight = 63,
+	torque = 68,
+	flywheelmass = 0.05,
+	idlerpm = 1200,
+	peakminrpm = 7500,
+	peakmaxrpm = 11500,
+	limitrpm = 12000
+} )
+
 ACF_DefineEngine( "1.9L-I4", {
 	name = "1.9L I4 Petrol",
 	desc = "Supercharged racing 4 cylinder, most of the power in the high revs.",
 	model = "models/engines/inline4s.mdl",
 	sound = "acf_engines/i4_special.wav",
 	category = "Special",
-	fuel = "Petrol-96",
+	fuel = "Petrol",
 	enginetype = "GenericPetrol",
-	requiresfuel = true,
 	weight = 150,
 	torque = 176,
 	flywheelmass = 0.06,
@@ -19,15 +36,31 @@ ACF_DefineEngine( "1.9L-I4", {
 	limitrpm = 9000
 } )
 
+ACF_DefineEngine( "2.6L-Wankel", {
+	name = "2.6L Rotary",
+	desc = "4 rotor racing Wankel, high revving and high strung.",
+	model = "models/engines/wankel_4_med.mdl",
+	sound = "acf_engines/wankel_large.wav",
+	category = "Special",
+	fuel = "Petrol",
+	enginetype = "Wankel",
+	weight = 260,
+	torque = 250,
+	flywheelmass = 0.11,
+	idlerpm = 1200,
+	peakminrpm = 4500,
+	peakmaxrpm = 9000,
+	limitrpm = 9500
+} )
+
 ACF_DefineEngine( "2.9-V8", {
 	name = "2.9L V8 Petrol",
 	desc = "Racing V8, very high revving and loud",
 	model = "models/engines/v8s.mdl",
 	sound = "acf_engines/v8_special.wav",
 	category = "Special",
-	fuel = "Petrol-96",
+	fuel = "Petrol",
 	enginetype = "GenericPetrol",
-	requiresfuel = true,
 	weight = 180,
 	torque = 200,
 	flywheelmass = 0.075,
@@ -43,9 +76,8 @@ ACF_DefineEngine( "3.8-I6", {
 	model = "models/engines/inline6m.mdl",
 	sound = "acf_engines/l6_special.wav",
 	category = "Special",
-	fuel = "Petrol-94",
+	fuel = "Petrol",
 	enginetype = "GenericPetrol",
-	requiresfuel = true,
 	weight = 180,
 	torque = 224,
 	flywheelmass = 0.1,
@@ -61,9 +93,8 @@ ACF_DefineEngine( "7.2-V8", {
 	model = "models/engines/v8m.mdl",
 	sound = "acf_engines/v8_special2.wav",
 	category = "Special",
-	fuel = "Petrol-96",
+	fuel = "Petrol",
 	enginetype = "GenericPetrol",
-	requiresfuel = true,
 	weight = 400,
 	torque = 340,
 	flywheelmass = 0.15,
@@ -81,9 +112,8 @@ ACF_DefineEngine( "13.0-V12", {
 	category = "Special",
 	fuel = "Petrol",
 	enginetype = "GenericPetrol",
-	requiresfuel = true,
 	weight = 520,
-	torque = 600,
+	torque = 660,
 	flywheelmass = 1,
 	idlerpm = 700,
 	peakminrpm = 2500,

@@ -27,22 +27,10 @@ fueltank_base.type = "Mobility"
 --##############################
 --##	setup base			####
 --##############################
---customizable small
-local engine_base2 = {}
-	engine_base2.ent = "acf_engine2"
-	engine_base2.type = "Mobility"
---no customizable
-local engine_base3 = {}
-	engine_base3.ent = "acf_engine3"
-	engine_base3.type = "Mobility"
---customizable fat
-local engine_base4 = {}
-	engine_base4.ent = "acf_engine4"
-	engine_base4.type = "Mobility"
 --engine maker
-local engine_base5 = {}
-	engine_base5.ent = "acf_engine5"
-	engine_base5.type = "Mobility"
+local enginemaker_base = {}
+	enginemaker_base.ent = "acf_enginemaker"
+	enginemaker_base.type = "Mobility"
 --chips
 local chips_base = {}
 	chips_base.ent = "acf_chips"
@@ -57,14 +45,14 @@ local nos_base = {}
 	nos_base.type = "Mobility"
 --cvt
 local cvt_base = {}
-	cvt_base.ent = "acf_gearbox2"
+	cvt_base.ent = "acf_gearboxcvt"
 	cvt_base.type = "Mobility"
 	cvt_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 --automatic
-local auto_base = {}
-	auto_base.ent = "acf_gearbox3"
-	auto_base.type = "Mobility"
-	auto_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+--local auto_base = {}
+	--auto_base.ent = "acf_gearbox3"
+	--auto_base.type = "Mobility"
+	--auto_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 
 --##############################
 --##		set gui			####
@@ -76,18 +64,9 @@ if CLIENT then
 	gearbox_base.guiupdate = function() return end
 	fueltank_base.guicreate = function( panel, tbl ) ACFFuelTankGUICreate( tbl ) end or nil
 	fueltank_base.guiupdate = function( panel, tbl ) ACFFuelTankGUIUpdate( tbl ) end or nil
-	--customizable small
-	engine_base2.guicreate = function( panel, tbl ) ACFEngine2GUICreate( tbl ) end or nil
-	engine_base2.guiupdate = function() return end
-	--no customizable
-	engine_base3.guicreate = function( panel, tbl ) ACFEngine3GUICreate( tbl ) end or nil
-	engine_base3.guiupdate = function() return end
-	--customizable fat
-	engine_base4.guicreate = function( panel, tbl ) ACFEngine4GUICreate( tbl ) end or nil
-	engine_base4.guiupdate = function() return end
 	--engine maker
-	engine_base5.guicreate = function( panel, tbl ) ACFEngine5GUICreate( tbl ) end or nil
-	engine_base5.guiupdate = function() return end
+	enginemaker_base.guicreate = function( panel, tbl ) ACFEngineMakerGUICreate( tbl ) end or nil
+	enginemaker_base.guiupdate = function() return end
 	--chips
 	chips_base.guicreate = function( panel, tbl ) ACFChipsGUICreate( tbl ) end or nil
 	chips_base.guiupdate = function() return end
@@ -98,11 +77,11 @@ if CLIENT then
 	nos_base.guicreate = function( panel, tbl ) ACFNosGUICreate( tbl ) end or nil
 	nos_base.guiupdate = function() return end
 	--CVT
-	cvt_base.guicreate = function( panel, tbl ) ACFGearbox2GUICreate( tbl ) end or nil
+	cvt_base.guicreate = function( panel, tbl ) ACFGearboxCVTGUICreate( tbl ) end or nil
 	cvt_base.guiupdate = function() return end
 	--automatic
-	auto_base.guicreate = function( panel, tbl ) ACFGearbox3GUICreate( tbl ) end or nil
-	auto_base.guiupdate = function() return end
+	--auto_base.guicreate = function( panel, tbl ) ACFGearbox3GUICreate( tbl ) end or nil
+	--auto_base.guiupdate = function() return end
 end
 
 --##############################
@@ -131,28 +110,10 @@ function ACF_DefineFuelTankSize( id, data )
 	table.Inherit( data, fueltank_base )
 	FuelTankTable[ id ] = data
 end
---customizable small
-function ACF_DefineEngine2( id, data )
-	data.id = id
-	table.Inherit( data, engine_base2 )
-	MobilityTable[ id ] = data
-end
---customizable fat
-function ACF_DefineEngine3( id, data )
-	data.id = id
-	table.Inherit( data, engine_base4 )
-	MobilityTable[ id ] = data
-end
---no customizable
-function ACF_DefineEngine4( id, data )
-	data.id = id
-	table.Inherit( data, engine_base3 )
-	MobilityTable[ id ] = data
-end
 --engine maker
-function ACF_DefineEngine5( id, data )
+function ACF_DefineEngineMaker( id, data )
 	data.id = id
-	table.Inherit( data, engine_base5 )
+	table.Inherit( data, enginemaker_base )
 	MobilityTable[ id ] = data
 end
 --chips
@@ -180,11 +141,11 @@ function ACF_DefineCvt( id, data )
 	MobilityTable[ id ] = data
 end
 --auto
-function ACF_DefineAutomatic( id, data )
+/*function ACF_DefineAutomatic( id, data )
 	data.id = id
 	table.Inherit( data, auto_base )
 	MobilityTable[ id ] = data
-end
+end*/
 
 --##############################
 --##	search and load		####
@@ -206,23 +167,11 @@ for k, v in pairs( fueltanks ) do
 	AddCSLuaFile( "acf/shared/fueltanks/" .. v )
 	include( "acf/shared/fueltanks/" .. v )
 end
---chips
-local chipscustom = file.Find( "acf/shared/chipscustom/*.lua", "LUA" )
-for k, v in pairs( chipscustom ) do
-	AddCSLuaFile( "acf/shared/chipscustom/" .. v )
-	include( "acf/shared/chipscustom/" .. v )
-end
---engine's
-local enginescustom = file.Find( "acf/shared/enginescustom/*.lua", "LUA" )
-for k, v in pairs( enginescustom ) do
-	AddCSLuaFile( "acf/shared/enginescustom/" .. v )
-	include( "acf/shared/enginescustom/" .. v )
-end
---gearbox's
-local gearboxescustom = file.Find( "acf/shared/gearboxescustom/*.lua", "LUA" )
-for k, v in pairs( gearboxescustom ) do
-	AddCSLuaFile( "acf/shared/gearboxescustom/" .. v )
-	include( "acf/shared/gearboxescustom/" .. v )
+--custom files
+local custom = file.Find( "acf/shared/customs/*.lua", "LUA" )
+for k, v in pairs( custom ) do
+	AddCSLuaFile( "acf/shared/customs/" .. v )
+	include( "acf/shared/customs/" .. v )
 end
 
 -- now that the mobility table is populated, throw it in the acf ents list

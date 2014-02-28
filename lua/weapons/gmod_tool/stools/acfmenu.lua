@@ -17,28 +17,32 @@ TOOL.ClientConVar[ "data7" ] = 0
 TOOL.ClientConVar[ "data8" ] = 0
 TOOL.ClientConVar[ "data9" ] = 0
 TOOL.ClientConVar[ "data10" ] = 0
+--#####################################
 TOOL.ClientConVar[ "data11" ] = 0
 TOOL.ClientConVar[ "data12" ] = 0
 TOOL.ClientConVar[ "data13" ] = 0
+TOOL.ClientConVar[ "data14" ] = 0
+TOOL.ClientConVar[ "data15" ] = 0
+TOOL.ClientConVar[ "red" ] = 0
+TOOL.ClientConVar[ "green" ] = 0
+TOOL.ClientConVar[ "blue" ] = 0
+--#####################################
 
 cleanup.Register( "acfmenu" )
 
 if CLIENT then	
 	language.Add( "Tool.acfmenu.listname", "ACF Menu" )
-	language.Add( "Tool.acfmenu.name", "ACF Custom" )
+	language.Add( "Tool.acfmenu.name", "ACF Custom V2" )
 	language.Add( "Tool.acfmenu.desc", "Spawn the ACF weapons and ammo" )
 	language.Add( "Tool.acfmenu.0", "Left click to spawn the entity, Right click to link an entity to another (+Use to unlink)" )
 	language.Add( "Tool.acfmenu.1", "Right click to link the selected sensor to a pod" )
 	
 	language.Add( "Undone_ACF Entity", "Undone ACF Entity" )
 	language.Add( "Undone_acf_engine", "Undone ACF Engine" )
-	language.Add( "Undone_acf_engine2", "Undone ACF Engine" )
-	language.Add( "Undone_acf_engine3", "Undone ACF Engine" )
-	language.Add( "Undone_acf_engine4", "Undone ACF Engine" )
-	language.Add( "Undone_acf_engine5", "Undone ACF Engine Maker" )
+	language.Add( "Undone_acf_enginemaker", "Undone ACF Engine Maker" )
 	language.Add( "Undone_acf_gearbox", "Undone ACF Gearbox" )
-	language.Add( "Undone_acf_gearbox2", "Undone ACF Gearbox CVT" )
-	language.Add( "Undone_acf_gearbox3", "Undone ACF Gearbox Automatic" )
+	language.Add( "Undone_acf_gearboxcvt", "Undone ACF Gearbox CVT" )
+	--language.Add( "Undone_acf_gearbox3", "Undone ACF Gearbox Automatic" )
 	language.Add( "Undone_acf_chips", "Undone ACF Engine Chips" )
 	language.Add( "Undone_acf_vtec", "Undone ACF Vtec Chip" )
 	language.Add( "Undone_acf_nos", "Undone ACF Nos Bottle" )

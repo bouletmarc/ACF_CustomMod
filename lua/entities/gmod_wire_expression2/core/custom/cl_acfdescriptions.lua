@@ -10,6 +10,7 @@ E2Helper.Descriptions["acfName"] = "Returns the full name of an ACF entity."
 E2Helper.Descriptions["acfType"] = "Returns the type of ACF entity."
 E2Helper.Descriptions["acfCapacity"] = "Returns the capacity of an ACF ammo crate or fuel tank."
 E2Helper.Descriptions["acfInfoRestricted"] = "Returns 1 if functions returning sensitive info are restricted to owned props."
+E2Helper.Descriptions["acfLinks"] = "Returns all the entities which are linked to this entity through ACF."
 
 --engine
 E2Helper.Descriptions["acfMaxTorque"] = "Returns the maximum torque (in N/m) of an ACF engine."
@@ -52,7 +53,7 @@ E2Helper.Descriptions["acfReady"] = "Returns 1 if an ACF weapon is ready to fire
 E2Helper.Descriptions["acfMagSize"] = "Returns the magazine capacity of an ACF weapon."
 E2Helper.Descriptions["acfSpread"] = "Returns the spread of an ACF weapon."
 E2Helper.Descriptions["acfFireRate"] = "Returns the rate of fire of an ACF weapon."
-E2Helper.Descriptions["acfFire"] = "Sets the firing state of an ACF weapon."
+E2Helper.Descriptions["acfFire"] = "Sets the firing state of an ACF weapon.  Kills are only attributed to gun owner.  Use wire inputs on gun if you want to properly attribute kills to driver."
 E2Helper.Descriptions["acfUnload"] = "Causes an ACF weapon to unload."
 E2Helper.Descriptions["acfReload"] = "Causes an ACF weapon to reload."
 E2Helper.Descriptions["acfMagRounds"] = "Returns the rounds remaining in the magazine of an ACF weapon."
@@ -63,9 +64,13 @@ E2Helper.Descriptions["acfTotalAmmoCount"] = "Returns the number of rounds in al
 E2Helper.Descriptions["acfRounds"] = "Returns the number of rounds in an ACF ammo crate."
 E2Helper.Descriptions["acfAmmoType"] = "Returns the type of ammo in an ACF ammo crate or ACF weapon."
 E2Helper.Descriptions["acfRoundType"] = "Returns the type of weapon the ammo in an ACF ammo crate loads into."
+E2Helper.Descriptions["acfCaliber"] = "Returns the caliber of the weapon or ammo."
 E2Helper.Descriptions["acfMuzzleVel"] = "Returns the muzzle velocity of the ammo in an ACF ammo crate or weapon."
 E2Helper.Descriptions["acfProjectileMass"] = "Returns the mass of the projectile in an ACF ammo crate or weapon."
-E2Helper.Descriptions["acfPenetration"] = "Returns the penetration of an AP, APHE, or HEAT round in an ACF ammo crate or weapon."
+E2Helper.Descriptions["acfFLSpikes"] = "Returns the number of projectiles in a flechette round."
+E2Helper.Descriptions["acfFLSpikeRadius"] = "Returns the radius (in mm) of the spikes in a flechette round."
+E2Helper.Descriptions["acfFLSpikeMass"] = "Returns the mass of a single spike in a FL round in a crate or gun."
+E2Helper.Descriptions["acfPenetration"] = "Returns the penetration of an AP, APHE, HEAT or FL round in an ACF ammo crate or weapon."
 E2Helper.Descriptions["acfBlastRadius"] = "Returns the blast radius of an HE, APHE, or HEAT round in an ACF ammo crate or weapon."
 
 --armor

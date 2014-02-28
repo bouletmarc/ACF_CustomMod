@@ -1,78 +1,4 @@
-r73
---Updated to Rev.396
-
-*r74
---Updated to Rev.401
---Added Custom Changlog
-
-*r75
---Updated ChangeLog Custom
---Quick cl_menu fix
----->BUG : SetText got a nil value
-
-*r76
---Fixed Chips Wires Duping
-
-*r77
--7.50
--->Updated with Fuel tank Base
--->Big change in code's
--7.51
--->Updated with new Wankel Model's
--->Removed Custom Menu Tab
--->Added Custom stuff to mobility Tab
--->Fixed Original Engine Running Error
--->Fixed Auto, Cvt, chips, nos Code's
--->Fixed Fat and Custom engine was inverted
--->Fixed Engine2 Client Menu on Click
----->BUG
--->Engine Maker are not Usable, still updating code's
--->Engine's Client Menu bug
--->Main Menu SetText() error
-
-*r78
--7.53
--->quick Client Side menu Update
-
-*r79
--7.54
--->Another quick Client side Update
--->Changelog Update
-
-*r80
--7.55
--->Client Menu Fix
--->Changlog Fix
--->SetText Fix
-
-*r81
--7.56
--->Fixed engine Working without tank BUG
--->Fixed engine Stop while running out of gaz
--->Added Consumption in Gui
-
-*r82
--7.57
--->Consumption update while changing value's
--->Customizable Engine's Menu Fix
--->Added Fuel menu for Engine Maker
--->Engine Maker Client Menu Fix
--->Wankel Fix for Engine Maker
--->Added Value's in Engine Maker Save Menu
--->Engine Maker Update Engine Model Fix
--->Fixed Consumption on engine's created
-
-*r83
--7.58
--->Updated to Revision 416
--->Quick Engine Fix
--->Engine Maker Fuel Menu Renamed
--->Help menu for Original ACF Created
--->All Engine's or Almost might Require Fuel
--->Turbine Engine's Require PlanePetrol
--->Customizable Engine Menu Fix
-
-*r84
+r84
 -7.61
 -->Added Temperature Mod
 -7.62
@@ -118,4 +44,61 @@ r73
 -
 -->Fixed Customizable engines
 -->Fixed Engine Maker
+
+*r88
+-8.01 Update 2014-Recode
+-ACF Custom V2
+
+-->Updated to Rev.483
+-->Updated All files
+
+-->COMPLET RECODE
+-->Less lua files
+-->Less lines in lua's
+-->Better folders and files locations
+-->Menus Spawn at Center
+
+-->Added Darker Sliders
+-->Added Change color Menu
+-->Added and Better Help menus
+-->Added Original Changelog Menu
+-->Added Installation menu
+-->Added Whats New Menu(Show up 1 time each update)
+-->Added Override Inputs Electric/Turbine
+-->Added Print Msg to SoundChanger
+-->All Engine Not require Fuel
+-->To Require Fuel, Only Link FuelTank
+-->Customs Engines are now with regulars
+
+-->Fixed Menu Fonts
+-->Fixed Menu Killicons
+-->Fixed Engines GUI
+-->Fixed Diesel Engines
+-->Fixed Electric&Turbine Modding
+-->Fixed Chips, Vtec, Nos
+-->Fixed Custom CVT
+    -Fixed think Rate
+    -Should be really better
+      than original CVT
+      with Powerful engine.
+-->Fixed Engine Maker
+	-Now Save And Load
+	-Better Updating system
+	-Added All Models
+	-Added Electric&Turbine Type
+	-Auto Load Last Engine
+	-Can Edit Last Engine
+	-Just Write NUMBER where needed
+	-And it Might never spawn Error
+	-Menus V8.1
+
+-->Removed Cutoff on Electric -Useless-
+-->Removed Cutoff on Turbine -Useless-
+-->Removed Automatic GB 'BETA'
+-->Removed EngineCustomSmall -Useless-
+-->Removed EngineCustomFat -Useless-
+-->Removed Temp Mod -useless-
+-->Removed Fuel Mod -Useless-
+
+
 

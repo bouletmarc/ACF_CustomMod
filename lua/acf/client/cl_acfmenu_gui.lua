@@ -1,17 +1,45 @@
 
 function PANEL:Init( )
-
+	--###########################################
+	--loading
+	if file.Exists("acf/menucolor.txt", "DATA") then
+		local MenuColor = file.Read("acf/menucolor.txt")
+		local MenuColorTable = {}
+		for w in string.gmatch(MenuColor, "([^,]+)") do
+			table.insert(MenuColorTable, w)
+		end
+		Redcolor = tonumber(MenuColorTable[1])
+		Greencolor = tonumber(MenuColorTable[2])
+		Bluecolor = tonumber(MenuColorTable[3])
+	else
+		Redcolor = 0
+		Greencolor = 0
+		Bluecolor = 200
+	end
+	--Check If the Client Saw the Whats New
+	if file.Exists("acf/revision.txt", "DATA") then
+		local RevisionFile = file.Read("acf/revision.txt")
+		local RevisionTable = {}
+		for w in string.gmatch(RevisionFile, "([^,]+)") do
+			table.insert(RevisionTable, w)
+		end
+		local RevisionNumber = tonumber(RevisionTable[1])
+		if RevisionNumber != ACF.Version2 then
+			file.CreateDir("acf")
+			file.Write("acf/revision.txt", tostring(RevisionNumber)..","..tostring(ACF.VersionCustom))
+			RunConsoleCommand("acf_whatsnew_browser_open")
+		end
+	else
+		file.CreateDir("acf")
+		file.Write("acf/revision.txt", tostring(ACF.Version2)..","..tostring(ACF.VersionCustom))
+		RunConsoleCommand("acf_whatsnew_browser_open")
+	end
+	--###########################################
 	acfmenupanel = self.Panel
-	
 	// height
-	
-	
 	self:SetTall( surface.ScreenHeight() - 120 )
-	
 	//Weapon Select	
-	
 	self.WeaponSelect = vgui.Create( "DTree", self )
-
 	self.WeaponData = ACF.Weapons
 	
 	local Classes = list.Get("ACFClasses")
@@ -48,7 +76,7 @@ function PANEL:Init( )
 	function HomeNode:DoClick()
 		acfmenupanel:UpdateDisplay(self.mytable)
 	end
-	HomeNode.Icon:SetImage( "gui/silkicons/star" )
+	HomeNode.Icon:SetImage( "icon16/newspaper.png" )
 	
 	local RoundAttribs = list.Get("ACFRoundTypes")
 	self.RoundAttribs = {}
@@ -71,7 +99,7 @@ function PANEL:Init( )
 					RunConsoleCommand( "acfmenu_type", self.mytable.type )
 					acfmenupanel:UpdateDisplay( self.mytable )
 				end
-				EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+				EndNode.Icon:SetImage( "icon16/newspaper.png" )
 			end
 		end
 		
@@ -86,7 +114,7 @@ function PANEL:Init( )
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
+		EndNode.Icon:SetImage( "icon16/newspaper.png" )
 		
 	end
 	
@@ -95,49 +123,23 @@ function PANEL:Init( )
 	local Gearboxes = Mobility:AddNode( "Gearboxes" )
 	local FuelTanks = Mobility:AddNode( "Fuel Tanks" )
 	--###################
-	local EnginesMaker = Mobility:AddNode( "Engines Maker Menu" )
-	local EnginesLittle = Mobility:AddNode( "Customizable Little Engines" )
-	local EnginesFat = Mobility:AddNode( "Customizable Fat Engines" )
-	local Engines2 = Mobility:AddNode( "Engines Custom" )
-	local CVT = Mobility:AddNode( "CVT Gearbox" )
-	local Automatic = Mobility:AddNode( "Automatic Gearbox" )
-	local Chips = Mobility:AddNode( "Chips" )
-	local Vtec = Mobility:AddNode( "Chips Vtec" )
-	local Nos = Mobility:AddNode( "Nos Bottle" )
+	local EngineMaker = Mobility:AddNode( "Engines Maker" )
+	local Extras = Mobility:AddNode( "Engines Extras" )
 	--###################
 	local EngineSubcats = {}
 	for _, MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		NodeAdd = Mobility
 		if( MobilityTable.ent == "acf_engine" ) then
 			NodeAdd = Engines
-		elseif ( MobilityTable.ent == "acf_gearbox" ) then
+		elseif ( MobilityTable.ent == "acf_gearbox" or MobilityTable.ent == "acf_gearboxcvt" ) then
 			NodeAdd = Gearboxes
 		elseif ( MobilityTable.ent == "acf_fueltank" ) then
 			NodeAdd = FuelTanks
-		elseif ( MobilityTable.ent == "acf_engine5" ) then
-			NodeAdd = EnginesMaker
-		elseif( MobilityTable.ent == "acf_engine2" ) then
-			NodeAdd = EnginesLittle
-		elseif ( MobilityTable.ent == "acf_engine4" ) then
-			NodeAdd = EnginesFat
-		elseif ( MobilityTable.ent == "acf_engine3" ) then
-			NodeAdd = Engines2
-		elseif ( MobilityTable.ent == "acf_gearbox2" ) then
-			NodeAdd = CVT
-		elseif ( MobilityTable.ent == "acf_gearbox3" ) then
-			NodeAdd = Automatic
-		elseif ( MobilityTable.ent == "acf_chips" ) then
-			NodeAdd = Chips
-		elseif ( MobilityTable.ent == "acf_vtec" ) then
-			NodeAdd = Vtec
-		elseif ( MobilityTable.ent == "acf_nos" ) then
-			NodeAdd = Nos
+		elseif( MobilityTable.ent == "acf_enginemaker") then
+			NodeAdd = EngineMaker
+		elseif ( MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_vtec" or MobilityTable.ent == "acf_nos") then
+			NodeAdd = Extras
 		end
-		--###############
-		--if((EngineSubcats["misce"] == nil) and (EngineSubcats["miscg"] == nil) ) then
-		--	EngineSubcats["misce"] = Engines:AddNode( "Miscellaneous" )
-		--	EngineSubcats["miscg"] = Gearboxes:AddNode( "Miscellaneous" )
-		--end
 		if(MobilityTable.category) then
 			if(!EngineSubcats[MobilityTable.category]) then
 				EngineSubcats[MobilityTable.category] = NodeAdd:AddNode( MobilityTable.category )
@@ -152,227 +154,63 @@ function PANEL:Init( )
 			NodeAdd = Engines
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
-			--else
-			--	NodeAdd = EngineSubcats["misce"]
 			end
-		elseif MobilityTable.ent == "acf_gearbox" then
+		elseif MobilityTable.ent == "acf_gearbox" or MobilityTable.ent == "acf_gearboxcvt" then
 			NodeAdd = Gearboxes
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
-			--else
-			--	NodeAdd = EngineSubcats["miscg"]
 			end
 		elseif MobilityTable.ent == "acf_fueltank" then
 			NodeAdd = FuelTanks
 			if (MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
-		elseif MobilityTable.ent == "acf_engine5" then
-			NodeAdd = EnginesMaker
+		elseif MobilityTable.ent == "acf_enginemaker" then
+			NodeAdd = EngineMaker
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
-		elseif MobilityTable.ent == "acf_engine2" then
-			NodeAdd = EnginesLittle
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_engine4" then
-			NodeAdd = EnginesFat
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_engine3" then
-			NodeAdd = Engines2
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_gearbox2" then
-			NodeAdd = CVT
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_gearbox3" then
-			NodeAdd = Automatic
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_chips" then
-			NodeAdd = Chips
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_vtec" then
-			NodeAdd = Vtec
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_nos" then
-			NodeAdd = Nos
+		elseif MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_vtec" or MobilityTable.ent == "acf_nos" then
+			NodeAdd = Extras
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
 		end
-		--###############
-		
 		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
 		EndNode.mytable = MobilityTable
 		function EndNode:DoClick()
 			RunConsoleCommand( "acfmenu_type", self.mytable.type )
 			acfmenupanel:UpdateDisplay( self.mytable )
 		end
-		EndNode.Icon:SetImage( "gui/silkicons/wrench" )
+		EndNode.Icon:SetImage( "icon16/newspaper.png" )
 
 	end
-	--#########################################################################################################
-	/*	--Creating New menu
-	local Mobility2 = self.WeaponSelect:AddNode( "Custom ACF Mod" )		-->menu name
-		--Creating SubCategories
-	local EnginesMaker = Mobility2:AddNode( "Engines Maker Menu" )
-	local EnginesLittle = Mobility2:AddNode( "Customizable Little Engines" )
-	local EnginesFat = Mobility2:AddNode( "Customizable Fat Engines" )
-	local Engines2 = Mobility2:AddNode( "Engines" )
-	local CVT = Mobility2:AddNode( "CVT Gearbox" )
-	local Automatic = Mobility2:AddNode( "Automatic Gearbox" )
-	local Chips = Mobility2:AddNode( "Chips" )
-	local Vtec = Mobility2:AddNode( "Chips Vtec" )
-	local Nos = Mobility2:AddNode( "Nos Bottle" )
-	
-	local Engine2Subcats = {}
-	for _, MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
-		NodeAdd = Mobility2
-		if ( MobilityTable.ent == "acf_engine5" ) then
-			NodeAdd = EnginesMaker
-		elseif( MobilityTable.ent == "acf_engine2" ) then
-			NodeAdd = EnginesLittle
-		elseif ( MobilityTable.ent == "acf_engine4" ) then
-			NodeAdd = EnginesFat
-		elseif ( MobilityTable.ent == "acf_engine3" ) then
-			NodeAdd = Engines2
-		elseif ( MobilityTable.ent == "acf_gearbox2" ) then
-			NodeAdd = CVT
-		elseif ( MobilityTable.ent == "acf_gearbox3" ) then
-			NodeAdd = Automatic
-		elseif ( MobilityTable.ent == "acf_chips" ) then
-			NodeAdd = Chips
-		elseif ( MobilityTable.ent == "acf_vtec" ) then
-			NodeAdd = Vtec
-		elseif ( MobilityTable.ent == "acf_nos" ) then
-			NodeAdd = Nos
-		end
-		
-		if(MobilityTable.category) then
-			if(!Engine2Subcats[MobilityTable.category]) then
-				Engine2Subcats[MobilityTable.category] = NodeAdd:AddNode( MobilityTable.category )
-			end
-		end
-	end
-	
-	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
-		
-		local NodeAdd = Mobility2
-		--#########################################################
-		if MobilityTable.ent == "acf_engine5" then
-			NodeAdd = EnginesMaker
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_engine2" then
-			NodeAdd = EnginesLittle
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_engine4" then
-			NodeAdd = EnginesFat
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_engine3" then
-			NodeAdd = Engines2
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_gearbox2" then
-			NodeAdd = CVT
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_gearbox3" then
-			NodeAdd = Automatic
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_chips" then
-			NodeAdd = Chips
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_vtec" then
-			NodeAdd = Vtec
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		elseif MobilityTable.ent == "acf_nos" then
-			NodeAdd = Nos
-			if(MobilityTable.category) then
-				NodeAdd = Engine2Subcats[MobilityTable.category]
-			end
-		end
-		
-		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
-		EndNode.mytable = MobilityTable
-		function EndNode:DoClick()
-			RunConsoleCommand( "acfmenu_type", self.mytable.type )
-			acfmenupanel:UpdateDisplay( self.mytable )
-		end
-		EndNode.Icon:SetImage( "gui/silkicons/wrench" )
-
-	end*/
-	
-	--#########################################################################################################
-	--#########################################################################################################
-	--#########################################################################################################
-	
-	/*local Missiles = self.WeaponSelect:AddNode( "Missiles" )
-	for MisID, MisTable in pairs(self.WeaponDisplay["Missiles"]) do
-
-		local EndNode = Missiles:AddNode( MisTable.name or "No Name" )
-    
-		EndNode.mytable = MisTable
-		function EndNode:DoClick()
-			RunConsoleCommand( "acfmenu_type", self.mytable.type )
-			acfmenupanel:UpdateDisplay( self.mytable )
-		end
-    
-		EndNode.Icon:SetImage( "gui/silkicons/newspaper")
-    
-	end*/
-	-- local Sensors = self.WeaponSelect:AddNode( "Sensors" )
-	-- for SensorsID,SensorsTable in pairs(self.WeaponDisplay["Sensors"]) do
-		
-		-- local EndNode = Sensors:AddNode( SensorsTable.name or "No Name" )
-		-- EndNode.mytable = SensorsTable
-		-- function EndNode:DoClick()
-			-- RunConsoleCommand( "acfmenu_type", self.mytable.type )
-			-- acfmenupanel:UpdateDisplay( self.mytable )
-		-- end
-		-- EndNode.Icon:SetImage( "gui/silkicons/newspaper" )
-		
-	-- end
-	
 end
-
 /*------------------------------------
 	Think
 ------------------------------------*/
 function PANEL:Think( )
-
 end
 
 function PANEL:UpdateDisplay( Table )
-	
+	--###########################################
+	--loading
+	if file.Exists("acf/menucolor.txt", "DATA") then
+		local MenuColor = file.Read("acf/menucolor.txt")
+		local MenuColorTable = {}
+		for w in string.gmatch(MenuColor, "([^,]+)") do
+			table.insert(MenuColorTable, w)
+		end
+		Redcolor = tonumber(MenuColorTable[1])
+		Greencolor = tonumber(MenuColorTable[2])
+		Bluecolor = tonumber(MenuColorTable[3])
+	else
+		Redcolor = 0
+		Greencolor = 0
+		Bluecolor = 200
+	end
+	--###########################################
 	RunConsoleCommand( "acfmenu_id", Table.id or 0 )
-	
 	--If a previous display exists, erase it
 	if ( acfmenupanel.CustomDisplay ) then
 		acfmenupanel.CustomDisplay:Clear(true)
@@ -385,18 +223,15 @@ function PANEL:UpdateDisplay( Table )
 		acfmenupanel.CustomDisplay:EnableHorizontal( false ) 
 		acfmenupanel.CustomDisplay:EnableVerticalScrollbar( false ) 
 		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() )
-	
 	if not acfmenupanel["CData"] then
 		--Create a table for the display to store data
 		acfmenupanel["CData"] = {}	
 	end
-		
 	acfmenupanel.CreateAttribs = Table.guicreate
 	acfmenupanel.UpdateAttribs = Table.guiupdate
 	acfmenupanel:CreateAttribs( Table )
 	
 	acfmenupanel:PerformLayout()
-
 end
 
 function PANEL:CreateAttribs( Table )
@@ -408,11 +243,9 @@ function PANEL:UpdateAttribs( Table )
 end
 
 function PANEL:PerformLayout()
-	
 	--Starting positions
 	local vspacing = 10
 	local ypos = 0
-	
 	--Selection Tree panel
 	acfmenupanel.WeaponSelect:SetPos( 0, ypos )
 	acfmenupanel.WeaponSelect:SetSize( acfmenupanel:GetWide(), 165 )
@@ -424,28 +257,11 @@ function PANEL:PerformLayout()
 		acfmenupanel.CustomDisplay:SetSize( acfmenupanel:GetWide(), acfmenupanel:GetTall() - acfmenupanel.WeaponSelect:GetTall() - 10 )
 		ypos = acfmenupanel.CustomDisplay.Y + acfmenupanel.CustomDisplay:GetTall() + vspacing
 	end
-	
 end
 
 function ACFHomeGUICreate( Table )
 
 	if not acfmenupanel.CustomDisplay then return end
-	--start version
-	
-	VersionText1 = vgui.Create( "DLabel" )
-	VersionText1:SetText("ACF Version")
-	VersionText1:SetTextColor(Color(0,0,50,255))
-	VersionText1:SetFont( "DefaultBold" )
-	VersionText1:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( VersionText1 )
-	
-	VersionT = vgui.Create( "DLabel" )
-	--versiontext = "Version\n\n".."SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version
-	VersionT:SetText("SVN Version: "..ACF.CurrentVersion.."\nCurrent Version: "..ACF.Version)
-	VersionT:SetTextColor(Color(0,0,250,255))
-	VersionT:SetFont( "DefaultBold" )
-	VersionT:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( VersionT )
 	
 	VersionText2 = vgui.Create( "DLabel" )
 	VersionText2:SetText("Custom Version")
@@ -456,29 +272,10 @@ function ACFHomeGUICreate( Table )
 	
 	VersionT2 = vgui.Create( "DLabel" )
 	VersionT2:SetText("SVN Version: "..ACF.CurrentVersion2.."\nCurrent Version: "..ACF.Version2)
-	VersionT2:SetTextColor(Color(0,0,250,255))
+	VersionT2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 	VersionT2:SetFont( "DefaultBold" )
 	VersionT2:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( VersionT2 )
-	
-	
-	acfmenupanel["CData"]["VersionText"] = vgui.Create( "DLabel" )
-	local color
-	local versionstring
-	if ACF.Version >= ACF.CurrentVersion then
-		versionstring = "Up To Date"
-		color = Color(0,225,0,255)
-	else
-		versionstring = "Out Of Date"
-		color = Color(225,0,0,255)
-	end
-	
-	acfmenupanel["CData"]["VersionText"]:SetText("\nACF Is "..versionstring.."!")
-	acfmenupanel["CData"]["VersionText"]:SetColor(color) 
-	acfmenupanel["CData"]["VersionText"]:SetFont( "DefaultBold" )
-	acfmenupanel["CData"]["VersionText"]:SizeToContents() 
-	acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["VersionText"] )
-	
 	
 	VersionT3 = vgui.Create( "DLabel" )
 	local color2
@@ -496,19 +293,30 @@ function ACFHomeGUICreate( Table )
 	VersionT3:SetFont( "DefaultBold" )
 	VersionT3:SizeToContents() 
 	acfmenupanel.CustomDisplay:AddItem( VersionT3 )
-	-- end version
 	
 	VersionCustomText = vgui.Create( "DLabel" )
 	VersionCustomText:SetText("Custom Version: "..ACF.VersionCustom.."\n")
-	VersionCustomText:SetTextColor(Color(0,0,250,255))
+	VersionCustomText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 	VersionCustomText:SetFont( "DefaultBold" )
 	VersionCustomText:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( VersionCustomText )
-	
-	------##### HELP CUSTOM MENU
+	--#################################################
+	--Color And Help Menu
+	ColorMenu = vgui.Create( "DButton" )
+	ColorMenu:SetText("Change ACF Menu Font's color")
+	ColorMenu:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	ColorMenu:SetToolTip("Bored of that font color ?\nClic that button to change it !")
+	ColorMenu:SetWide(100)
+	ColorMenu:SetTall(50)
+	ColorMenu.DoClick = function()
+		RunConsoleCommand("acf_colormenu_browser_open")
+	end
+	acfmenupanel.CustomDisplay:AddItem( ColorMenu )
+		
 	HelpText1 = vgui.Create( "DButton" )
 	HelpText1:SetText("Help")
-	HelpText1:SetTextColor(Color(255,0,0,255))
+	HelpText1:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	HelpText1:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
 	HelpText1:SetWide(70)
 	HelpText1:SetTall(50)
 	HelpText1.DoClick = function()
@@ -516,114 +324,56 @@ function ACFHomeGUICreate( Table )
 	end
 	acfmenupanel.CustomDisplay:AddItem( HelpText1 )
 	
-	--acfmenupanel:CPanelText("Header", "Changelog")
+	OldACFChangelog = vgui.Create( "DButton" )
+	OldACFChangelog:SetText("Original Changelog")
+	OldACFChangelog:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	OldACFChangelog:SetToolTip("Check the Original ACF Changlog")
+	OldACFChangelog:SetWide(70)
+	OldACFChangelog:SetTall(50)
+	OldACFChangelog.DoClick = function()
+		RunConsoleCommand("acf_changelog_browser_open")
+	end
+	acfmenupanel.CustomDisplay:AddItem( OldACFChangelog )
+	
 	TextLog= vgui.Create( "DLabel" )
 		TextLog:SetText( "Changelog")
-		TextLog:SetTextColor(Color(0,0,200,255))
+		TextLog:SetTextColor(Color(0,0,50,255))
 		TextLog:SetFont( "DefaultBold" )
 	acfmenupanel.CustomDisplay:AddItem( TextLog )
-	
 	--#################
 	if acfmenupanel.Changelog then
 		acfmenupanel["CData"]["Changelist"] = vgui.Create( "DTree" )
 		for Rev,Changes in pairs(acfmenupanel.Changelog) do
-			
 			local Node = acfmenupanel["CData"]["Changelist"]:AddNode( "Rev "..Rev )
 			Node.mytable = {}
 				Node.mytable["rev"] = Rev
 			function Node:DoClick()
 				acfmenupanel:UpdateAttribs( Node.mytable )
 			end
-			Node.Icon:SetImage( "gui/silkicons/newspaper" )
-			
+			Node.Icon:SetImage( "icon16/newspaper.png" )
 		end	
 		acfmenupanel.CData.Changelist:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
-		
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist"] )
-		
 		acfmenupanel.CustomDisplay:PerformLayout()
-		
 		acfmenupanel:UpdateAttribs( {rev = table.maxn(acfmenupanel.Changelog)} )
 	end
-	--#################
-	/*if acfmenupanel.Changelog2 then
-		acfmenupanel["CData"]["Changelist2"] = vgui.Create( "DTree" )
-		for Rev2,Changes in pairs(acfmenupanel.Changelog2) do
-			
-			local Node = acfmenupanel["CData"]["Changelist2"]:AddNode( "Rev2 "..Rev2 )
-			Node.mytable = {}
-				Node.mytable["rev2"] = Rev2
-			function Node:DoClick()
-				acfmenupanel:UpdateAttribs( Node.mytable )
-			end
-			Node.Icon:SetImage( "gui/silkicons/newspaper" )
-			
-		end	
-		acfmenupanel.CData.Changelist2:SetSize( acfmenupanel.CustomDisplay:GetWide(), 60 )
-		
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"]["Changelist2"] )
-		
-		acfmenupanel.CustomDisplay:PerformLayout()
-		
-		acfmenupanel:UpdateAttribs( {rev2 = table.maxn(acfmenupanel.Changelog2)} )
-	end*/
-	
 end
 	
 function ACFHomeGUIUpdate( Table )
 	
-	/*acfmenupanel:CPanelText("Changelog", acfmenupanel.Changelog[Table["rev"]])
-	acfmenupanel.CustomDisplay:PerformLayout()
-	TextLog2 = vgui.Create( "DLabel" )
-		TextLog2:SetText( acfmenupanel.Changelog2[Table["rev2"]])
-		TextLog2:SetTextColor(Color(0,0,200,255))
-		TextLog2:SetFont( "DefaultBold" )
-		TextLog2:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( TextLog2 )
-	acfmenupanel.CustomDisplay:PerformLayout()*/
-	
 	TextLog1 = vgui.Create( "DLabel" )
 		TextLog1:SetText( "Custom Changlog :")
-		TextLog1:SetTextColor(Color(200,0,0,255))
+		TextLog1:SetTextColor(Color(0,0,50,255))
 		TextLog1:SetFont( "DefaultBold" )
 		TextLog1:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextLog1 )
 	
 	TextLog2 = vgui.Create( "DLabel" )
 		TextLog2:SetText( acfmenupanel.Changelog[Table["rev"]])
-		TextLog2:SetTextColor(Color(0,0,200,255))
+		TextLog2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 		TextLog2:SetFont( "DefaultBold" )
 		TextLog2:SizeToContents()
 	acfmenupanel.CustomDisplay:AddItem( TextLog2 )
-	
-	/*TextLog3 = vgui.Create( "DLabel" )
-		TextLog3:SetText( "Original Changlog :")
-		TextLog3:SetTextColor(Color(200,0,0,255))
-		TextLog3:SetFont( "DefaultBold" )
-		TextLog3:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( TextLog3 )
-	
-	TextLog4 = vgui.Create( "DLabel" )
-		TextLog4:SetText( acfmenupanel.Changelog2[Table["rev2"]])
-		TextLog4:SetTextColor(Color(0,0,200,255))
-		TextLog4:SetFont( "DefaultBold" )
-		TextLog4:SizeToContents()
-	acfmenupanel.CustomDisplay:AddItem( TextLog4 )*/
-	
-	local color
-	local versionstring
-	if ACF.Version >= ACF.CurrentVersion then
-		versionstring = "Up To Date"
-		color = Color(0,225,0,255)
-	else
-		versionstring = "Out Of Date"
-		color = Color(225,0,0,255)
-
-	end
-	
-	acfmenupanel["CData"]["VersionText"]:SetText("\nACF Is "..versionstring.."!")
-	acfmenupanel["CData"]["VersionText"]:SetColor(color)
-	acfmenupanel["CData"]["VersionText"]:SizeToContents()
 	
 	local color2
 	local versionstring2
@@ -639,45 +389,25 @@ function ACFHomeGUIUpdate( Table )
 	VersionT3:SetColor(color2)
 	VersionT3:SizeToContents()
 	
-	acfmenupanel.CustomDisplay:PerformLayout()	
+	acfmenupanel.CustomDisplay:PerformLayout()
 end
 
 function ACFChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
-	
 	acfmenupanel.Changelog = {}
 	for Key,String in pairs(Temp) do
 		acfmenupanel.Changelog[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
 	end
 	table.SortByKey(acfmenupanel.Changelog,true)
-	
 	local Table = {}
 		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
 		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
 	acfmenupanel:UpdateDisplay( Table )
-
 end
 http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelogHTTPCallBack, function() end)
 
-/*function ACFChangelog2HTTPCallBack(contents , size)
-	local Temp = string.Explode( "*", contents )
-	
-	acfmenupanel.Changelog2 = {}
-	for Key,String in pairs(Temp) do
-		acfmenupanel.Changelog2[tonumber(string.sub(String,2,4))] = string.Trim(string.sub(String, 5))
-	end
-	table.SortByKey(acfmenupanel.Changelog2,true)
-	
-	local Table = {}
-		Table.guicreate = (function( Panel, Table ) ACFHomeGUICreate( Table ) end or nil)
-		Table.guiupdate = (function( Panel, Table ) ACFHomeGUIUpdate( Table ) end or nil)
-	acfmenupanel:UpdateDisplay( Table )
-
-end
-http.Fetch("https://raw.github.com/nrlulz/ACF/master/changelog.txt", ACFChangelog2HTTPCallBack, function() end)*/
-
 function PANEL:AmmoSelect( Blacklist )
-	
+
 	if not acfmenupanel.CustomDisplay then return end
 	if not Blacklist then Blacklist = {} end
 	
@@ -799,7 +529,7 @@ function PANEL:CPanelText(Name, Desc)
 	if not acfmenupanel["CData"][Name.."_text"] then
 		acfmenupanel["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanel["CData"][Name.."_text"]:SetText( Desc or "" )
-			acfmenupanel["CData"][Name.."_text"]:SetDark( true )
+			acfmenupanel["CData"][Name.."_text"]:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 			acfmenupanel["CData"][Name.."_text"]:SetWrap(true)
 			acfmenupanel["CData"][Name.."_text"]:SetAutoStretchVertical( true )
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Name.."_text"] )

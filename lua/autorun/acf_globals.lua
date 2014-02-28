@@ -2,11 +2,11 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 425 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 483 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 7.64
-ACF.Version2 = 86
+ACF.VersionCustom = 8.01
+ACF.Version2 = 88
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -34,14 +34,15 @@ ACF.DragDiv = 40		--Drag fudge factor
 ACF.VelScale = 1		--Scale factor for the shell velocities in the game world
 -- local PhysEnv = physenv.GetPerformanceSettings()
 ACF.PhysMaxVel = 4000
+ACF.SmokeWind = 5 + math.random()*35 --affects the ability of smoke to be used for screening effect
 
 ACF.PBase = 1050		--1KG of propellant produces this much KE at the muzzle, in kj
 ACF.PScale = 1	--Gun Propellant power expotential
 ACF.MVScale = 0.5  --Propellant to MV convertion expotential
 ACF.PDensity = 1.6	--Gun propellant density (Real powders go from 0.7 to 1.6, i'm using higher densities to simulate case bottlenecking)
 
-ACF.TorqueBoost = 1.25 --torque multiplier from using fuel
-ACF.FuelRate = 4.0  --multiplier for fuel usage, 1.0 is approx real world
+ACF.TorqueBoost = 1.15 --torque multiplier from using fuel
+ACF.FuelRate = 3.1  --multiplier for fuel usage, 1.0 is approx real world
 ACF.ElecRate = 1.5 --multiplier for electrics
 ACF.TankVolumeMul = 1.0 -- multiplier for fuel tank volume
 
@@ -51,10 +52,6 @@ ACF.CuIToLiter = 0.0163871 -- cubic inches to liters
 ACF.FuelDensity = {}
 ACF.FuelDensity["Diesel"] = 0.832  --kg/liter
 ACF.FuelDensity["Petrol"] = 0.745
-ACF.FuelDensity["Petrol-94"] = 0.755
-ACF.FuelDensity["Petrol-96"] = 0.765
-ACF.FuelDensity["VP_Racing-112"] = 0.779
-ACF.FuelDensity["PlanePetrol"] = 0.795
 ACF.FuelDensity["Electric"] = 3.89 -- li-ion
 
 ACF.Efficiency = {} --how efficient various engine types are
@@ -72,8 +69,18 @@ ACF.Year = 1945
 
 ACF.DebrisScale = 20 -- Ignore debris that is less than this bounding radius.
 ACF.TorqueScale = 1/4
-ACF.SpreadScale = 4
+ACF.SpreadScale = 4		-- The maximum amount that damage can decrease a gun's accuracy.  Default 4x
+ACF.GunInaccuracyScale = 1 -- A multiplier for gun accuracy.
+ACF.GunInaccuracyBias = 2  -- Higher numbers make shots more likely to be inaccurate.  Choose between 0.5 to 4. Default is 2 (unbiased).
 ACF.EngineHPMult = 1/8
+
+ACF.EnableDefaultDP = false -- Enable the inbuilt damage protection system.
+
+
+
+if file.Exists("acf/shared/acf_userconfig.lua", "LUA") then
+	include("acf/shared/acf_userconfig.lua")
+end
 
 
 CreateConVar('sbox_max_acf_gun', 12)
@@ -85,26 +92,26 @@ AddCSLuaFile()
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
 AddCSLuaFile( "acf/client/cl_acfmenu_gui.lua" )
 AddCSLuaFile( "acf/client/cl_acfrender.lua" )
-
-AddCSLuaFile( "acf/client/acf_menu.lua" )
-AddCSLuaFile( "acf/client/acf_menustart.lua" )
-AddCSLuaFile( "acf/client/acf_menuenginefuel.lua" )
-AddCSLuaFile( "acf/client/acf_menuengine.lua" )
-AddCSLuaFile( "acf/client/acf_menuengine2.lua" )
-AddCSLuaFile( "acf/client/acf_menuengine3.lua" )
-AddCSLuaFile( "acf/client/acf_menuengine4.lua" )
-AddCSLuaFile( "acf/client/acf_filebrowser.lua" )
-AddCSLuaFile( "acf/client/acf_listeditor.lua" )
-AddCSLuaFile( "acf/client/acf_modelbrowser.lua" )
-AddCSLuaFile( "acf/client/acf_list2editor.lua" )
-AddCSLuaFile( "acf/client/acf_menuengineloadcustom.lua" )
-AddCSLuaFile( "acf/client/acf_menuengineload.lua" )
-AddCSLuaFile( "acf/client/acf_menuengineloaded.lua" )
-AddCSLuaFile( "acf/client/acf_menuhelp.lua" )
-AddCSLuaFile( "acf/client/acf_menuhelporiginal.lua" )
+--Loading Customs Files
+local customfiles = file.Find( "acf/client/custommenu/*.lua", "LUA" )
+local customfileshelpmenu = file.Find( "acf/client/custommenu/helpmenu/*.lua", "LUA" )
+local customfilesenginemaker = file.Find( "acf/client/custommenu/enginemaker/*.lua", "LUA" )
+for k, v in pairs( customfiles ) do
+	AddCSLuaFile( "acf/client/custommenu/" .. v )
+end
+for k, v in pairs( customfileshelpmenu ) do
+	AddCSLuaFile( "acf/client/custommenu/helpmenu/" .. v )
+end
+for k, v in pairs( customfilesenginemaker ) do
+	AddCSLuaFile( "acf/client/custommenu/enginemaker/" .. v )
+end
+----------------------
+if SERVER and ACF.EnableDefaultDP then
+	AddCSLuaFile( "acf/client/cl_acfpermission.lua" )
+	AddCSLuaFile( "acf/client/gui/cl_acfsetpermission.lua" )
+end
 
 if SERVER then
-
 	util.AddNetworkString( "ACF_KilledByACF" )
 	util.AddNetworkString( "ACF_RenderDamage" )
 	util.AddNetworkString( "ACF_Notify" )
@@ -113,27 +120,31 @@ if SERVER then
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")
 	
+	if ACF.EnableDefaultDP then
+		include("acf/server/sv_acfpermission.lua")
+	end
 elseif CLIENT then
-
 	include("acf/client/cl_acfballistics.lua")
 	include("acf/client/cl_acfrender.lua")
 	
-	include("acf/client/acf_menu.lua")
-	include("acf/client/acf_menustart.lua")
-	include("acf/client/acf_menuengine.lua")
-	include("acf/client/acf_menuenginefuel.lua")
-	include("acf/client/acf_menuengine2.lua")
-	include("acf/client/acf_menuengine3.lua")
-	include("acf/client/acf_menuengine4.lua")
-	include("acf/client/acf_filebrowser.lua")
-	include("acf/client/acf_listeditor.lua")
-	include("acf/client/acf_modelbrowser.lua")
-	include("acf/client/acf_list2editor.lua")
-	include("acf/client/acf_menuengineloadcustom.lua")
-	include("acf/client/acf_menuengineload.lua")
-	include("acf/client/acf_menuengineloaded.lua")
-	include("acf/client/acf_menuhelp.lua")
-	include("acf/client/acf_menuhelporiginal.lua")
+	if ACF.EnableDefaultDP then
+		include("acf/client/cl_acfpermission.lua")
+		include("acf/client/gui/cl_acfsetpermission.lua")
+	end
+	--Loading Customs Files
+	local customfiles2 = file.Find( "acf/client/custommenu/*.lua", "LUA" )
+	local customfileshelpmenu2 = file.Find( "acf/client/custommenu/helpmenu/*.lua", "LUA" )
+	local customfilesenginemaker2 = file.Find( "acf/client/custommenu/enginemaker/*.lua", "LUA" )
+	for k, v in pairs( customfiles2 ) do
+		include( "acf/client/custommenu/" .. v )
+	end
+	for k, v in pairs( customfileshelpmenu2 ) do
+		include( "acf/client/custommenu/helpmenu/" .. v )
+	end
+	for k, v in pairs( customfilesenginemaker2 ) do
+		include( "acf/client/custommenu/enginemaker/" .. v )
+	end
+	----------------------
 	
 	killicon.Add( "acf_AC", "HUD/killicons/acf_AC", Color( 200, 200, 48, 255 ) )
 	killicon.Add( "acf_AL", "HUD/killicons/acf_AL", Color( 200, 200, 48, 255 ) )
@@ -147,12 +158,14 @@ elseif CLIENT then
 	killicon.Add( "acf_SA", "HUD/killicons/acf_SA", Color( 200, 200, 48, 255 ) )
 	killicon.Add( "acf_ammo", "HUD/killicons/acf_ammo", Color( 200, 200, 48, 255 ) )
 	
+	CreateConVar("acf_cl_particlemul", 1)
 end
 
 include("acf/shared/rounds/roundap.lua")
 include("acf/shared/rounds/roundaphe.lua")
 include("acf/shared/rounds/roundhe.lua")
 include("acf/shared/rounds/roundheat.lua")
+include("acf/shared/rounds/roundfl.lua")
 include("acf/shared/rounds/roundhp.lua")
 include("acf/shared/rounds/roundsmoke.lua")
 include("acf/shared/rounds/roundrefill.lua")
@@ -160,16 +173,11 @@ include("acf/shared/rounds/roundfunctions.lua")
 
 include("acf/shared/acfgunlist.lua")
 include("acf/shared/acfmobilitylist.lua")
---include("acf/shared/acfmobility2list.lua")
-include("acf/shared/acfsensorlist.lua")
 include("acf/shared/acfmissilelist.lua")
 
 ACF.Weapons = list.Get("ACFEnts")
-	
 ACF.Classes = list.Get("ACFClasses")
-
 ACF.RoundTypes = list.Get("ACFRoundTypes")
-
 ACF.IdRounds = list.Get("ACFIdRounds")	--Lookup tables so i can get rounds classes from clientside with just an integer
 
 game.AddParticles("particles/acf_muzzleflashes.pcf")
@@ -186,44 +194,65 @@ end)
 
 -- changes here will be automatically reflected in the armor properties tool
 function ACF_CalcArmor( Area, Ductility, Mass )
-	
 	return ( Mass * 1000 / Area / 0.78 ) / ( 1 + Ductility ) ^ 0.5 * ACF.ArmorMod
-	
 end
 
 function ACF_MuzzleVelocity( Propellant, Mass, Caliber )
-
 	local PEnergy = ACF.PBase * ((1+Propellant)^ACF.PScale-1)
 	local Speed = ((PEnergy*2000/Mass)^ACF.MVScale)
 	local Final = Speed -- - Speed * math.Clamp(Speed/2000,0,0.5)
-
 	return Final
 end
 
 function ACF_Kinetic( Speed , Mass, LimitVel )
-	
 	LimitVel = LimitVel or 99999
 	Speed = Speed/39.37
-	
 	local Energy = {}
 		Energy.Kinetic = ((Mass) * ((Speed)^2))/2000 --Energy in KiloJoules
 		Energy.Momentum = (Speed * Mass)
 		
 		local KE = (Mass * (Speed^ACF.KinFudgeFactor))/2000 + Energy.Momentum
 		Energy.Penetration = math.max( KE - (math.max(Speed-LimitVel,0)^2)/(LimitVel*5) * (KE/200)^0.95 , KE*0.1 )
-		--Energy.Penetration = math.max( KE - (math.max(Speed-LimitVel,0)^2)/(LimitVel*5) * (KE/200)^0.95 , KE*0.1 )
-		--Energy.Penetration = math.max(Energy.Momentum^ACF.KinFudgeFactor - math.max(Speed-LimitVel,0)/(LimitVel*5) * Energy.Momentum , Energy.Momentum*0.1)
-	
+		
 	return Energy
 end
-
+-- Global Ratio Setting Function
+function ACF_CalcMassRatio( obj )
+	local Mass = 0
+	local PhysMass = 0
+	-- get the shit that is physically attached to the vehicle
+	local PhysEnts = ACF_GetAllPhysicalConstraints( obj )
+	-- add any parented but not constrained props you sneaky bastards
+	local AllEnts = table.Copy( PhysEnts )
+	for k, v in pairs( PhysEnts ) do
+		table.Merge( AllEnts, ACF_GetAllChildren( v ) )
+	end
+	
+	for k, v in pairs( AllEnts ) do
+		if not IsValid( v ) then continue end
+		local phys = v:GetPhysicsObject()
+		if not IsValid( phys ) then continue end
+		Mass = Mass + phys:GetMass()
+		if PhysEnts[ v ] then
+			PhysMass = PhysMass + phys:GetMass()
+		end
+	end
+	
+	for k, v in pairs( AllEnts ) do
+		v.acfphystotal = PhysMass
+		v.acftotal = Mass
+		v.acflastupdatemass = CurTime()
+	end
+end
+-- Cvars for recoil/he push
+CreateConVar("acf_hepush", 1)
+CreateConVar("acf_recoilpush", 1)
 -- New healthmod/armormod/ammomod cvars
 CreateConVar("acf_healthmod", 1)
 CreateConVar("acf_armormod", 1)
 CreateConVar("acf_ammomod", 1)
 CreateConVar("acf_spalling", 0)
 CreateConVar("acf_gunfire", 1)
-
 function ACF_CVarChangeCallback(CVar, Prev, New)
 	if( CVar == "acf_healthmod" ) then
 		ACF.Threshold = 150 / math.max(New, 0.01)
@@ -248,7 +277,7 @@ function ACF_CVarChangeCallback(CVar, Prev, New)
 			text = "enabled" 
 		end
 		print ("ACF Gunfire has been " .. text)
-	end	
+	end
 end
 
 if SERVER then
@@ -267,11 +296,9 @@ else
 	end
 	net.Receive( "ACF_Notify", ACF_Notify )
 end
-
+--################################################################################################
 function ACF_UpdateChecking( )
-	
 	print("[ACF] Checking for updates....")
-	
 	http.Fetch("https://github.com/nrlulz/ACF",function(contents,size)
 		local rev = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
 		if rev and ACF.Version >= rev then
@@ -282,15 +309,12 @@ function ACF_UpdateChecking( )
 			print("[ACF] A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
 			if CLIENT then chat.AddText( Color( 255, 0, 0 ), "A newer version of ACF is available!" ) end
 		end
-		ACF.CurrentVersion = rev
-		
+		ACF.CurrentVersion = rev	
 	end, function() end)
-	
 	http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/",function(contents,size)
 		local rev2 = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
 		if rev2 and ACF.Version2 >= rev2 then
 			print("[ACF] ACF Custom Is Up To Date, Latest Version: "..rev2)
-			
 		elseif !rev2 then
 			print("[ACF] No Internet Connection Detected! ACF Custom Update Check Failed")
 		else
@@ -298,11 +322,10 @@ function ACF_UpdateChecking( )
 			if CLIENT then chat.AddText( Color( 255, 0, 0 ), "A newer version of ACF Custom is available!" ) end
 		end
 		ACF.CurrentVersion2 = rev2
-		
 	end, function() end)
 end
 ACF_UpdateChecking( )
-
+--################################################################################################
 local function OnInitialSpawn( ply )
 	local Table = {}
 	for k,v in pairs( ents.GetAll() ) do
@@ -324,80 +347,50 @@ cvars.AddChangeCallback("acf_armormod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_ammomod", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_spalling", ACF_CVarChangeCallback)
 cvars.AddChangeCallback("acf_gunfire", ACF_CVarChangeCallback)
-
-/*
-ONE HUGE HACK to get good killicons.
-*/
--- disabling this for now because it was breaking killicons completely and i don't want to deal with it right now
-/*
+-- smoke-wind cvar handling
 if SERVER then
-	
-	hook.Add("PlayerDeath", "ACF_PlayerDeath",function( victim, inflictor, attacker )
-		if inflictor:GetClass() == "acf_ammo" then
-			net.Start("ACF_KilledByACF")
-				net.WriteString( victim:Nick()..";ammo;"..attacker:Nick() )
-			net.Broadcast()
-		end
-		if inflictor:GetClass() == "acf_gun" then
-			net.Start("ACF_KilledByACF")
-				net.WriteString( victim:Nick()..";"..inflictor.Class..";"..attacker:Nick() )
-			net.Broadcast()
-		end
-	end)
-end
-
-
-if CLIENT then
-	
-	net.Receive("ACF_KilledByACF", function()
-		local Table = string.Explode(";", net.ReadString())
-		local victim, gun, attacker = Table[1], Table[2], Table[3]
-		
-		if attacker == "worldspawn" then attacker = "" end
-		GAMEMODE:AddDeathNotice( attacker, -1, "acf_"..gun, victim, 1001 )
-	end)
-	
-	if not ACF.replacedPlayerKilled then
-		timer.Create("ACF_replacePlayerKilled", 1, 0, function()
-			local Hooks = usermessage.GetTable()
-			if Hooks["PlayerKilled"] then
-				local ACF_PlayerKilled = Hooks["PlayerKilled"].Function
-				ACF.replacedPlayerKilled = true
-				Hooks["PlayerKilled"].Function = function(msg)
-					local victim     = msg:ReadEntity()
-					if ( !IsValid( victim ) ) then return end
-					local inflictor    = msg:ReadString()
-					local attacker     = msg:ReadString()
-					if inflictor != "acf_gun" and inflictor != "acf_ammo" then
-						ACF_PlayerKilled(msg)
-					end
-				end
-				timer.Destroy("ACF_replacePlayerKilled")
-				Msg("[ACF] Replaced PlayerKilled\n")
-			end
-		end)
+	local function msgtoconsole(hud, msg)
+			print(msg)
 	end
-	if not ACF.replacedPlayerKilledByPlayer then
-		timer.Create("ACF_replacePlayerKilledByPlayer", 1, 0, function()
-			local Hooks = usermessage.GetTable()
-			if Hooks["PlayerKilledByPlayer"] then
-				local ACF_PlayerKilledByPlayer = Hooks["PlayerKilledByPlayer"].Function
-				ACF.replacedPlayerKilledByPlayer = true
-				Hooks["PlayerKilledByPlayer"].Function = function(msg)
-					local victim     = msg:ReadEntity()
-					local inflictor    = msg:ReadString()
-					local attacker     = msg:ReadEntity()
-
-					if ( !IsValid( attacker ) ) then return end
-					if ( !IsValid( victim ) ) then return end
-					if inflictor != "acf_gun" and inflictor != "acf_ammo" then
-						ACF_PlayerKilledByPlayer(msg)
-					end
-				end
-				timer.Destroy("ACF_replacePlayerKilledByPlayer")
-				Msg("[ACF] Replaced PlayerKilledByPlayer\n")
+	util.AddNetworkString("acf_smokewind")
+	concommand.Add( "acf_smokewind", function(ply, cmd, args, str)
+			local validply = IsValid(ply)
+			local printmsg = validply and function(hud, msg) ply:PrintMessage(hud, msg) end or msgtoconsole
+			if not args[1] then printmsg(HUD_PRINTCONSOLE,
+					"Set the wind intensity upon all smoke munitions." ..
+					"\n   This affects the ability of smoke to be used for screening effect." ..
+					"\n   Example; acf_smokewind 300")
+					return false
 			end
-		end)
+			if validply and not ply:IsAdmin() then
+					printmsg(HUD_PRINTCONSOLE, "You can't use this because you are not an admin.")
+					return false
+			else
+					local wind = tonumber(args[1])
+					if not wind then
+							printmsg(HUD_PRINTCONSOLE, "Command unsuccessful: that wind value could not be interpreted as a number!")
+							return false
+					end
+					
+					ACF.SmokeWind = wind
+					
+					net.Start("acf_smokewind")
+							net.WriteFloat(wind)
+					net.Broadcast()
+					
+					printmsg(HUD_PRINTCONSOLE, "Command SUCCESSFUL: set smoke-wind to " .. wind .. "!")
+					return true        
+			end
+	end)
+	local function sendSmokeWind(ply)
+			net.Start("acf_smokewind")
+					net.WriteFloat(ACF.SmokeWind)
+			net.Send(ply)
 	end
+	hook.Add( "PlayerInitialSpawn", "ACF_SendSmokeWind", sendSmokeWind )
+else
+	local function recvSmokeWind(len)
+		ACF.SmokeWind = net.ReadFloat()
+	end
+	net.Receive("acf_smokewind", recvSmokeWind)
 end
-*/
