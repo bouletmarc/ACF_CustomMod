@@ -3,35 +3,37 @@
 INSTALLATION:
 #######################
 
-Create 2 folder anywhere, better be on Desktop
-call the 1st "ACF"
-call the 2nd "Custom"
-----You can put any name, its just to use this name for the Guide-----
+Create 2 folders anywhere, but DON'T put them in a garrysmod folder I suggest placing it on desktop.
+Example:
+	Custom ACF Folder
+	ACF Folder
+----You can use any name, I'm just using these names for the Guide...-----
 
 
-Install the Complet ACF Addons from this SVN bellow in the "ACF" folder
+Install the normal ACF Addon from this SVN below in the "ACF" folder.
 https://github.com/nrlulz/ACF/trunk
 
 
-Install the Custom ACF Mod from this SVN bellow in the "Custom" folder
+Install the Custom ACF Mod from this SVN below in the "Custom ACF" folder.
 https://github.com/bouletmarc/ACF_CustomMod/trunk
 
 
-Now Copy and paste all the stuff from the "Custom" folder to "ACF" folder
-Make sure to Override the files
+Now Copy and paste all the stuff from the "Custom ACF" folder to "ACF" folder
+Make sure to Override the files.
 
-then put "ACF" folder in garrysmod addons directory (garrysmod/garrysmod/addons)
-DO NOT PUT "Custom" FOLDER IN ADDONS, you will be already running acf with the other above
+Then put "ACF" folder in garrysmod addons directory (garrysmod/garrysmod/addons)
+DON'T PUT "Custom" FOLDER IN ADDONS, you will be already running acf with the other above
 
 
 
-You can finnaly remove the "Custom" folder created above, BUT this folder are useful for doing updates
-So just put this folder somewhere if you want to keep it safely.
+You can finally remove the "Custom" folder created above, BUT this folder are useful for doing updates and will save time.
+So just put this folder on your desktop if you want.
 
 
 -- While Doing Updates --
 
-just repeat the same process
-you can also only copy and paste the custom mod files directly in "garrysmod/garrysmod/addons/acf"
+If you deleted the Custom ACF folder, re-install the Custom ACF.
+If you kept the Custom ACF folder, just right click on the folder and do SVN update.
+You can also just copy and paste the Custom mod files directly into "garrysmod/garrysmod/addons/acf" if you already got normal ACF installed.
 
-Just always make sure you are overriding acf file's
+Just always make sure you are overriding ACF files.

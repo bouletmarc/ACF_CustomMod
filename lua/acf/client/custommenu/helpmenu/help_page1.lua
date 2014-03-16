@@ -78,12 +78,12 @@ local function CreateSoundBrowser()
 		WireModTextGearbox:SetFont( "DefaultBold" )
 		WireModTextGearbox:SizeToContents()
 		
-		WireModTextChips = ButtonsSidePanel:Add("DLabel")
+		/*WireModTextChips = ButtonsSidePanel:Add("DLabel")
 		WireModTextChips:SetText("With Chips's :")
 		WireModTextChips:SetTextColor(Color(210,210,210,255))
 		WireModTextChips:SetPos(40,220)
 		WireModTextChips:SetFont( "DefaultBold" )
-		WireModTextChips:SizeToContents()
+		WireModTextChips:SizeToContents()*/
 		
 		WireModTextFuel = ButtonsSidePanel2:Add("DLabel")
 		WireModTextFuel:SetText("With Fuel Tank's :")
@@ -113,12 +113,12 @@ local function CreateSoundBrowser()
 		WireLineGearbox = WireLineGearbox .. "* if you use GearUp and GearDown, those should\n"
 		WireLineGearbox = WireLineGearbox .. "* be wired to (0-1) to Increase or Decrease Gear.\n"
 		
-		local WireLineChips = ""
+		/*local WireLineChips = ""
 		WireLineChips = WireLineChips .. "- ActiveChips should be wired to a (0-1) value\n"
 		WireLineChips = WireLineChips .. "** OUTPUTS : **\n"
 		WireLineChips = WireLineChips .. "- TqAdd to the Engine(Engine to Chips)\n"
 		WireLineChips = WireLineChips .. "- MaxRpmAdd to the Engine(Engine to Chips)\n"
-		WireLineChips = WireLineChips .. "- LimitRpmAdd to the Engine(Engine to Chips)"
+		WireLineChips = WireLineChips .. "- LimitRpmAdd to the Engine(Engine to Chips)"*/
 		
 		local WireLineFuel = ""
 		WireLineFuel = WireLineFuel .. "- Active should be wired to a (0-1) value AND\n"
@@ -140,12 +140,12 @@ local function CreateSoundBrowser()
 		WireModText3:SetFont( "DefaultBold" )
 		WireModText3:SizeToContents()
 		
-		WireModText2 = ButtonsSidePanel:Add("DLabel")
+		/*WireModText2 = ButtonsSidePanel:Add("DLabel")
 		WireModText2:SetText(WireLineChips)
 		WireModText2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 		WireModText2:SetPos(20,240)
 		WireModText2:SetFont( "DefaultBold" )
-		WireModText2:SizeToContents()
+		WireModText2:SizeToContents()*/
 		
 		WireModTextFuelDesc = ButtonsSidePanel2:Add("DLabel")
 		WireModTextFuelDesc:SetText(WireLineFuel)

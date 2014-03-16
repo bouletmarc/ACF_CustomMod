@@ -23,20 +23,20 @@ if CLIENT then
 			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
 			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
 			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetFOV( 20 )
+			acfmenupanel.CData.DisplayModel:SetColor(Color(0,0,255))
+			acfmenupanel.CData.DisplayModel:SetFOV( 4 )
 			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
 			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		
 		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 		
 		for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
 			if ID == 1 then
 				ACF_NosSlider1(1, Value, Table.id, "Torque Adding")
 			end
 		end
-		
-		acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
@@ -75,7 +75,6 @@ function ENT:Initialize()
 	self.ActiveNos = false
 
 	self.UsableNos = 1
-	self.RpmAddFinal = 0
 	
 	--Timer setup
 	self.StopNos = 0
@@ -86,16 +85,17 @@ function ENT:Initialize()
 	self.CanUpdate = true
 	self.LegalThink = 0
 	self.LastActive = 0
+	self.Master = {}
 	
 	self.Inputs = Wire_CreateInputs( self, { "ActiveNos" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self, { "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "Active", "Usable" }, { "NORMAL", "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "TqAdd", "Active", "Usable" }, { "NORMAL", "NORMAL", "NORMAL" } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Nos"
 end  
 
 function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 
-	if not Owner:CheckLimit("_acf_misc") then return false end
+	if not Owner:CheckLimit("_acf_extra") then return false end
 	
 	local Nos = ents.Create("acf_nos")
 	if not IsValid( Nos ) then return false end
@@ -115,12 +115,13 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Nos.Model = Lookup.model
 	Nos.Weight = Lookup.weight
 	Nos.SoundPath = Lookup.sound
-	Nos.RpmAdd = Lookup.rpmadd
+	Nos.MaxRPMAdd = Lookup.rpmadd
+	Nos.LimitRPMAdd = Lookup.rpmadd
 	Nos.ModTable = Lookup.modtable
 		Nos.ModTable[1] = Data1
 		Nos.TorqueAdd2 = Data1
 		
-	Nos.TorqueAdd3 = 0
+	Nos.TorqueAdd = 0
 	Nos.UsableNos = 1
 	Nos.RpmAddFinal = 0
 	--Getting Time
@@ -146,9 +147,7 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Owner:AddCleanup( "acfmenu", Nos )
 	
 	--send Wire Outputs
-	Wire_TriggerOutput(Nos.Entity, "TqAdd", Nos.TorqueAdd3)
-	Wire_TriggerOutput(Nos.Entity, "MaxRpmAdd", Nos.RpmAddFinal)
-	Wire_TriggerOutput(Nos.Entity, "LimitRpmAdd", Nos.RpmAddFinal)
+	Wire_TriggerOutput(Nos.Entity, "TqAdd", Nos.TorqueAdd)
 	Wire_TriggerOutput(Nos.Entity, "Usable", Nos.UsableNos)
 	Wire_TriggerOutput(Nos.Entity, "Active", Nos.ActiveChips2)
 	
@@ -184,8 +183,9 @@ function ENT:Update( ArgsTable )
 		self.Model = Lookup.model
 		self.Weight = Lookup.weight
 		self.SoundPath = Lookup.sound
-		self.RpmAdd = Lookup.rpmadd
-		self.TorqueAdd3 = 0
+		self.MaxRPMAdd = Lookup.rpmadd
+		self.LimitRPMAdd = Lookup.rpmadd
+		self.TorqueAdd = 0
 		self.UsableNos = 1
 		self.RpmAddFinal = 0
 	end
@@ -198,9 +198,7 @@ function ENT:Update( ArgsTable )
 	self.BoostTime = 10
 	
 	--send Wire Outputs
-	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
-	Wire_TriggerOutput(self, "MaxRpmAdd", self.RpmAddFinal)
-	Wire_TriggerOutput(self, "LimitRpmAdd", self.RpmAddFinal)
+	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd)
 	Wire_TriggerOutput(self, "Usable", self.UsableNos)
 	Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 	
@@ -212,20 +210,12 @@ end
 
 function ENT:UpdateOverlayText()
 	
-	local text = "Torque Add: " .. self.TorqueAdd2 .. "Tq\n"
+	local text = "Torque Add: " .. math.Round(self.TorqueAdd2,0) .. "Tq\n"
 	text = text .. "Usable: " .. self.UsableNos .. "\n"
 	text = text .. "Weight: " .. self.Weight .. "Kg"
 	
 	self:SetOverlayText( text )
 	
-end
-
-
--- prevent people from changing bodygroup
-function ENT:CanProperty( ply, property )
-
-	return property ~= "bodygroups"
-
 end
 
 function ENT:TriggerInput( iname , value )
@@ -256,17 +246,14 @@ function ENT:Think()
 		--Stop Nos
 		if self.StopNos < CurTime() and self.ActiveChips2 == 1 then
 			self.ActiveChips2 = 0	--Nos are not active
-			self.TorqueAdd3 = 0		--Stop giving Torque
-			self.RpmAddFinal = 0	--Stop giving Rpm
+			self.TorqueAdd = 0		--Stop giving Torque
 			--Stop sound
 			if self.Sound then
 				self.Sound:Stop()
 			end
 			self.Sound = nil
 			--Send Wire Outputs
-			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
-			Wire_TriggerOutput(self, "MaxRpmAdd", self.RpmAddFinal)
-			Wire_TriggerOutput(self, "LimitRpmAdd", self.RpmAddFinal)
+			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd)
 			Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 		end
 		--Reactive Button
@@ -274,6 +261,7 @@ function ENT:Think()
 			self.UsableNos = 1 --usable
 			--send wire
 			Wire_TriggerOutput(self, "Usable", self.UsableNos)
+			self:UpdateOverlayText()
 		end
 	end
 	
@@ -288,36 +276,32 @@ function ENT:PowerUp(value)
 
 	self.ActiveChips2 = 1	--Nos are active
 	self.UsableNos = 0 		--Unusable
-	self.TorqueAdd3 = self.TorqueAdd2	--Get Torque
-	self.RpmAddFinal = self.RpmAdd		--Get RPM
+	self.TorqueAdd = self.TorqueAdd2	--Get Torque
 	--Send Wire Outputs
-	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
-	Wire_TriggerOutput(self, "MaxRpmAdd", self.RpmAddFinal)
-	Wire_TriggerOutput(self, "LimitRpmAdd", self.RpmAddFinal)
+	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd)
 	Wire_TriggerOutput(self, "Usable", self.UsableNos)
 	Wire_TriggerOutput(self, "Active", self.ActiveChips2)
+	self:UpdateOverlayText()
 	
 	self.StopNos = CurTime() + self.BoostTime
 	self.AllowNos = CurTime() + self.SwitchTime
 end
 
 function ENT:PreEntityCopy()
-	
 	//Wire dupe info
-	self.BaseClass.PreEntityCopy( self )
-	
+	self.BaseClass.PreEntityCopy( self )	
 end
 
 function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
-	
 	//Wire dupe info
 	self.BaseClass.PostEntityPaste( self, Player, Ent, CreatedEntities )
-
 end
 
 function ENT:OnRemove()
-
-	Wire_Remove(self)
-	
+	for Key,Value in pairs(self.Master) do		--Let's unlink ourselves from the engines properly
+		if IsValid( self.Master[Key] ) then
+			self.Master[Key]:Unlink( self )
+		end
+	end
 end
 

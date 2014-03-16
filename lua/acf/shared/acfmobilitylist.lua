@@ -35,10 +35,6 @@ local enginemaker_base = {}
 local chips_base = {}
 	chips_base.ent = "acf_chips"
 	chips_base.type = "Mobility"
---vtec
-local vtec_base = {}
-	vtec_base.ent = "acf_vtec"
-	vtec_base.type = "Mobility"
 --nos
 local nos_base = {}
 	nos_base.ent = "acf_nos"
@@ -48,11 +44,20 @@ local cvt_base = {}
 	cvt_base.ent = "acf_gearboxcvt"
 	cvt_base.type = "Mobility"
 	cvt_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+--airplane
+local air_base = {}
+	air_base.ent = "acf_gearboxair"
+	air_base.type = "Mobility"
+	air_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 --automatic
---local auto_base = {}
-	--auto_base.ent = "acf_gearbox3"
-	--auto_base.type = "Mobility"
-	--auto_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+local auto_base = {}
+	auto_base.ent = "acf_gearboxauto"
+	auto_base.type = "Mobility"
+	auto_base.sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+--radiator
+local rads_base = {}
+	rads_base.ent = "acf_rads"
+	rads_base.type = "Mobility"
 
 --##############################
 --##		set gui			####
@@ -70,18 +75,21 @@ if CLIENT then
 	--chips
 	chips_base.guicreate = function( panel, tbl ) ACFChipsGUICreate( tbl ) end or nil
 	chips_base.guiupdate = function() return end
-	--vtec
-	vtec_base.guicreate = function( panel, tbl ) ACFVtecGUICreate( tbl ) end or nil
-	vtec_base.guiupdate = function() return end
 	--nos
 	nos_base.guicreate = function( panel, tbl ) ACFNosGUICreate( tbl ) end or nil
 	nos_base.guiupdate = function() return end
 	--CVT
 	cvt_base.guicreate = function( panel, tbl ) ACFGearboxCVTGUICreate( tbl ) end or nil
 	cvt_base.guiupdate = function() return end
+	--Airplane
+	air_base.guicreate = function( panel, tbl ) ACFGearboxAirGUICreate( tbl ) end or nil
+	air_base.guiupdate = function() return end
 	--automatic
-	--auto_base.guicreate = function( panel, tbl ) ACFGearbox3GUICreate( tbl ) end or nil
-	--auto_base.guiupdate = function() return end
+	auto_base.guicreate = function( panel, tbl ) ACFGearboxAutoGUICreate( tbl ) end or nil
+	auto_base.guiupdate = function() return end
+	--radiator
+	rads_base.guicreate = function( panel, tbl ) ACFRadsGUICreate( tbl ) end or nil
+	rads_base.guiupdate = function() return end
 end
 
 --##############################
@@ -122,12 +130,6 @@ function ACF_DefineChips( id, data )
 	table.Inherit( data, chips_base )
 	MobilityTable[ id ] = data
 end
---vtec
-function ACF_DefineVtec( id, data )
-	data.id = id
-	table.Inherit( data, vtec_base )
-	MobilityTable[ id ] = data
-end
 --nos
 function ACF_DefineNos( id, data )
 	data.id = id
@@ -140,12 +142,24 @@ function ACF_DefineCvt( id, data )
 	table.Inherit( data, cvt_base )
 	MobilityTable[ id ] = data
 end
---auto
-/*function ACF_DefineAutomatic( id, data )
+--airplane
+function ACF_DefineGearboxAir( id, data )
+	data.id = id
+	table.Inherit( data, air_base )
+	MobilityTable[ id ] = data
+end
+--automatic
+function ACF_DefineAutomatic( id, data )
 	data.id = id
 	table.Inherit( data, auto_base )
 	MobilityTable[ id ] = data
-end*/
+end
+--radiator
+function ACF_DefineRads( id, data )
+	data.id = id
+	table.Inherit( data, rads_base )
+	MobilityTable[ id ] = data
+end
 
 --##############################
 --##	search and load		####

@@ -64,7 +64,7 @@ local function CreateSoundBrowser()
 		WireModText1:SetFont( "DefaultBold" )
 		WireModText1:SizeToContents()
 		--#########################################################################################
-		WireModTextVtec = ButtonsSidePanel:Add("DLabel")
+		/*WireModTextVtec = ButtonsSidePanel:Add("DLabel")
 		WireModTextVtec:SetText("With Vtec's :")
 		WireModTextVtec:SetTextColor(Color(210,210,210,255))
 		WireModTextVtec:SetPos(40,40)
@@ -76,12 +76,12 @@ local function CreateSoundBrowser()
 		WireModTextNos:SetTextColor(Color(210,210,210,255))
 		WireModTextNos:SetPos(20,40)
 		WireModTextNos:SetFont( "DefaultBold" )
-		WireModTextNos:SizeToContents()
+		WireModTextNos:SizeToContents()*/
 		
 		LinkingText1 = ButtonsSidePanel:Add("DLabel")
 		LinkingText1:SetText("Linking Part :")
 		LinkingText1:SetTextColor(Color(0,170,170,255))
-		LinkingText1:SetPos(40,180)
+		LinkingText1:SetPos(40,40)
 		LinkingText1:SetFont( "DefaultBold" )
 		LinkingText1:SizeToContents()
 		
@@ -92,7 +92,7 @@ local function CreateSoundBrowser()
 		EngineTextOption:SetFont( "DefaultBold" )
 		EngineTextOption:SizeToContents()*/
 		--#########################################################################################
-		local WireLineVtec = ""
+		/*local WireLineVtec = ""
 		WireLineVtec = WireLineVtec .. "- RPM should be wired to the Engine\n"
 		WireLineVtec = WireLineVtec .. "** OUTPUTS : **\n"
 		WireLineVtec = WireLineVtec .. "- ActiveChips to a ACF Chips(Chips to Vtec)\n\n"
@@ -108,14 +108,16 @@ local function CreateSoundBrowser()
 		WireLineNos = WireLineNos .. "- MaxRpmAdd to the Engine(Engine to Nos)\n"
 		WireLineNos = WireLineNos .. "- LimitRpmAdd to the Engine(Engine to Nos)"
 		WireLineNos = WireLineNos .. "- Usable to a Screen or similar to know if\n"
-		WireLineNos = WireLineNos .. "  you can activate it"
+		WireLineNos = WireLineNos .. "  you can activate it"*/
 		
 		local LinkingLine1 = ""
 		LinkingLine1 = LinkingLine1 .. "*To LINK, you must RIGHT clic on both entities with acf_menu*\n"
 		LinkingLine1 = LinkingLine1 .. "*To UNLINK, you must hold -E- and right clic with acf_menu*\n\n"
-		LinkingLine1 = LinkingLine1 .. "- Engine must be linked to Gearbox and FuelTank\n"
+		LinkingLine1 = LinkingLine1 .. "- Engine must be linked to Gearbox, FuelTank or a Engine Extra\n"
 		LinkingLine1 = LinkingLine1 .. "- Gearbox's must be linked to Wheels (regular prop's)\n"
-		LinkingLine1 = LinkingLine1 .. "- Gun must be linked to the Ammo Box\n"
+		LinkingLine1 = LinkingLine1 .. "- Gun must be linked to the Ammo Box\n\n"
+		LinkingLine1 = LinkingLine1 .. "-- Chips is a Engine Extra\n"
+		LinkingLine1 = LinkingLine1 .. "-- Nos is a Engine Extra\n"
 		
 		--local EngineLineOption = ""
 		--#########################################################################################

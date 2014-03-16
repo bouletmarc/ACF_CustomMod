@@ -2,12 +2,13 @@ AddCSLuaFile()
 
 DEFINE_BASECLASS( "base_wire_entity" )
 
-ENT.PrintName = "ACF Gearbox CVT"
-ENT.WireDebugName = "ACF Gearbox CVT"
+ENT.PrintName = "ACF GearboxAuto"
+ENT.WireDebugName = "ACF GearboxAuto"
 
 if CLIENT then
-	function ACFGearboxCVTGUICreate( Table )
 	
+	function ACFGearboxAutoGUICreate( Table )
+		
 		if not acfmenupanel.GearboxData then
 			acfmenupanel.GearboxData = {}
 		end
@@ -27,152 +28,179 @@ if CLIENT then
 			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		
-		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
-		acfmenupanel:CPanelText("MaxTq", "Max Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb\nWeight : "..(Table.weight).." kg")
-		for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
-			if ID > 0 and ID < 3 then
-				ACF_CvtSlider1(ID, Value, Table.id)
-			elseif ID == 3 then
-				ACF_CvtSlider3(3, Value, Table.id, "Ratio Minimum")
-			elseif ID == 4 then
-				ACF_CvtSlider4(4, Value, Table.id, "Ratio Maximum")
-			elseif ID == 5 then
-				ACF_CvtSlider2(5, Value, Table.id, "Rpm maximum")
-			elseif ID == 6 then
-				ACF_CvtSlider5(6, Value, Table.id, "Rpm minimum")
-			elseif ID == 7 then
-				ACF_CvtSlider6(7, Value, Table.id, "Declutch Rpm")
+		acfmenupanel:CPanelText("Desc", Table.desc)	--Description (Name, Desc)
+		
+		if Table.gears == 4 then
+			for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
+				if ID > 0 and ID < 4 then
+					ACF_AutoSlider1(ID, Value, Table.id)
+				elseif ID == 4 then
+					ACF_AutoSlider2(4, Value, Table.id, "Reverse Gear")
+				elseif ID == 7 then
+					ACF_AutoSlider3(7, Value, Table.id, "Declutch Rpm")
+				elseif ID == 8 then
+					ACF_AutoSlider4(8, Value, Table.id, "Minimum Rpm")
+				elseif ID == 9 then
+					ACF_AutoSlider5(9, Value, Table.id, "Maximum Rpm")
+				elseif ID == -1 then
+					ACF_AutoSlider6(10, Value, Table.id, "Final Drive")
+				end
+			end
+		elseif Table.gears == 6 then
+			for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
+				if ID > 0 and ID < 6 then
+					ACF_AutoSlider1(ID, Value, Table.id)
+				elseif ID == 6 then
+					ACF_AutoSlider2(6, Value, Table.id, "Reverse Gear")
+				elseif ID == 7 then
+					ACF_AutoSlider3(7, Value, Table.id, "Declutch Rpm")
+				elseif ID == 8 then
+					ACF_AutoSlider4(8, Value, Table.id, "Minimum Rpm")
+				elseif ID == 9 then
+					ACF_AutoSlider5(9, Value, Table.id, "Maximum Rpm")
+				elseif ID == -1 then
+					ACF_AutoSlider6(10, Value, Table.id, "Final Drive")
+				end
 			end
 		end
+		
+		acfmenupanel:CPanelText("MaxTorque", "Clutch Maximum Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb")
+		acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight.."kg")
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		maxtorque = Table.maxtq
 	end
 
-	function ACF_CvtSlider1(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Gear "..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( -1 )
-				acfmenupanel.CData[Gear]:SetMax( 1 )
-				acfmenupanel.CData[Gear]:SetDecimals( 2 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
+	function ACF_AutoSlider1(Gear, Value, ID)
+
+		if Gear and not acfmenupanel["CData"][Gear] then	
+			acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+				acfmenupanel["CData"][Gear]:SetText("Gear "..Gear )
+				acfmenupanel["CData"][Gear].Label:SizeToContents()
+				acfmenupanel["CData"][Gear]:SetMin( 0.01 )
+				acfmenupanel["CData"][Gear]:SetMax( 1 )
+				acfmenupanel["CData"][Gear]:SetDecimals( 2 )
+				acfmenupanel["CData"][Gear]["Gear"] = Gear
+				acfmenupanel["CData"][Gear]["ID"] = ID
+				acfmenupanel["CData"][Gear]:SetValue(Value)
 				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
+				acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 					RunConsoleCommand( "acfmenu_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
 		end
+
 	end
 
-	function ACF_CvtSlider2(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Rpm maximum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 3000 )
-				acfmenupanel.CData[Gear]:SetMax( 10000 )
-				acfmenupanel.CData[Gear]:SetDecimals( 0 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
+	function ACF_AutoSlider2(Gear, Value, ID, Desc)
+
+		if Gear and not acfmenupanel["CData"][Gear] then	
+			acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+				acfmenupanel["CData"][Gear]:SetText( Desc or "Reverse Gear" )
+				acfmenupanel["CData"][Gear].Label:SizeToContents()
+				acfmenupanel["CData"][Gear]:SetMin( -1 )
+				acfmenupanel["CData"][Gear]:SetMax( -0.01 )
+				acfmenupanel["CData"][Gear]:SetDecimals( 2 )
+				acfmenupanel["CData"][Gear]["Gear"] = Gear
+				acfmenupanel["CData"][Gear]["ID"] = ID
+				acfmenupanel["CData"][Gear]:SetValue(Value)
 				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
+				acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 					RunConsoleCommand( "acfmenu_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
 		end
+
 	end
 
-	function ACF_CvtSlider3(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Ratio Minimum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 0.001 )
-				acfmenupanel.CData[Gear]:SetMax( 0.5 )
-				acfmenupanel.CData[Gear]:SetDecimals( 3 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
+	function ACF_AutoSlider3(Gear, Value, ID, Desc)
+
+		if Gear and not acfmenupanel["CData"][Gear] then	
+			acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+				acfmenupanel["CData"][Gear]:SetText( Desc or "Declutch Rpm" )
+				acfmenupanel["CData"][Gear].Label:SizeToContents()
+				acfmenupanel["CData"][Gear]:SetMin( 1000 )
+				acfmenupanel["CData"][Gear]:SetMax( 4000 )
+				acfmenupanel["CData"][Gear]:SetDecimals( 0 )
+				acfmenupanel["CData"][Gear]["Gear"] = Gear
+				acfmenupanel["CData"][Gear]["ID"] = ID
+				acfmenupanel["CData"][Gear]:SetValue(Value)
 				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
+				acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 					RunConsoleCommand( "acfmenu_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
 		end
+
 	end
 
-	function ACF_CvtSlider4(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Ratio Maximum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 0.3 )
-				acfmenupanel.CData[Gear]:SetMax( 4 )
-				acfmenupanel.CData[Gear]:SetDecimals( 1 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
+	function ACF_AutoSlider4(Gear, Value, ID, Desc)
+
+		if Gear and not acfmenupanel["CData"][Gear] then	
+			acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+				acfmenupanel["CData"][Gear]:SetText( Desc or "Minimum Rpm" )
+				acfmenupanel["CData"][Gear].Label:SizeToContents()
+				acfmenupanel["CData"][Gear]:SetMin( 2000 )
+				acfmenupanel["CData"][Gear]:SetMax( 7000 )
+				acfmenupanel["CData"][Gear]:SetDecimals( 0 )
+				acfmenupanel["CData"][Gear]["Gear"] = Gear
+				acfmenupanel["CData"][Gear]["ID"] = ID
+				acfmenupanel["CData"][Gear]:SetValue(Value)
 				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
+				acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 					RunConsoleCommand( "acfmenu_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
 		end
+
 	end
 
-	function ACF_CvtSlider5(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Rpm minimum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 2000 )
-				acfmenupanel.CData[Gear]:SetMax( 7000 )
-				acfmenupanel.CData[Gear]:SetDecimals( 0 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
+	function ACF_AutoSlider5(Gear, Value, ID, Desc)
+
+		if Gear and not acfmenupanel["CData"][Gear] then	
+			acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+				acfmenupanel["CData"][Gear]:SetText( Desc or "Maximum Rpm" )
+				acfmenupanel["CData"][Gear].Label:SizeToContents()
+				acfmenupanel["CData"][Gear]:SetMin( 3000 )
+				acfmenupanel["CData"][Gear]:SetMax( 12000 )
+				acfmenupanel["CData"][Gear]:SetDecimals( 0 )
+				acfmenupanel["CData"][Gear]["Gear"] = Gear
+				acfmenupanel["CData"][Gear]["ID"] = ID
+				acfmenupanel["CData"][Gear]:SetValue(Value)
 				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
+				acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 					RunConsoleCommand( "acfmenu_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
 		end
+
 	end
 
-	function ACF_CvtSlider6(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Declutch Rpm"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 1000 )
-				acfmenupanel.CData[Gear]:SetMax( 4000 )
-				acfmenupanel.CData[Gear]:SetDecimals( 0 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
+	function ACF_AutoSlider6(Gear, Value, ID, Desc)
+
+		if Gear and not acfmenupanel["CData"][Gear] then	
+			acfmenupanel["CData"][Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
+				acfmenupanel["CData"][Gear]:SetText( Desc or "Final Drive" )
+				acfmenupanel["CData"][Gear].Label:SizeToContents()
+				acfmenupanel["CData"][Gear]:SetMin( 0.01 )
+				acfmenupanel["CData"][Gear]:SetMax( 2 )
+				acfmenupanel["CData"][Gear]:SetDecimals( 2 )
+				acfmenupanel["CData"][Gear]["Gear"] = Gear
+				acfmenupanel["CData"][Gear]["ID"] = ID
+				acfmenupanel["CData"][Gear]:SetValue(Value)
 				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
+				acfmenupanel["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
 					RunConsoleCommand( "acfmenu_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanel.CustomDisplay:AddItem( acfmenupanel["CData"][Gear] )
 		end
+
 	end
 	
 	return
@@ -187,19 +215,21 @@ function ENT:Initialize()
 	
 	self.WheelLink = {} -- a "Link" has these components: Ent, Side, Axis, Rope, RopeLen, Output, ReqTq, Vel
 	
-	--################
-	self.CurrentRPM = 0
-	self.ClutchMode = 0
-	self.ClutchModeUse = 0
-	
 	self.TotalReqTq = 0
 	self.RClutch = 0
 	self.LClutch = 0
 	self.LBrake = 0
 	self.RBrake = 0
 	self.SteerRate = 0
-
-	self.Gear = 1
+	
+	--########################
+	self.OnReverse = 0
+	self.Usable = 1
+	self.AllowChange = 0
+	self.ClutchMode = 0
+	self.ClutchModeUse = 0
+	--########################
+	
 	self.GearRatio = 0
 	self.ChangeFinished = 0
 	
@@ -207,6 +237,8 @@ function ENT:Initialize()
 	
 	self.RPM = {}
 	self.CurRPM = 0
+    self.CVT = false
+	self.DoubleDiff = false
 	self.InGear = false
 	self.CanUpdate = true
 	self.LastActive = 0
@@ -214,63 +246,63 @@ function ENT:Initialize()
 	
 end  
 
-function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
+function MakeACF_GearboxAuto(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, Data5, Data6, Data7, Data8, Data9, Data10)
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
-	local GearboxCVT = ents.Create("acf_gearboxcvt")
+	local GearboxAuto = ents.Create("acf_gearboxauto")
 	local List = list.Get("ACFEnts")
 	local Classes = list.Get("ACFClasses")
-	if not IsValid( GearboxCVT ) then return false end
-	GearboxCVT:SetAngles(Angle)
-	GearboxCVT:SetPos(Pos)
-	GearboxCVT:Spawn()
+	if not IsValid( GearboxAuto ) then return false end
+	GearboxAuto:SetAngles(Angle)
+	GearboxAuto:SetPos(Pos)
+	GearboxAuto:Spawn()
 
-	GearboxCVT:SetPlayer(Owner)
-	GearboxCVT.Owner = Owner
-	GearboxCVT.Id = Id
-	GearboxCVT.Model = List.Mobility[Id].model
-	GearboxCVT.Mass = List.Mobility[Id].weight
-	GearboxCVT.SwitchTime = List.Mobility[Id].switch
-	GearboxCVT.MaxTorque = List.Mobility[Id].maxtq
-	GearboxCVT.Gears = List.Mobility[Id].gears
-	GearboxCVT.Dual = List.Mobility[Id].doubleclutch
-	GearboxCVT.GearTable = List.Mobility[Id].geartable
-		GearboxCVT.GearTable.Final = Data10
-		GearboxCVT.GearTable[1] = Data1
-		GearboxCVT.GearTable[2] = Data2
-		GearboxCVT.GearTable[3] = Data3
-		GearboxCVT.GearTable[4] = Data4
-		GearboxCVT.GearTable[5] = Data5
-		GearboxCVT.GearTable[6] = Data6
-		GearboxCVT.GearTable[7] = Data7
-		GearboxCVT.GearTable[8] = Data8
-		GearboxCVT.GearTable[9] = Data9
-		GearboxCVT.GearTable[0] = 0
+	GearboxAuto:SetPlayer(Owner)
+	GearboxAuto.Owner = Owner
+	GearboxAuto.Id = Id
+	GearboxAuto.Model = List.Mobility[Id].model
+	GearboxAuto.Mass = List.Mobility[Id].weight
+	GearboxAuto.SwitchTime = List.Mobility[Id].switch
+	GearboxAuto.MaxTorque = List.Mobility[Id].maxtq
+	GearboxAuto.Gears = List.Mobility[Id].gears
+	GearboxAuto.Dual = List.Mobility[Id].doubleclutch
+	GearboxAuto.GearTable = List.Mobility[Id].geartable
+		GearboxAuto.GearTable.Final = Data10
+		GearboxAuto.GearTable[1] = Data1
+		GearboxAuto.GearTable[2] = Data2
+		GearboxAuto.GearTable[3] = Data3
+		GearboxAuto.GearTable[4] = Data4
+		GearboxAuto.GearTable[5] = Data5
+		GearboxAuto.GearTable[6] = Data6
+		GearboxAuto.GearTable[7] = Data7
+		GearboxAuto.GearTable[8] = Data8
+		GearboxAuto.GearTable[9] = Data9
+		GearboxAuto.GearTable[0] = 0
 		
-		GearboxCVT.Gear0 = Data10
-		GearboxCVT.Gear1 = Data1
-		GearboxCVT.Gear2 = Data2
-		GearboxCVT.Gear3 = Data3
-		GearboxCVT.Gear4 = Data4
-		GearboxCVT.Gear5 = Data5
-		GearboxCVT.Gear6 = Data6
-		GearboxCVT.Gear7 = Data7
-		GearboxCVT.Gear8 = Data8
-		GearboxCVT.Gear9 = Data9
+		GearboxAuto.Gear0 = Data10
+		GearboxAuto.Gear1 = Data1
+		GearboxAuto.Gear2 = Data2
+		GearboxAuto.Gear3 = Data3
+		GearboxAuto.Gear4 = Data4
+		GearboxAuto.Gear5 = Data5
+		GearboxAuto.Gear6 = Data6
+		GearboxAuto.Gear7 = Data7
+		GearboxAuto.Gear8 = Data8
+		GearboxAuto.Gear9 = Data9
 				
-	GearboxCVT:SetModel( GearboxCVT.Model )	
+	GearboxAuto:SetModel( GearboxAuto.Model )
 	
-	GearboxCVT.GearFinal = tonumber(GearboxCVT.Gear3)
-	GearboxCVT.RatioMin = tonumber(GearboxCVT.Gear3)
-	GearboxCVT.RatioMax = tonumber(GearboxCVT.Gear4)
-	GearboxCVT.RpmLimit = tonumber(GearboxCVT.Gear5)
-	GearboxCVT.RpmLimit2 = tonumber(GearboxCVT.Gear6)
-	GearboxCVT.DeclutchRpm = tonumber(GearboxCVT.Gear7)
-	GearboxCVT.GearFinal2 = tonumber(GearboxCVT.GearFinal)
-		
-	local Inputs = {"Gear","Gear Up","Gear Down"}
-	if GearboxCVT.Dual then
+	--############################
+	--Convert to number
+	GearboxAuto.DeclutchRpm = tonumber(GearboxAuto.Gear7)
+	GearboxAuto.RpmDown = tonumber(GearboxAuto.Gear8)
+	GearboxAuto.RpmUp = tonumber(GearboxAuto.Gear9)
+	GearboxAuto.ReverseGear = GearboxAuto.Gears
+	--############################ 
+	
+	local Inputs = {"Reverse"}
+	if GearboxAuto.Dual then
 		table.insert(Inputs, "Left Clutch")
 		table.insert(Inputs, "Right Clutch")
 		table.insert(Inputs, "Left Brake")
@@ -280,62 +312,65 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 		table.insert(Inputs, "Brake")
 	end
 	
-    GearboxCVT.Inputs = Wire_CreateInputs( GearboxCVT.Entity, Inputs )
-	GearboxCVT.Outputs = WireLib.CreateSpecialOutputs( GearboxCVT.Entity, { "Ratio", "Entity" , "Current Gear", "Gearbox RPM" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
-	Wire_TriggerOutput(GearboxCVT.Entity, "Entity", GearboxCVT.Entity)
+    local Outputs = { "Ratio", "Entity", "Current Gear", "Gearbox RPM" }
+    local OutputTypes = { "NORMAL", "ENTITY", "NORMAL", "NORMAL" }
 	
-	GearboxCVT.LClutch = GearboxCVT.MaxTorque
-	GearboxCVT.RClutch = GearboxCVT.MaxTorque
+	GearboxAuto.Inputs = Wire_CreateInputs( GearboxAuto, Inputs )
+	GearboxAuto.Outputs = WireLib.CreateSpecialOutputs( GearboxAuto, Outputs, OutputTypes )
+	Wire_TriggerOutput(GearboxAuto, "Entity", GearboxAuto)
+	
+	GearboxAuto.LClutch = GearboxAuto.MaxTorque
+	GearboxAuto.RClutch = GearboxAuto.MaxTorque
 
-	GearboxCVT:PhysicsInit( SOLID_VPHYSICS )      	
-	GearboxCVT:SetMoveType( MOVETYPE_VPHYSICS )     	
-	GearboxCVT:SetSolid( SOLID_VPHYSICS )
+	GearboxAuto:PhysicsInit( SOLID_VPHYSICS )      	
+	GearboxAuto:SetMoveType( MOVETYPE_VPHYSICS )     	
+	GearboxAuto:SetSolid( SOLID_VPHYSICS )
 
-	local phys = GearboxCVT:GetPhysicsObject()  	
+	local phys = GearboxAuto:GetPhysicsObject()  	
 	if IsValid( phys ) then 
-		phys:SetMass( GearboxCVT.Mass ) 
+		phys:SetMass( GearboxAuto.Mass ) 
 	end
 	
-	GearboxCVT.In = GearboxCVT:WorldToLocal(GearboxCVT:GetAttachment(GearboxCVT:LookupAttachment( "input" )).Pos)
-	GearboxCVT.OutL = GearboxCVT:WorldToLocal(GearboxCVT:GetAttachment(GearboxCVT:LookupAttachment( "driveshaftL" )).Pos)
-	GearboxCVT.OutR = GearboxCVT:WorldToLocal(GearboxCVT:GetAttachment(GearboxCVT:LookupAttachment( "driveshaftR" )).Pos)
+	GearboxAuto.In = GearboxAuto:WorldToLocal(GearboxAuto:GetAttachment(GearboxAuto:LookupAttachment( "input" )).Pos)
+	GearboxAuto.OutL = GearboxAuto:WorldToLocal(GearboxAuto:GetAttachment(GearboxAuto:LookupAttachment( "driveshaftL" )).Pos)
+	GearboxAuto.OutR = GearboxAuto:WorldToLocal(GearboxAuto:GetAttachment(GearboxAuto:LookupAttachment( "driveshaftR" )).Pos)
 	
-	Owner:AddCount("_acf_gearboxcvt", GearboxCVT)
-	Owner:AddCleanup( "acfmenu", GearboxCVT )
+	Owner:AddCount("_acf_gearboxauto", GearboxAuto)
+	Owner:AddCleanup( "acfmenu", GearboxAuto )
 	
-	GearboxCVT:ChangeGear(1)
+	GearboxAuto.Gear = 1
+	GearboxAuto:ChangeGear(1)
 	
-	if GearboxCVT.Dual then
-		GearboxCVT:SetBodygroup(1, 1)
+	if GearboxAuto.Dual then
+		GearboxAuto:SetBodygroup(1, 1)
 	else
-		GearboxCVT:SetBodygroup(1, 0)
+		GearboxAuto:SetBodygroup(1, 0)
 	end
 	
-	GearboxCVT:SetNetworkedString( "WireName", List.Mobility[Id].name )
-	GearboxCVT:UpdateOverlayText()
+	GearboxAuto:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	GearboxAuto:UpdateOverlayText()
 		
-	return GearboxCVT
+	return GearboxAuto
 end
-list.Set( "ACFCvars", "acf_gearboxcvt" , {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
-duplicator.RegisterEntityClass("acf_gearboxcvt", MakeACF_GearboxCVT, "Pos", "Angle", "Id", "Gear1", "Gear2", "Gear3", "Gear4", "Gear5", "Gear6", "Gear7", "Gear8", "Gear9", "Gear0" )
+list.Set( "ACFCvars", "acf_gearboxauto", {"id", "data1", "data2", "data3", "data4", "data5", "data6", "data7", "data8", "data9", "data10"} )
+duplicator.RegisterEntityClass("acf_gearboxauto", MakeACF_GearboxAuto, "Pos", "Angle", "Id", "Gear1", "Gear2", "Gear3", "Gear4", "Gear5", "Gear6", "Gear7", "Gear8", "Gear9", "Gear0" )
 
 function ENT:Update( ArgsTable )
 	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
 	-- and pos and angle of the tool trace inserted at the start
 	
 	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
-		return false, "You don't own that gearbox!"
+		return false, "You don't own that gearboxauto!"
 	end
 	
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
 	local List = list.Get("ACFEnts")
 	
 	if List.Mobility[Id].model ~= self.Model then
-		return false, "The new gearbox must have the same model!"
+		return false, "The new gearboxauto must have the same model!"
 	end
 		
 	if self.Id != Id then
-	
 		self.Id = Id
 		self.Mass = List.Mobility[Id].weight
 		self.SwitchTime = List.Mobility[Id].switch
@@ -343,7 +378,7 @@ function ENT:Update( ArgsTable )
 		self.Gears = List.Mobility[Id].gears
 		self.Dual = List.Mobility[Id].doubleclutch
 		
-		local Inputs = {"Gear","Gear Up","Gear Down"}
+		local Inputs = {"Reverse"}
 		if self.Dual then
 			table.insert(Inputs,"Left Clutch")
 			table.insert(Inputs,"Right Clutch")
@@ -354,14 +389,17 @@ function ENT:Update( ArgsTable )
 			table.insert(Inputs, "Brake")
 		end
 		
+		local Outputs = { "Ratio", "Entity", "Current Gear" }
+		local OutputTypes = { "NORMAL", "ENTITY", "NORMAL" }
+		
 		local phys = self:GetPhysicsObject()    
 		if IsValid( phys ) then 
 			phys:SetMass( self.Mass ) 
 		end
 		
 		self.Inputs = Wire_CreateInputs( self, Inputs )
+        self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputTypes )
         Wire_TriggerOutput( self, "Entity", self )
-		
 	end
 	
 	self.GearTable.Final = ArgsTable[14]
@@ -387,15 +425,16 @@ function ENT:Update( ArgsTable )
 	self.Gear8 = ArgsTable[12]
 	self.Gear9 = ArgsTable[13]
 	
-	self:ChangeGear(1)
-	
-	self.GearFinal = tonumber(self.Gear3)
-	self.RatioMin = tonumber(self.Gear3)
-	self.RatioMax = tonumber(self.Gear4)
-	self.RpmLimit = tonumber(self.Gear5)
-	self.RpmLimit2 = tonumber(self.Gear6)
+	--############################ 
+	--Convert to number
 	self.DeclutchRpm = tonumber(self.Gear7)
-	self.GearFinal2 = tonumber(self.GearFinal)
+	self.RpmDown = tonumber(self.Gear8)
+	self.RpmUp = tonumber(self.Gear9)
+	self.ReverseGear = self.Gears
+	--############################ 
+	
+	self.Gear = 1
+	self:ChangeGear(1)
 	
 	if self.Dual then
 		self:SetBodygroup(1, 1)
@@ -406,24 +445,22 @@ function ENT:Update( ArgsTable )
 	self:SetNetworkedString( "WireName", List.Mobility[Id].name )
 	self:UpdateOverlayText()
 	
-	return true, "CVT Gearbox updated successfully!"
+	return true, "GearboxAuto updated successfully!"
 end
 
 function ENT:UpdateOverlayText()
 	
-	local text = "Current Gear: " .. self.Gear .. "\n"
-	text = text .. "Final Ratio: " .. self.GearFinal2 .. "\n"
-	text = text .. "Gear1: " .. self.Gear1 .. "\n"
-	text = text .. "Gear2: " .. self.Gear2 .. "\n"
-	text = text .. "Rpm Max: " .. self.RpmLimit .. "Rpm\n"
-	text = text .. "Rpm Min: " .. self.RpmLimit2 .. "Rpm\n"
-	text = text .. "Declutch: " .. self.DeclutchRpm .. "Rpm\n"
-	text = text .. "Weight: "..self.Mass.." Kg\n"
+	local text = ""
+	for i = 1, self.Gears do
+		text = text .. "Gear " .. i .. ": " .. math.Round( self.GearTable[ i ], 2 ) .. "\n"
+	end
+	text = text .. "Current Gear: " .. self.Gear .. "\n"
+	text = text .. "Final Drive: " .. math.Round( self.Gear0, 2 ) .. "\n"
+	text = text .. "Torque Rating: " .. self.MaxTorque .. " Nm / " .. math.Round( self.MaxTorque * 0.73 ) .. " ft-lb"
 	
 	self:SetOverlayText( text )
 	
 end
-
 
 -- prevent people from changing bodygroup
 function ENT:CanProperty( ply, property )
@@ -431,15 +468,13 @@ function ENT:CanProperty( ply, property )
 end
 
 function ENT:TriggerInput( iname , value )
-	if ( iname == "Gear" and self.Gear != math.floor(value) ) then
-		self:ChangeGear(math.floor(value))
-	elseif ( iname == "Gear Up" ) then
-		if ( self.Gear < self.Gears and value > 0 ) then
-			self:ChangeGear(math.floor(self.Gear + 1))
-		end
-	elseif ( iname == "Gear Down" ) then
-		if ( self.Gear > 1 and value > 0 ) then
-			self:ChangeGear(math.floor(self.Gear - 1))
+	if ( iname == "Reverse" ) then
+		if ( value > 0 and self.Gear != self.ReverseGear) then
+			self.OnReverse = 1
+			self:ChangeGear(math.floor(self.ReverseGear))
+		elseif ( value == 0 and self.Gear == self.ReverseGear) then
+			self.OnReverse = 0
+			self:ChangeGear(math.floor(1))
 		end
 	elseif ( iname == "Clutch" ) then
 		self.ClutchModeUse = value
@@ -454,9 +489,13 @@ function ENT:TriggerInput( iname , value )
 	elseif ( iname == "Right Brake" ) then
 		self.RBrake = math.Clamp(value,0,100)
 	elseif ( iname == "Left Clutch" ) then
-		self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.LClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	elseif ( iname == "Right Clutch" ) then
-		self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		if(self.ClutchMode == 0 ) then
+			self.RClutch = math.Clamp(1-value,0,1)*self.MaxTorque
+		end
 	end
 end
 
@@ -468,8 +507,7 @@ function ENT:Think()
 	end
 	
 	self.Legal = self:CheckLegal()
-	
-	self:NextThink(Time+0.2)
+	self:NextThink( Time + math.random( 5, 10 ) )
 	return true
 end
 
@@ -484,7 +522,6 @@ function ENT:CheckLegal()
 	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
 		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
 	end
-	
 	return false
 end
 
@@ -530,6 +567,7 @@ function ENT:CheckEnts()
 end
 
 function ENT:Calc( InputRPM, InputInertia )
+
 	if self.LastActive == CurTime() then
 		return math.min( self.TotalReqTq, self.MaxTorque )
 	end
@@ -557,49 +595,29 @@ function ENT:Calc( InputRPM, InputInertia )
 			self.RClutch = math.Clamp(1-0,0,1)*self.MaxTorque
 		end
 	end
-	--####################
-	if self.ClutchMode == 1 then
-		if(self.GearFinal2 > self.RatioMin) then
-			--self.Reducer = ((self.RpmLimit2-InputRPM)+((self.RpmLimit2-InputRPM)/6000))-(self.RpmLimit2-InputRPM)
-			self.Reducer = self.Reducer + self.Reducer + 0.002
-			self.GearFinal = self.GearFinal-(0.002+self.Reducer)
-			self.GearFinal2 = tonumber(self.GearFinal)
-		elseif(self.GearFinal2 <= self.RatioMin) then
-			self.Reducer = 0
-			self.GearFinal = self.RatioMin
-			self.GearFinal2 = tonumber(self.GearFinal)
+	--#################################################################################################
+	--increase
+	if self.OnReverse == 0 then
+		if InputRPM >= self.RpmUp then
+			if self.Gear < self.Gears-1 then
+				self:ChangeGear(math.floor(self.Gear + 1))
+			elseif self.Gear > self.Gears-1 then
+				self:ChangeGear(math.floor(self.Gears-1)) --not Allow reverse
+			end
+		--decrease
+		elseif InputRPM <= self.RpmDown then
+			if self.Gear > 1 then
+				self:ChangeGear(math.floor(self.Gear - 1))
+			elseif self.Gear < 1 then
+				self:ChangeGear(math.floor(1))
+			end
 		end
-		self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
-		self:UpdateOverlayText()
-		Wire_TriggerOutput(self, "Ratio", self.GearRatio)
-	else
-		if (InputRPM >= self.RpmLimit) then	--Increase
-			self.Reducer = ((InputRPM-self.RpmLimit)+((InputRPM-self.RpmLimit)/6000))-(InputRPM-self.RpmLimit)
-			if(self.GearFinal2 < self.RatioMax) then
-				self.GearFinal = self.GearFinal+(0.002+self.Reducer)
-				self.GearFinal2 = tonumber(self.GearFinal)
-			elseif(self.GearFinal2 >= self.RatioMax) then
-				self.GearFinal = self.RatioMax
-				self.GearFinal2 = tonumber(self.GearFinal)
-			end
-			self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
-			self:UpdateOverlayText()
-			Wire_TriggerOutput(self, "Ratio", self.GearRatio)
-		elseif (InputRPM <= self.RpmLimit2) then --Decrease
-			self.Reducer = ((self.RpmLimit2-InputRPM)+((self.RpmLimit2-InputRPM)/6000))-(self.RpmLimit2-InputRPM)
-			if(self.GearFinal2 > self.RatioMin) then
-				self.GearFinal = self.GearFinal-(0.002+self.Reducer)
-				self.GearFinal2 = tonumber(self.GearFinal)
-			elseif(self.GearFinal2 <= self.RatioMin) then
-				self.GearFinal = self.RatioMin
-				self.GearFinal2 = tonumber(self.GearFinal)
-			end
-			self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
-			self:UpdateOverlayText()
-			Wire_TriggerOutput(self, "Ratio", self.GearRatio)
+	else --Reverse
+		if self.Gear != self.ReverseGear then
+			self:ChangeGear(math.floor(self.ReverseGear))
 		end
 	end
-	--####################
+	--####################################################################################################
 	
 	for Key, Link in pairs( self.WheelLink ) do
 		if not IsValid( Link.Ent ) then
@@ -633,11 +651,13 @@ function ENT:Calc( InputRPM, InputInertia )
 		end
 		self.TotalReqTq = self.TotalReqTq + math.abs( Link.ReqTq )
 	end
-
+			
 	return math.min( self.TotalReqTq, self.MaxTorque )
+	
 end
 
 function ENT:CalcWheel( Link, SelfWorld )
+
 	local Wheel = Link.Ent
 	local WheelPhys = Wheel:GetPhysicsObject()
 	local VelDiff = ( Wheel:LocalToWorld( WheelPhys:GetAngleVelocity() ) - Wheel:GetPos() ) - SelfWorld
@@ -648,9 +668,11 @@ function ENT:CalcWheel( Link, SelfWorld )
 	
 	-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
 	return BaseRPM / self.GearRatio / -6
+	
 end
 
-function ENT:Act( Torque, DeltaTime, Throttle )
+function ENT:Act( Torque, DeltaTime )
+	
 	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
@@ -658,7 +680,8 @@ function ENT:Act( Torque, DeltaTime, Throttle )
 		AvailTq = math.min( math.abs( Torque ) / self.TotalReqTq, 1 ) / self.GearRatio * -( -Torque / math.abs( Torque ) )
 	end
 	
-	for Key, Link in pairs( self.WheelLink ) do	
+	for Key, Link in pairs( self.WheelLink ) do
+		
 		local Brake = 0
 		if Link.Side == 0 then
 			Brake = self.LBrake
@@ -671,7 +694,8 @@ function ENT:Act( Torque, DeltaTime, Throttle )
 		else
 			self:ActWheel( Link, Link.ReqTq * AvailTq, Brake, DeltaTime )
 			ReactTq = ReactTq + Link.ReqTq * AvailTq
-		end	
+		end
+		
 	end
 	
 	local BoxPhys = self:GetPhysicsObject()
@@ -682,9 +706,11 @@ function ENT:Act( Torque, DeltaTime, Throttle )
 	end
 	
 	self.LastActive = CurTime()
+	
 end
 
 function ENT:ActWheel( Link, Torque, Brake, DeltaTime )
+	
 	local Phys = Link.Ent:GetPhysicsObject()
 	local Pos = Link.Ent:GetPos()
 	local TorqueAxis = Link.Ent:LocalToWorld( Link.Axis ) - Pos
@@ -699,11 +725,13 @@ function ENT:ActWheel( Link, Torque, Brake, DeltaTime )
 	local Force = TorqueVec * Torque * 0.75 + TorqueVec * BrakeMult
 	Phys:ApplyForceOffset( Force * -39.37 * DeltaTime, Pos + Cross * 39.37 )
 	Phys:ApplyForceOffset( Force * 39.37 * DeltaTime, Pos + Cross * -39.37 )
+	
 end
 
 function ENT:ChangeGear(value)
+
 	self.Gear = math.Clamp(value,0,self.Gears)
-	self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearFinal
+	self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearTable.Final
 	self.ChangeFinished = CurTime() + self.SwitchTime
 	self.InGear = false
 	
@@ -711,18 +739,22 @@ function ENT:ChangeGear(value)
 	self:EmitSound("buttons/lever7.wav",250,100)
 	Wire_TriggerOutput(self, "Ratio", self.GearRatio)
 	self:UpdateOverlayText()
+	
 end
 
 function ENT:Link( Target )
+
 	if not IsValid( Target ) or not table.HasValue( { "prop_physics", "acf_gearbox", "tire", "acf_gearboxair" }, Target:GetClass() ) then
 		return false, "Can only link props or gearboxes!"
 	end
+	
 	-- Check if target is already linked
 	for Key, Link in pairs( self.WheelLink ) do
 		if Link.Ent == Target then 
-			return false, "That is already linked to this gearbox!"
+			return false, "That is already linked to this gearboxauto!"
 		end
 	end
+	
 	-- make sure the angle is not excessive
 	local InPos = Vector( 0, 0, 0 )
 	if Target.IsGeartrain then
@@ -758,11 +790,15 @@ function ENT:Link( Target )
 	table.insert( self.WheelLink, Link )
 	
 	return true, "Link successful!"
+	
 end
 
 function ENT:Unlink( Target )
+	
 	for Key, Link in pairs( self.WheelLink ) do
+		
 		if Link.Ent == Target then
+			
 			-- Remove any old physical ropes leftover from dupes
 			for Key, Rope in pairs( constraint.FindConstraints( Link.Ent, "Rope" ) ) do
 				if Rope.Ent1 == self or Rope.Ent2 == self then
@@ -777,21 +813,28 @@ function ENT:Unlink( Target )
 			table.remove( self.WheelLink, Key )
 			
 			return true, "Unlink successful!"
+			
 		end
+		
 	end
-	return false, "That entity is not linked to this gearbox!"
+	
+	return false, "That entity is not linked to this gearboxauto!"
+	
 end
 
 function ENT:PreEntityCopy()
+	
 	-- Link Saving
 	local info = {}
 	local entids = {}
+	
 	-- Clean the table of any invalid entities
 	for Key, Link in pairs( self.WheelLink ) do
 		if not IsValid( Link.Ent ) then
 			table.remove( self.WheelLink, Key )
 		end
 	end
+	
 	-- Then save it
 	for Key, Link in pairs( self.WheelLink ) do
 		table.insert( entids, Link.Ent:EntIndex() )
@@ -801,11 +844,14 @@ function ENT:PreEntityCopy()
 	if info.entities then
 		duplicator.StoreEntityModifier( self, "WheelLink", info )
 	end
+	
 	//Wire dupe info
 	self.BaseClass.PreEntityCopy( self )
+	
 end
 
 function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
+	
 	-- Link Pasting
 	if Ent.EntityMods and Ent.EntityMods.WheelLink and Ent.EntityMods.WheelLink.entities then
 		local WheelLink = Ent.EntityMods.WheelLink
@@ -821,15 +867,18 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 		end
 		Ent.EntityMods.WheelLink = nil
 	end
+	
 	//Wire dupe info
 	self.BaseClass.PostEntityPaste( self, Player, Ent, CreatedEntities )
+
 end
 
 function ENT:OnRemove()
+
 	for Key,Value in pairs(self.Master) do		--Let's unlink ourselves from the engines properly
 		if IsValid( self.Master[Key] ) then
 			self.Master[Key]:Unlink( self )
 		end
 	end
+	
 end
-

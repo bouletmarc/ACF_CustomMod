@@ -21,14 +21,15 @@ if CLIENT then
 		
 		acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
 			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
+			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 325, 250 ) )
 			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetFOV( 20 )
+			acfmenupanel.CData.DisplayModel:SetFOV( 1 )
 			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
 			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
 		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
 		
 		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 		
 		for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
 			if ID == 1 then
@@ -37,10 +38,10 @@ if CLIENT then
 				ACF_ChipSlider2(2, Value, Table.id, "Rpm Max Adding")
 			elseif ID == 3 then
 				ACF_ChipSlider2(3, Value, Table.id, "Rpm Limit Adding")
+			elseif ID == 4 then
+				ACF_ChipVtecSlider(4, Value, Table.id)
 			end
 		end
-		
-		acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
 		
@@ -76,7 +77,7 @@ if CLIENT then
 				acfmenupanel.CData[Mod]:SetText( Desc or "Adding "..Mod )
 				acfmenupanel.CData[Mod].Label:SizeToContents()
 				acfmenupanel.CData[Mod]:SetMin( 100 )
-				acfmenupanel.CData[Mod]:SetMax( 5000 )
+				acfmenupanel.CData[Mod]:SetMax( 3000 )
 				acfmenupanel.CData[Mod]:SetDecimals( 0 )
 				acfmenupanel.CData[Mod]["Mod"] = Mod
 				acfmenupanel.CData[Mod]["ID"] = ID
@@ -92,35 +93,83 @@ if CLIENT then
 
 	end
 	
+	function ACF_ChipVtecSlider(Mod, Value, ID)
+
+		local VtecUsing = 0
+		local VtecKickRpm = 4500
+		
+		if VtecSlider then VtecSlider:Remove() end
+		
+		VtecButton = vgui.Create("DButton")
+		VtecButton:SetWide(100)
+		VtecButton:SetTall(60)
+		VtecButton:SetText("Vtec Off")
+		VtecButton:SetTextColor(Color(200,20,20,255))
+		VtecButton:SetToolTip("Vtec On = Adding the Power like a Vtec\nVtec Off = Adding the Power instantly")
+		VtecButton.DoClick = function()
+			if VtecUsing == 0 then
+				VtecUsing = 1
+				VtecButton:SetText("Vtec On")
+				VtecButton:SetTextColor(Color(20,200,20,255))
+				acfmenupanel.ModData[ID]["ModTable"][Mod] = VtecKickRpm
+				--Create The Slider
+				VtecSlider = vgui.Create( "DNumSlider")
+					VtecSlider:SetText( "Kick Rpm")
+					VtecSlider.Label:SizeToContents()
+					VtecSlider:SetMin( 3500 )
+					VtecSlider:SetMax( 6000 )
+					VtecSlider:SetDecimals( 0 )
+					VtecSlider["Mod"] = Mod
+					VtecSlider["ID"] = ID
+					VtecSlider:SetValue(VtecKickRpm)
+					VtecSlider:SetDark( true )
+					RunConsoleCommand( "acfmenu_data"..Mod, VtecKickRpm )
+					VtecSlider.OnValueChanged = function( slider, val )
+						acfmenupanel.ModData[slider.ID]["ModTable"][slider.Mod] = val
+						RunConsoleCommand( "acfmenu_data"..Mod, val )
+						VtecKickRpm = val
+					end
+				acfmenupanel.CustomDisplay:AddItem( VtecSlider )
+			elseif VtecUsing == 1 then
+				VtecUsing = 0
+				VtecButton:SetText("Vtec Off")
+				VtecButton:SetTextColor(Color(200,20,20,255))
+				if VtecSlider then VtecSlider:Remove() end
+				RunConsoleCommand( "acfmenu_data"..Mod, 0 )
+				acfmenupanel.ModData[ID]["ModTable"][Mod] = 0
+			end
+		end
+		acfmenupanel.CustomDisplay:AddItem( VtecButton )
+	
+	end
+	
 	return
 	
 end
 
 function ENT:Initialize()
-	
-	--input
-	self.ActiveChips = false
 
-	
+	self.Master = {}
 	self.CanUpdate = true
+	self.Legal = true
+	self.LastActive = 0
 	
-	self.Inputs = Wire_CreateInputs( self, { "ActiveChips" } )
-	self.Outputs = WireLib.CreateSpecialOutputs( self, { "TqAdd", "MaxRpmAdd", "LimitRpmAdd", "Active" }, { "NORMAL", "NORMAL", "NORMAL", "NORMAL" } )
+	self.Inputs = Wire_CreateInputs( self, { } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Chips"
 
 end 
 
-function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
+function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 
-	if not Owner:CheckLimit("_acf_misc") then return false end
-	
+	if not Owner:CheckLimit("_acf_extra") then return false end
+	print(GetConVarNumber("sbox_max_acf_extra"))
 	local Chips = ents.Create("acf_chips")
 	if not IsValid( Chips ) then return false end
 	
 	local EID
 	local List = list.Get("ACFEnts")
-	if List.Mobility[Id] then EID = Id else EID = "5.7-V8" end
+	if List.Mobility[Id] then EID = Id else EID = "V3_Chips" end
 	local Lookup = List.Mobility[EID]
 	
 	Chips:SetAngles(Angle)
@@ -136,14 +185,43 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 		Chips.ModTable[1] = Data1
 		Chips.ModTable[2] = Data2
 		Chips.ModTable[3] = Data3
-		Chips.TorqueAdd2 = Data1
-		Chips.MaxRPMAdd2 = Data2
-		Chips.LimitRPMAdd2 = Data3
+		Chips.ModTable[4] = Data4
+		--Set All Mods
+		Chips.Mods1 = Data1	--Torque
+		Chips.Mods2 = Data2	--MaxRpm
+		Chips.Mods3 = Data3	--LimitRpm
+		Chips.Mods4 = Data4	--VtecRpm
 		
-	Chips.TorqueAdd3 = 0
-	Chips.MaxRPMAdd3 = 0
-	Chips.LimitRPMAdd3 = 0
-				
+		Chips.KickRpm = Chips.Mods4	--Check if its Vtec first
+	
+	--Vtec Settings
+	Chips.KickActive = 0
+	Chips.KickRpmNumber = tonumber(Chips.KickRpm)
+	--Set Vtec Using
+	if Chips.KickRpmNumber <= 0 then Chips.VtecUsing = 0
+	elseif Chips.KickRpmNumber > 0 then Chips.VtecUsing = 1 end
+	--Set Values
+	if Chips.VtecUsing == 0 then
+		Chips.TorqueAdd = Chips.Mods1
+		Chips.MaxRPMAdd = Chips.Mods2
+		Chips.LimitRPMAdd = Chips.Mods3
+	elseif Chips.VtecUsing == 1 then
+		Chips.TorqueAdd = 0
+		Chips.MaxRPMAdd = 0
+		Chips.LimitRPMAdd = 0
+		Chips.TorqueAddVtec = Chips.Mods1
+		Chips.MaxRPMAddVtec = Chips.Mods2
+		Chips.LimitRPMAddVtec = Chips.Mods3
+	end
+	--Creating Wire Outputs
+	local Outputs = {"TqAdd", "MaxRpmAdd", "LimitRpmAdd"}
+	local OutputsTypes = {"NORMAL", "NORMAL", "NORMAL"}
+	if Chips.VtecUsing == 1 then
+		table.insert(Outputs, "Vtec On")
+		table.insert(OutputsTypes, "NORMAL")
+	end
+	Chips.Outputs = WireLib.CreateSpecialOutputs( Chips, Outputs, OutputsTypes )
+	
 	Chips:SetModel( Chips.Model )	
 
 	Chips:PhysicsInit( SOLID_VPHYSICS )      	
@@ -160,11 +238,12 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 	
 	Chips:SetNetworkedString( "WireName", Lookup.name )
 	Chips:UpdateOverlayText()
+	Chips:SetWireOutputs()
 		
 	return Chips
 end
-list.Set( "ACFCvars", "acf_chips" , {"id", "data1", "data2", "data3"} )
-duplicator.RegisterEntityClass("acf_chips", MakeACF_Chips, "Pos", "Angle", "Id", "TorqueAdd2", "MaxRPMAdd2", "LimitRPMAdd2")
+list.Set( "ACFCvars", "acf_chips" , {"id", "data1", "data2", "data3", "data4"} )
+duplicator.RegisterEntityClass("acf_chips", MakeACF_Chips, "Pos", "Angle", "Id", "Mods1", "Mods2", "Mods3", "Mods4")
 
 function ENT:Update( ArgsTable )
 	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
@@ -193,79 +272,137 @@ function ENT:Update( ArgsTable )
 	self.ModTable[1] = ArgsTable[5]
 	self.ModTable[2] = ArgsTable[6]
 	self.ModTable[3] = ArgsTable[7]
-	self.TorqueAdd2 = ArgsTable[5]
-	self.MaxRPMAdd2 = ArgsTable[6]
-	self.LimitRPMAdd2 = ArgsTable[7]
+	self.ModTable[4] = ArgsTable[8]
+	--Set Mods
+	self.Mods1 = ArgsTable[5]	--Torque
+	self.Mods2 = ArgsTable[6]	--MaxRpm
+	self.Mods3 = ArgsTable[7]	--LimitRpm
+	self.Mods4 = ArgsTable[8]	--VtecRpm
+	
+	self.KickRpm = self.Mods4	--Check if its Vtec first
+	
+	--Vtec Settings
+	self.KickActive = 0
+	self.KickRpmNumber = tonumber(self.KickRpm)
+	--Set Vtec Using
+	if self.KickRpmNumber <= 0 then self.VtecUsing = 0
+	elseif self.KickRpmNumber > 0 then self.VtecUsing = 1 end
+	--Set Values
+	if self.VtecUsing == 0 then
+		self.TorqueAdd = self.Mods1
+		self.MaxRPMAdd = self.Mods2
+		self.LimitRPMAdd = self.Mods3
+	elseif self.VtecUsing == 1 then
+		self.TorqueAdd = 0
+		self.MaxRPMAdd = 0
+		self.LimitRPMAdd = 0
+		self.TorqueAddVtec = self.Mods1
+		self.MaxRPMAddVtec = self.Mods2
+		self.LimitRPMAddVtec = self.Mods3
+	end
+	--Creating Wire Outputs
+	local Outputs = {"TqAdd", "MaxRpmAdd", "LimitRpmAdd"}
+	local OutputsTypes = {"NORMAL", "NORMAL", "NORMAL"}
+	if self.VtecUsing == 1 then
+		table.insert(Outputs, "Vtec On")
+		table.insert(OutputsTypes, "NORMAL")
+	end
+	self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputsTypes )
 	
 	self:SetNetworkedString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
+	self:SetWireOutputs()
 	
 	return true, "Chips updated successfully!"
 end
 
+function ENT:SetWireOutputs()
+	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd)
+	Wire_TriggerOutput(self, "MaxRpmAdd", self.MaxRPMAdd)
+	Wire_TriggerOutput(self, "LimitRpmAdd", self.LimitRPMAdd)
+	if self.VtecUsing == 1 then
+		Wire_TriggerOutput(self, "Vtec On", self.KickActive)
+	end
+end
+
 function ENT:UpdateOverlayText()
-	
-	local text = "Torque Add: " .. self.TorqueAdd2 .. "Tq\n"
-	text = text .. "Max Rpm Add: " .. self.MaxRPMAdd2 .. "Rpm\n"
-	text = text .. "Limit Rpm Add: " .. self.LimitRPMAdd2 .. "Rpm\n"
-	text = text .. "Weight: " .. self.Weight .. "Kg"
+	local text = ""
+	if self.VtecUsing == 0 then
+		text = text .. "Torque Add: " .. math.Round(self.TorqueAdd,0) .. "Tq\n"
+		text = text .. "Max Rpm Add: " .. math.Round(self.MaxRPMAdd,0) .. "Rpm\n"
+		text = text .. "Limit Rpm Add: " .. math.Round(self.LimitRPMAdd,0) .. "Rpm\n"
+		text = text .. "Weight: " .. self.Weight .. "Kg"
+	elseif self.VtecUsing == 1 then
+		text = text .. "Torque Add: " .. math.Round(self.TorqueAddVtec,0) .. "Tq\n"
+		text = text .. "Max Rpm Add: " .. math.Round(self.TorqueAddVtec,0) .. "Rpm\n"
+		text = text .. "Limit Rpm Add: " .. math.Round(self.TorqueAddVtec,0) .. "Rpm\n"
+		text = text .. "Kick Rpm: " .. math.Round(self.KickRpm,0) .. "Rpm\n"
+		text = text .. "Vtec On: " .. self.KickActive .. "\n"
+		text = text .. "Weight: " .. self.Weight .. "Kg"
+	end
 	
 	self:SetOverlayText( text )
+end
+
+function ENT:Think()
+	local Time = CurTime()
 	
-end
-
-
--- prevent people from changing bodygroup
-function ENT:CanProperty( ply, property )
-
-	return property ~= "bodygroups"
-
-end
-
-function ENT:TriggerInput( iname , value )
-	if (iname == "ActiveChips") then
-		if (value > 0) then
-			self.ActiveChips = true
-			self.ActiveChips2 = 1
-			self.TorqueAdd3 = self.TorqueAdd2
-			self.MaxRPMAdd3 = self.MaxRPMAdd2
-			self.LimitRPMAdd3 = self.LimitRPMAdd2
-			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
-			Wire_TriggerOutput(self, "MaxRpmAdd", self.MaxRPMAdd3)
-			Wire_TriggerOutput(self, "LimitRpmAdd", self.LimitRPMAdd3)
-			Wire_TriggerOutput(self, "Active", self.ActiveChips2)
-		elseif (value <= 0) then
-			self.ActiveChips = false
-			self.ActiveChips2 = 0
-			self.TorqueAdd3 = 0
-			self.MaxRPMAdd3 = 0
-			self.LimitRPMAdd3 = 0
-			Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd3)
-			Wire_TriggerOutput(self, "MaxRpmAdd", self.MaxRPMAdd3)
-			Wire_TriggerOutput(self, "LimitRpmAdd", self.LimitRPMAdd3)
-			Wire_TriggerOutput(self, "Active", self.ActiveChips2)
-		end
+	if self.LastActive + 2 > Time then
+		self:CheckRopes()
 	end
+	
+	self.Legal = self:CheckLegal()
+	self:NextThink( Time + math.random( 5, 10 ) )
+	return true
+end
 
+function ENT:CheckLegal()
+	-- make sure weight is not below stock
+	if self:GetPhysicsObject():GetMass() < self.Weight then return false end
+	-- if it's not parented we're fine
+	if not IsValid( self:GetParent() ) then return true end
+	-- but not if it's parented to a parented prop
+	if IsValid( self:GetParent():GetParent() ) then return false end
+	-- parenting is only legal if it's also welded
+	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
+		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
+	end
+	
+	return false
+end
+
+--Get RPM for Vtec Chips ONLY
+function ENT:GetRPM(IntputRPM)
+	if IntputRPM < self.KickRpmNumber then
+		self.TorqueAdd = 0
+		self.MaxRPMAdd = 0
+		self.LimitRPMAdd = 0
+		self.KickActive = 0
+	elseif IntputRPM >= self.KickRpmNumber then
+		self.TorqueAdd = self.TorqueAddVtec
+		self.MaxRPMAdd = self.MaxRPMAddVtec
+		self.LimitRPMAdd = self.LimitRPMAddVtec
+		self.KickActive = 1
+	end
+	self:UpdateOverlayText()
+	self:SetWireOutputs()
 end
 
 function ENT:PreEntityCopy()
-	
 	//Wire dupe info
 	self.BaseClass.PreEntityCopy( self )
-	
 end
 
 function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
-	
 	//Wire dupe info
 	self.BaseClass.PostEntityPaste( self, Player, Ent, CreatedEntities )
-
 end
 
 function ENT:OnRemove()
-
-	Wire_Remove(self)
-	
+	for Key,Value in pairs(self.Master) do		--Let's unlink ourselves from the engines properly
+		if IsValid( self.Master[Key] ) then
+			self.Master[Key]:Unlink( self )
+		end
+	end
 end
 

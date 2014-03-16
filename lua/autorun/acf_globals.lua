@@ -5,8 +5,8 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 483 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 8.01
-ACF.Version2 = 91
+ACF.VersionCustom = 8.11
+ACF.Version2 = 92
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
@@ -85,6 +85,10 @@ CreateConVar('sbox_max_acf_gun', 12)
 CreateConVar('sbox_max_acf_ammo', 32)
 CreateConVar('sbox_max_acf_misc', 32)
 CreateConVar('acf_meshvalue', 1)
+--Customs Cvars
+CreateConVar('sbox_max_acf_modding', 1)
+CreateConVar('sbox_max_acf_extra', 12)
+CreateConVar('sbox_max_acf_maker', 12)
 
 AddCSLuaFile()
 AddCSLuaFile( "acf/client/cl_acfballistics.lua" )
@@ -113,7 +117,7 @@ if SERVER then
 	util.AddNetworkString( "ACF_KilledByACF" )
 	util.AddNetworkString( "ACF_RenderDamage" )
 	util.AddNetworkString( "ACF_Notify" )
-
+	
 	include("acf/server/sv_acfbase.lua")
 	include("acf/server/sv_acfdamage.lua")
 	include("acf/server/sv_acfballistics.lua")

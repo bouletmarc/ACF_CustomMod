@@ -105,5 +105,30 @@ r84
 -->Removed Temp Mod -useless-
 -->Removed Fuel Mod -Useless-
 
+*r92
+-8.11
+--Fixed CVT Linking to Gearboxes
+--Fixed CVT Clutching issue
 
+--Added Airplane Gearboxes
+--Added Automatic Gearboxes
+--Added Engine Radiators Extra
+--Added Chips Linking
+--Added Nos Linking
+--Added Blue Color to Nos in Menu
+--Added CustomModding rcon switch
+--Added EngineMaker rcon
+--Added Engine Extras rcon
+
+--Integrated Vtec with Chips
+--Engine Link to Extra(chips,nos)
+--Allow only 1 Extra linked
+--Chips are now V3
+--Extra Linking not allowed on Electric and Turbine
+--Consumption show only while require fuel
+
+--Re-made Readme file. Thanks to joker
+
+--Removed Vtec Chips "Integrated"
+--Removed Inputs on Chips -Useless-
 

@@ -42,7 +42,7 @@ if CLIENT then
 	language.Add( "Undone_acf_enginemaker", "Undone ACF Engine Maker" )
 	language.Add( "Undone_acf_gearbox", "Undone ACF Gearbox" )
 	language.Add( "Undone_acf_gearboxcvt", "Undone ACF Gearbox CVT" )
-	--language.Add( "Undone_acf_gearbox3", "Undone ACF Gearbox Automatic" )
+	language.Add( "Undone_acf_gearboxauto", "Undone ACF Gearbox Automatic" )
 	language.Add( "Undone_acf_chips", "Undone ACF Engine Chips" )
 	language.Add( "Undone_acf_vtec", "Undone ACF Vtec Chip" )
 	language.Add( "Undone_acf_nos", "Undone ACF Nos Bottle" )
@@ -66,7 +66,6 @@ if CLIENT then
 	
 	end
 end
-
 
 -- Spawn/update functions
 function TOOL:LeftClick( trace )

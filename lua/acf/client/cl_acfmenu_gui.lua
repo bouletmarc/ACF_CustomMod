@@ -117,27 +117,35 @@ function PANEL:Init( )
 		
 	end
 	
+	
+	--Get Convars limits
+	local Makerlimit = GetConVarNumber("sbox_max_acf_maker")
+	local Extralimit = GetConVarNumber("sbox_max_acf_extra")
+	--Set Pages
 	local Mobility = self.WeaponSelect:AddNode( "Mobility" )
 	local Engines = Mobility:AddNode( "Engines" )
 	local Gearboxes = Mobility:AddNode( "Gearboxes" )
+	local CustomGB = Mobility:AddNode( "Custom Gearboxes" )
 	local FuelTanks = Mobility:AddNode( "Fuel Tanks" )
 	--###################
-	local EngineMaker = Mobility:AddNode( "Engines Maker" )
-	local Extras = Mobility:AddNode( "Engines Extras" )
+	if Makerlimit > 0 then MakerNode = Mobility:AddNode( "Engines Maker" ) end
+	if Extralimit > 0 then ExtraNode = Mobility:AddNode( "Engines Extras" ) end
 	--###################
 	local EngineSubcats = {}
 	for _, MobilityTable in pairs(self.WeaponDisplay["Mobility"]) do
 		NodeAdd = Mobility
 		if( MobilityTable.ent == "acf_engine" ) then
 			NodeAdd = Engines
-		elseif ( MobilityTable.ent == "acf_gearbox" or MobilityTable.ent == "acf_gearboxcvt" ) then
+		elseif ( MobilityTable.ent == "acf_gearbox" ) then
 			NodeAdd = Gearboxes
+		elseif ( MobilityTable.ent == "acf_gearboxauto" or MobilityTable.ent == "acf_gearboxcvt" or MobilityTable.ent == "acf_gearboxair" ) then
+			NodeAdd = CustomGB
 		elseif ( MobilityTable.ent == "acf_fueltank" ) then
 			NodeAdd = FuelTanks
 		elseif( MobilityTable.ent == "acf_enginemaker") then
-			NodeAdd = EngineMaker
-		elseif ( MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_vtec" or MobilityTable.ent == "acf_nos") then
-			NodeAdd = Extras
+			if Makerlimit > 0 then NodeAdd = MakerNode end
+		elseif ( MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads") then
+			if Extralimit > 0 then NodeAdd = ExtraNode end
 		end
 		if(MobilityTable.category) then
 			if(!EngineSubcats[MobilityTable.category]) then
@@ -154,8 +162,13 @@ function PANEL:Init( )
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
-		elseif MobilityTable.ent == "acf_gearbox" or MobilityTable.ent == "acf_gearboxcvt" then
+		elseif MobilityTable.ent == "acf_gearbox" then
 			NodeAdd = Gearboxes
+			if(MobilityTable.category) then
+				NodeAdd = EngineSubcats[MobilityTable.category]
+			end
+		elseif MobilityTable.ent == "acf_gearboxauto" or MobilityTable.ent == "acf_gearboxcvt" or MobilityTable.ent == "acf_gearboxair" then
+			NodeAdd = CustomGB
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
@@ -165,14 +178,18 @@ function PANEL:Init( )
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
 		elseif MobilityTable.ent == "acf_enginemaker" then
-			NodeAdd = EngineMaker
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
+			if Makerlimit > 0 then
+				NodeAdd = MakerNode
+				if(MobilityTable.category) then
+					NodeAdd = EngineSubcats[MobilityTable.category]
+				end
 			end
-		elseif MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_vtec" or MobilityTable.ent == "acf_nos" then
-			NodeAdd = Extras
-			if(MobilityTable.category) then
-				NodeAdd = EngineSubcats[MobilityTable.category]
+		elseif MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads" then
+			if Extralimit > 0 then
+				NodeAdd = ExtraNode
+				if(MobilityTable.category) then
+					NodeAdd = EngineSubcats[MobilityTable.category]
+				end
 			end
 		end
 		local EndNode = NodeAdd:AddNode( MobilityTable.name or "No Name" )
@@ -306,7 +323,7 @@ function ACFHomeGUICreate( Table )
 	ColorMenu:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 	ColorMenu:SetToolTip("Bored of that font color ?\nClic that button to change it !")
 	ColorMenu:SetWide(100)
-	ColorMenu:SetTall(50)
+	ColorMenu:SetTall(30)
 	ColorMenu.DoClick = function()
 		RunConsoleCommand("acf_colormenu_browser_open")
 	end
@@ -317,18 +334,48 @@ function ACFHomeGUICreate( Table )
 	HelpText1:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 	HelpText1:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
 	HelpText1:SetWide(70)
-	HelpText1:SetTall(50)
+	HelpText1:SetTall(30)
 	HelpText1.DoClick = function()
 		RunConsoleCommand("acf_help_browser_open")
 	end
 	acfmenupanel.CustomDisplay:AddItem( HelpText1 )
+	
+	/*--Get player Admin
+	ply = LocalPlayer()
+	--Set Allowed Group
+	local AllowedGroup = GetConVarString("acf_admin")
+	if AllowedGroup == "" or AllowedGroup == nil then
+		if ply:IsAdmin() or ply:IsSuperAdmin() then
+			AdminButton = vgui.Create( "DButton" )
+			AdminButton:SetText("Admins Options")
+			AdminButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+			AdminButton:SetWide(100)
+			AdminButton:SetTall(30)
+			AdminButton.DoClick = function()
+				RunConsoleCommand("acf_admin_browser_open")
+			end
+			acfmenupanel.CustomDisplay:AddItem( AdminButton )
+		end
+	else
+		if ply:IsUserGroup(AllowedGroup) then
+			AdminButton = vgui.Create( "DButton" )
+			AdminButton:SetText("Admins Options")
+			AdminButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+			AdminButton:SetWide(100)
+			AdminButton:SetTall(30)
+			AdminButton.DoClick = function()
+				RunConsoleCommand("acf_admin_browser_open")
+			end
+			acfmenupanel.CustomDisplay:AddItem( AdminButton )
+		end
+	end*/
 	
 	OldACFChangelog = vgui.Create( "DButton" )
 	OldACFChangelog:SetText("Original Changelog")
 	OldACFChangelog:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 	OldACFChangelog:SetToolTip("Check the Original ACF Changlog")
 	OldACFChangelog:SetWide(70)
-	OldACFChangelog:SetTall(50)
+	OldACFChangelog:SetTall(30)
 	OldACFChangelog.DoClick = function()
 		RunConsoleCommand("acf_changelog_browser_open")
 	end
