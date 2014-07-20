@@ -1,3 +1,4 @@
+
 AddCSLuaFile()
 
 DEFINE_BASECLASS( "base_wire_entity" )
@@ -152,6 +153,8 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.EngineType = Lookup.enginetype or "GenericPetrol"
 	Engine.SoundPitch = Lookup.pitch or 1
 	Engine.SpecialHealth = true
+	Engine.SpecialDamage = true
+	Engine.TorqueMult = 1
 	---------------------
 	Engine:FirstLoadCustom()
 	Engine.FlywheelMassValue = Lookup.flywheelmass
@@ -177,6 +180,12 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	end
 	Engine.Inputs = Wire_CreateInputs( Engine, Inputs )
 	---------------------
+	if Engine.EngineType == "GenericDiesel" then
+		Engine.TorqueScale = ACF.DieselTorqueScale
+	else
+		Engine.TorqueScale = ACF.TorqueScale
+	end
+	
 	--calculate boosted peak kw
 	if Engine.EngineType == "Turbine" or Engine.EngineType == "Electric" then
 		Engine.DisableCut = 1
@@ -274,6 +283,8 @@ function ENT:Update( ArgsTable )
 	self.EngineType = Lookup.enginetype
 	self.SoundPitch = Lookup.pitch or 1
 	self.SpecialHealth = true
+	self.SpecialDamage = true
+	self.TorqueMult = self.TorqueMult or 1
 	---------------------
 	self:FirstLoadCustom()
 	self.FlywheelMassValue = Lookup.flywheelmass
@@ -299,6 +310,12 @@ function ENT:Update( ArgsTable )
 	end
 	self.Inputs = Wire_CreateInputs( self, Inputs )
 	---------------------
+	if self.EngineType == "GenericDiesel" then
+		self.TorqueScale = ACF.DieselTorqueScale
+	else
+		self.TorqueScale = ACF.TorqueScale
+	end
+	
 	--calculate boosted peak kw
 	if self.EngineType == "Turbine" or self.EngineType == "Electric" then
 		self.DisableCut = 1
@@ -567,8 +584,13 @@ function ENT:ACF_Activate()
 		Percent = Entity.ACF.Health/Entity.ACF.MaxHealth
 	end
 	
-	Entity.ACF.Health = Health * Percent * ACF.EngineHPMult
-	Entity.ACF.MaxHealth = Health * ACF.EngineHPMult
+	if self.EngineType == "GenericDiesel" then
+		Entity.ACF.Health = Health * Percent * ACF.DieselEngineHPMult
+		Entity.ACF.MaxHealth = Health * ACF.DieselEngineHPMult
+	else
+		Entity.ACF.Health = Health * Percent * ACF.EngineHPMult
+		Entity.ACF.MaxHealth = Health * ACF.EngineHPMult
+	end
 	Entity.ACF.Armour = Armour * (0.5 + Percent/2)
 	Entity.ACF.MaxArmour = Armour * ACF.ArmorMod
 	Entity.ACF.Type = nil
@@ -576,6 +598,15 @@ function ENT:ACF_Activate()
 	--Entity.ACF.Density = (PhysObj:GetMass()*1000)/Entity.ACF.Volume
 	
 	Entity.ACF.Type = "Prop"
+	--print(Entity.ACF.Health)
+end
+
+function ENT:ACF_OnDamage( Entity, Energy, FrAera, Angle, Inflictor, Bone, Type )	--This function needs to return HitRes
+
+	local Mul = ((Type == "HEAT" and 6.6) or 1) --Heat penetrators deal bonus damage to engines, roughly half an AP round
+	local HitRes = ACF_PropDamage( Entity, Energy, FrAera * Mul, Angle, Inflictor )	--Calling the standard damage prop function
+	
+	return HitRes --This function needs to return HitRes
 end
 
 function ENT:Think()
@@ -714,14 +745,13 @@ function ENT:CalcRPM()
 		end
 	end
 	
-	-- Calculate the current torque from flywheel RPM
-	local TorqueScale = ACF.TorqueScale
-	local TorqueMult = 1
-	if (self.ACF.Health and self.ACF.MaxHealth) then
-		TorqueMult = math.Clamp(((1 - TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, TorqueScale, 1)
-	end
+	--adjusting performance based on damage
+	self.TorqueMult = math.Clamp(((1 - self.TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, self.TorqueScale, 1)
+	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth) * self.TorqueMult
 	
-	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth) * TorqueMult
+	-- Calculate the current torque from flywheel RPM
+	self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM, (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
+	
 	self.Inertia = self.FlywheelMassValue*(3.1416)^2
 	
 	local Drag

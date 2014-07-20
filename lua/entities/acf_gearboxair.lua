@@ -167,7 +167,7 @@ end*/
 
 function ENT:UpdateOverlayText()
 	local text = ""
-	text = text .. "Propeller RPM: " .. self.PropellerRpm .. " Rpm\n"
+	text = text .. "Propeller RPM: " .. math.Round(self.PropellerRpm,0) .. " Rpm\n"
 	text = text .. "Torque Rating: " .. self.MaxTorque .. " Nm / " .. math.Round( self.MaxTorque * 0.73 ) .. " ft-lb"
 	
 	self:SetOverlayText( text )
