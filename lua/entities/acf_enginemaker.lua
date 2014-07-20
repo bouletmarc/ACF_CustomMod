@@ -257,6 +257,9 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 	EngineMaker.elecpower = Lookup.elecpower
 	EngineMaker.SoundPitch = Lookup.pitch or 1
 	EngineMaker.SpecialHealth = true
+	EngineMaker.SpecialDamage = true
+	EngineMaker.TorqueMult = 1
+	
 	EngineMaker.ModTable = Lookup.modtable
 		EngineMaker.ModTable[1] = Data1
 		EngineMaker.ModTable[2] = Data2
@@ -334,6 +337,12 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		EngineMaker.PeakMaxRPM2 = EngineMaker.PeakMaxRPM
 		EngineMaker.LimitRPM2 = EngineMaker.LimitRPM
 		--calculate boosted peak kw
+		if EngineMaker.EngineType == "GenericDiesel" then
+			EngineMaker.TorqueScale = ACF.DieselTorqueScale
+		else
+			EngineMaker.TorqueScale = ACF.TorqueScale
+		end
+	
 		if EngineMaker.EngineType == "Turbine" or EngineMaker.EngineType == "Electric" then
 			EngineMaker.DisableCut = 1
 			EngineMaker.peakkw = EngineMaker.PeakTorque * EngineMaker.LimitRPM / (4 * 9548.8)
@@ -438,6 +447,8 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 		self.elecpower = Lookup.elecpower -- how much power does it output
 		self.SoundPitch = Lookup.pitch or 1
 		self.SpecialHealth = true
+		self.SpecialDamage = true
+		self.TorqueMult = self.TorqueMult or 1
 	end
 	self.ModTable[1] = ArgsTable[5]
 	self.ModTable[2] = ArgsTable[6]
@@ -513,7 +524,12 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.Idling = self.IdleRPM
 	self.PeakMaxRPM2 = self.PeakMaxRPM
 	self.LimitRPM2 = self.LimitRPM
-
+	
+	if self.EngineType == "GenericDiesel" then
+		self.TorqueScale = ACF.DieselTorqueScale
+	else
+		self.TorqueScale = ACF.TorqueScale
+	end
 	--calculate boosted peak kw
 	if self.EngineType == "Turbine" or self.EngineType == "Electric" then
 		self.DisableCut = 1
@@ -791,8 +807,13 @@ function ENT:ACF_Activate()
 		Percent = Entity.ACF.Health/Entity.ACF.MaxHealth
 	end
 	
-	Entity.ACF.Health = Health * Percent * ACF.EngineHPMult
-	Entity.ACF.MaxHealth = Health * ACF.EngineHPMult
+	if self.EngineType == "GenericDiesel" then
+		Entity.ACF.Health = Health * Percent * ACF.DieselEngineHPMult
+		Entity.ACF.MaxHealth = Health * ACF.DieselEngineHPMult
+	else
+		Entity.ACF.Health = Health * Percent * ACF.EngineHPMult
+		Entity.ACF.MaxHealth = Health * ACF.EngineHPMult
+	end
 	Entity.ACF.Armour = Armour * (0.5 + Percent/2)
 	Entity.ACF.MaxArmour = Armour * ACF.ArmorMod
 	Entity.ACF.Type = nil
@@ -800,6 +821,15 @@ function ENT:ACF_Activate()
 	--Entity.ACF.Density = (PhysObj:GetMass()*1000)/Entity.ACF.Volume
 	
 	Entity.ACF.Type = "Prop"
+	--print(Entity.ACF.Health)
+end
+
+function ENT:ACF_OnDamage( Entity, Energy, FrAera, Angle, Inflictor, Bone, Type )	--This function needs to return HitRes
+
+	local Mul = ((Type == "HEAT" and 6.6) or 1) --Heat penetrators deal bonus damage to engines, roughly half an AP round
+	local HitRes = ACF_PropDamage( Entity, Energy, FrAera * Mul, Angle, Inflictor )	--Calling the standard damage prop function
+	
+	return HitRes --This function needs to return HitRes
 end
 
 function ENT:Think()
@@ -938,14 +968,13 @@ function ENT:CalcRPM()
 		end
 	end
 	
-	-- Calculate the current torque from flywheel RPM
-	local TorqueScale = ACF.TorqueScale
-	local TorqueMult = 1
-	if (self.ACF.Health and self.ACF.MaxHealth) then
-		TorqueMult = math.Clamp(((1 - TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, TorqueScale, 1)
-	end
+	--adjusting performance based on damage
+	self.TorqueMult = math.Clamp(((1 - self.TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, self.TorqueScale, 1)
+	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra) * self.TorqueMult
 	
-	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra) * TorqueMult
+	-- Calculate the current torque from flywheel RPM
+	self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM, (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
+	
 	self.Inertia = self.FlywheelMassValue*(3.1416)^2
 	
 	local Drag

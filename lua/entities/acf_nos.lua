@@ -127,6 +127,8 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	--Getting Time
 	Nos.SwitchTime = Nos.TorqueAdd2 / 1.6
 	Nos.BoostTime = 10
+	
+	Nos.KickRpmNumber = 0
 				
 	Nos:SetModel( Nos.Model )
 
@@ -188,6 +190,7 @@ function ENT:Update( ArgsTable )
 		self.TorqueAdd = 0
 		self.UsableNos = 1
 		self.RpmAddFinal = 0
+		self.KickRpmNumber = 0
 	end
 	
 	self.ModTable[1] = ArgsTable[5]

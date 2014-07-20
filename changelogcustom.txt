@@ -1,111 +1,4 @@
-r84
--7.61
--->Added Temperature Mod
--7.62
--->Temp Mod Power Affect
--->Temp Mod Blow Fix
--->Temp can decrease while engine Off
--->Better Consumption Gui decimals
--->Fuel Mod, More Tanks
--->Petrol94, 96, VP Racing
--->Changed Fuel type's on some's engine's
--->Fixed Engine Updating
-
--->Engine Temp are 88degree if not changed
--->Engine Heat Above 109degree
--->Engine Blow Above 125degree
--->Engine Lost Health while heating
--->Engine Lost Power with Health
--->Engine can use Higher Fuel with RISK
--->Higher fuel make heat faster
--->Higher fuel make more power
--->lower fuel make less power
-
-*r85
--7.63
--->Updated to Rev.420
--->Fixed Gearbox's Gui
--->Better Temperature Mod
--->Temp increase bit less fast
--->Temp Rpm Update while Updating
--->Warm Temp changed to 112degree
--->Fixed modded engine blow fast
--->Added Flywheel in Fuel Mod
--->Better throttle responce. Fuel Mod
-
-*r86
--7.64
--->Updated to Rev.425
--->Added GearboxRPM inputs/outputs
--->Added Autoclutch Disable feature
--->Wiring GearboxRPM from the
-...Engine to Gearbox disable
-...Autoclutch on engine.
--
--->Fixed Customizable engines
--->Fixed Engine Maker
-
-*r89
--8.01 Update 2014-Recode
--ACF Custom V2
-
--->Updated to Rev.483
--->Updated All files
-
--->COMPLET RECODE
--->Less lua files
--->Less lines in lua's
--->Better folders and files locations
--->Menus Spawn at Center
-
--->Added Darker Sliders
--->Added Change color Menu
--->Added and Better Help menus
--->Added Original Changelog Menu
--->Added Installation menu
--->Added Whats New Menu(Show up 1 time each update)
--->Added Override Inputs Electric/Turbine
--->Added Print Msg to SoundChanger
--->All Engine Not require Fuel
--->To Require Fuel, Only Link FuelTank
--->Customs Engines are now with regulars
-
--->Fixed Menu Fonts
--->Fixed Menu Killicons
--->Fixed Engines GUI
--->Fixed Diesel Engines
--->Fixed Electric&Turbine Modding
--->Fixed Chips, Vtec, Nos
--->Fixed Custom CVT
--Fixed think Rate
--Should be really better
- than original CVT
- with Powerful engine.
-
-*r91
----CHANGELOG PART2---
---TO SEE PART1 REFER TO REV 89--
-
--->Fixed Engine Maker
--Now Save And Load
--Better Updating system
--Added All Models
--Added Electric&Turbine Type
--Auto Load Last Engine
--Can Edit Last Engine
--Just Write NUMBER where needed
--And it Might never spawn Error
--Menus V8.1
-
--->Removed Cutoff on Electric -Useless-
--->Removed Cutoff on Turbine -Useless-
--->Removed Automatic GB 'BETA'
--->Removed EngineCustomSmall -Useless-
--->Removed EngineCustomFat -Useless-
--->Removed Temp Mod -useless-
--->Removed Fuel Mod -Useless-
-
-*r93
+r93
 -8.11
 --Fixed CVT Linking to Gearboxes
 --Fixed CVT Clutching issue
@@ -132,3 +25,17 @@ r84
 --Removed Vtec Chips "Integrated"
 --Removed Inputs on Chips -Useless-
 
+*r94
+-8.21
+--Fixed Airplane Gearbox Gui+Name
+
+*r95
+-8.31
+--Fixed Menu Bug
+--Fixed Spawn Bug
+--Fixed Nos Bottle
+--Fixed Airplane Gearboxes Name
+
+--Turbine not necessary require fuel
+
+--Updated for original acf V.501
