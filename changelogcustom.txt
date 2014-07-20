@@ -34,7 +34,6 @@ r93
 --Fixed Menu Bug
 --Fixed Spawn Bug
 --Fixed Nos Bottle
---Fixed Airplane Gearboxes Name
 
 --Turbine not necessary require fuel
 
