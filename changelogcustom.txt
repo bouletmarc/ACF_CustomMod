@@ -38,3 +38,7 @@ r93
 --Turbine not necessary require fuel
 
 --Updated for original acf V.501
+
+*r98
+-8.32
+--Small Revision Fix

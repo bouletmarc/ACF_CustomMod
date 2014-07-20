@@ -5,8 +5,8 @@ ACF.AmmoBlacklist = {}
 ACF.Version = 501 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 8.31
-ACF.Version2 = 95
+ACF.VersionCustom = 8.32
+ACF.Version2 = 98
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
 
