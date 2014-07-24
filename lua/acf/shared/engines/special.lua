@@ -104,6 +104,23 @@ ACF_DefineEngine( "7.2-V8", {
 	limitrpm = 8500
 } )
 
+ACF_DefineEngine( "5.3-V10", {
+	name = "5.3L V10 Special",
+	desc = "Extreme performance v10",
+	model = "models/engines/v10sml.mdl",
+	sound = "acf_engines/v10_special.wav",
+	category = "Special",
+	fuel = "Petrol",
+	enginetype = "GenericPetrol",
+	weight = 300,
+	torque = 320,
+	flywheelmass = 0.2,
+	idlerpm = 1100,
+	peakminrpm = 5750,
+	peakmaxrpm = 8000,
+	limitrpm = 9000
+} )
+
 ACF_DefineEngine( "13.0-V12", {
 	name = "13.0L V12 Petrol",
 	desc = "Thirsty gasoline v12, good torque and power for medium applications.",

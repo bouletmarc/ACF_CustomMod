@@ -376,6 +376,10 @@ local function CreateSoundBrowser()
 				ModelTxtSize1 = "s"
 				ModelTxtSize2 = "m"
 				ModelTxtSize3 = "b"
+			elseif ModelTxtSizing == 3 then
+				ModelTxtSize1 = "sml"
+				ModelTxtSize2 = "med"
+				ModelTxtSize3 = "big"
 			end
 			if ModelTxt2 != ModelTxtSize1 or ModelTxt2 != ModelTxtSize2 or ModelTxt2 != ModelTxtSize3 then
 				if EngSizeValue == 0 then 	--Get Small Engines
@@ -469,6 +473,16 @@ local function CreateSoundBrowser()
 					EngineTypeButton:SetText("Vtwins")
 					ModelTxtSizing = 2
 				elseif EngTypeValue == 12 then
+					EngTypeValue = 13
+					ModelTxt1 = "inline5"
+					EngineTypeButton:SetText("Inline 5")
+					ModelTxtSizing = 2
+				elseif EngTypeValue == 13 then
+					EngTypeValue = 14
+					ModelTxt1 = "v10"
+					EngineTypeButton:SetText("V10")
+					ModelTxtSizing = 3
+				elseif EngTypeValue == 14 then
 					EngTypeValue = 0
 					ModelTxt1 = "inline4"
 					EngineTypeButton:SetText("Inline 4")
@@ -488,6 +502,10 @@ local function CreateSoundBrowser()
 				ModelTxtSize1 = "s"
 				ModelTxtSize2 = "m"
 				ModelTxtSize3 = "b"
+			elseif ModelTxtSizing == 3 then
+				ModelTxtSize1 = "sml"
+				ModelTxtSize2 = "med"
+				ModelTxtSize3 = "big"
 			end
 			if ModelTxt2 != ModelTxtSize1 or ModelTxt2 != ModelTxtSize2 or ModelTxt2 != ModelTxtSize3 then
 				if EngSizeValue == 0 then 	--Get Small Engines
@@ -538,6 +556,7 @@ local function CreateSoundBrowser()
 				if ModelTxtSizing == 0 then ModelTxt2 = "m"
 				elseif ModelTxtSizing == 1 then ModelTxt2 = "med"
 				elseif ModelTxtSizing == 2 then ModelTxt2 = "m"
+				elseif ModelTxtSizing == 3 then ModelTxt2 = "med"
 				end
 			elseif EngSizeValue == 1 then
 				if EngTypeValue == 5 or EngTypeValue == 8 or EngTypeValue == 9 then	--not allow Large on B4 and Wankels
@@ -546,6 +565,7 @@ local function CreateSoundBrowser()
 					if ModelTxtSizing == 0 then ModelTxt2 = "s"
 					elseif ModelTxtSizing == 1 then ModelTxt2 = "small"
 					elseif ModelTxtSizing == 2 then ModelTxt2 = "s"
+					elseif ModelTxtSizing == 3 then ModelTxt2 = "sml"
 					end
 				else
 					EngSizeValue = 2
@@ -553,6 +573,7 @@ local function CreateSoundBrowser()
 					if ModelTxtSizing == 0 then ModelTxt2 = "l"
 					elseif ModelTxtSizing == 1 then ModelTxt2 = "large"
 					elseif ModelTxtSizing == 2 then ModelTxt2 = "b"
+					elseif ModelTxtSizing == 3 then ModelTxt2 = "big"
 					end
 				end
 			elseif EngSizeValue == 2 then
@@ -564,6 +585,7 @@ local function CreateSoundBrowser()
 				if ModelTxtSizing == 0 then ModelTxt2 = "s"
 				elseif ModelTxtSizing == 1 then ModelTxt2 = "small"
 				elseif ModelTxtSizing == 2 then ModelTxt2 = "s"
+				elseif ModelTxtSizing == 3 then ModelTxt2 = "sml"
 				end
 			end
 			--Just do nothing for Wankel3 and Wankel4
@@ -573,6 +595,7 @@ local function CreateSoundBrowser()
 				if ModelTxtSizing == 0 then ModelTxt2 = "m"
 				elseif ModelTxtSizing == 1 then ModelTxt2 = "med"
 				elseif ModelTxtSizing == 2 then ModelTxt2 = "m"
+				elseif ModelTxtSizing == 3 then ModelTxt2 = "med"
 				end
 			end
 			

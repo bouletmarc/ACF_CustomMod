@@ -1,31 +1,4 @@
-r93
--8.11
---Fixed CVT Linking to Gearboxes
---Fixed CVT Clutching issue
-
---Added Airplane Gearboxes
---Added Automatic Gearboxes
---Added Engine Radiators Extra
---Added Chips Linking
---Added Nos Linking
---Added Blue Color to Nos in Menu
---Added CustomModding rcon switch
---Added EngineMaker rcon
---Added Engine Extras rcon
-
---Integrated Vtec with Chips
---Engine Link to Extra(chips,nos)
---Allow only 1 Extra linked
---Chips are now V3
---Extra Linking not allowed on Electric and Turbine
---Consumption show only while require fuel
-
---Re-made Readme file. Thanks to joker
-
---Removed Vtec Chips "Integrated"
---Removed Inputs on Chips -Useless-
-
-*r94
+r94
 -8.21
 --Fixed Airplane Gearbox Gui+Name
 
@@ -42,3 +15,10 @@ r93
 *r98
 -8.32
 --Small Revision Fix
+
+*r99
+-8.41
+--Added i5 and v10 engine's
+--Added also in engine maker
+
+--Updated for original acf V.502
