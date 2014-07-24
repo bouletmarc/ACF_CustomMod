@@ -57,14 +57,14 @@ local function CreateSoundBrowser()
 	ButtonsSidePanel2:SetSize(400, 420)
 	ButtonsSidePanel2:SetDrawBackground(false)
 	--#############################################################
-		WireModText1 = ButtonsSidePanel:Add("DLabel")
+		/*WireModText1 = ButtonsSidePanel:Add("DLabel")
 		WireModText1:SetText("WireMod Part :")
 		WireModText1:SetTextColor(Color(0,170,170,255))
 		WireModText1:SetPos(280,20)
 		WireModText1:SetFont( "DefaultBold" )
 		WireModText1:SizeToContents()
 		--#########################################################################################
-		/*WireModTextVtec = ButtonsSidePanel:Add("DLabel")
+		WireModTextVtec = ButtonsSidePanel:Add("DLabel")
 		WireModTextVtec:SetText("With Vtec's :")
 		WireModTextVtec:SetTextColor(Color(210,210,210,255))
 		WireModTextVtec:SetPos(40,40)
@@ -121,7 +121,7 @@ local function CreateSoundBrowser()
 		
 		--local EngineLineOption = ""
 		--#########################################################################################
-		WireModText3 = ButtonsSidePanel:Add("DLabel")
+		/*WireModText3 = ButtonsSidePanel:Add("DLabel")
 		WireModText3:SetText(WireLineVtec)
 		WireModText3:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 		WireModText3:SetPos(20,60)
@@ -133,12 +133,12 @@ local function CreateSoundBrowser()
 		WireModText4:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 		WireModText4:SetPos(0,60)
 		WireModText4:SetFont( "DefaultBold" )
-		WireModText4:SizeToContents()
+		WireModText4:SizeToContents()*/
 		
 		LinkingText2 = ButtonsSidePanel:Add("DLabel")
 		LinkingText2:SetText(LinkingLine1)
 		LinkingText2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		LinkingText2:SetPos(20,200)
+		LinkingText2:SetPos(20,80)
 		LinkingText2:SetFont( "DefaultBold" )
 		LinkingText2:SizeToContents()
 		

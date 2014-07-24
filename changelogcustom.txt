@@ -22,3 +22,9 @@ r94
 --Added also in engine maker
 
 --Updated for original acf V.502
+
+*r100
+-8.42
+--Fixed help menu page2
+
+--Work with original acf v.502
