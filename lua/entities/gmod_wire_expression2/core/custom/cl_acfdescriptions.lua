@@ -24,6 +24,12 @@ E2Helper.Descriptions["acfTorque"] = "Returns the current torque (in N/m) of an 
 E2Helper.Descriptions["acfPower"] = "Returns the current power (in kW) of an ACF engine."
 E2Helper.Descriptions["acfInPowerband"] = "Returns 1 if the ACF engine RPM is inside the powerband."
 E2Helper.Descriptions["acfThrottle"] = "Gets/sets Throttle (0-100) for an ACF engine."
+E2Helper.Descriptions["acfTqAdd"] = "Sets Torque Add for an ACF engine."
+E2Helper.Descriptions["acfMaxRpmAdd"] = "Sets Max Rpm Add for an ACF engine."
+E2Helper.Descriptions["acfLimitRpmAdd"] = "Sets Limit Rpm Add for an ACF engine."
+E2Helper.Descriptions["acfFlywheelMass"] = "Sets Flywheel Mass for an ACF engine."
+E2Helper.Descriptions["acfIdle"] = "Sets Idle Rpm for an ACF engine."
+E2Helper.Descriptions["acfDisableCut"] = "Sets Disable Cutoff(rev limiter) for an ACF engine."
 
 --gearbox
 E2Helper.Descriptions["acfGear"] = "Returns the current gear of an ACF gearbox."

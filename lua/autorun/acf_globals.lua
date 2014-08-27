@@ -2,15 +2,13 @@ ACF = {}
 ACF.AmmoTypes = {}
 ACF.MenuFunc = {}
 ACF.AmmoBlacklist = {}
-ACF.Version = 502 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
+ACF.Version = 506 -- REMEMBER TO CHANGE THIS FOR GODS SAKE, OMFG!!!!!!! -wrex
 ACF.CurrentVersion = 0 -- just defining a variable, do not change
 --##############
-ACF.VersionCustom = 8.42
-ACF.Version2 = 100
+ACF.VersionCustom = 8.51
+ACF.Version2 = 101
 ACF.CurrentVersion2 = 0
 print("[[ ACF Loaded ]]")
-
-ACF.Year = 1945
 
 ACF.Threshold = 225	--Health Divisor
 ACF.PartialPenPenalty = 5 --Exponent for the damage penalty for partial penetration
@@ -48,24 +46,26 @@ ACF.FuelRate = 5.0  --multiplier for fuel usage, 1.0 is approx real world
 ACF.ElecRate = 1.5 --multiplier for electrics
 ACF.TankVolumeMul = 1.0 -- multiplier for fuel tank volume
 
+ACF.LiIonED = 0.458 -- li-ion energy density: kw hours / liter
+ACF.CuIToLiter = 0.0163871 -- cubic inches to liters
+
 ACF.FuelDensity = {}
 ACF.FuelDensity["Diesel"] = 0.832  --kg/liter
 ACF.FuelDensity["Petrol"] = 0.745
 ACF.FuelDensity["Electric"] = 3.89 -- li-ion
 
-ACF.Efficiency = {} --how efficient various engine types are, higher is worse
-ACF.Efficiency["GenericPetrol"] = 0.304 --kg per kw hr
-ACF.Efficiency["GenericDiesel"] = 0.243 --up to 0.274
-ACF.Efficiency["Turbine"] = 0.46 -- previously 0.231
+ACF.Efficiency = {} --how efficient various engine types are
+ACF.Efficiency["GenericPetrol"] = 0.304 --kg per kw hr, higher is worse (too high?)
+ACF.Efficiency["GenericDiesel"] = 0.243 --up to 0.274 (too low?)
+ACF.Efficiency["Turbine"] = 0.46 --0.231
 ACF.Efficiency["Wankel"] = 0.335
-ACF.Efficiency["Radial"] = 0.4 -- 0.38 to 0.53
+ACF.Efficiency["Radial"] = 0.4 --0.53 to 0.38
 ACF.Efficiency["Electric"] = 0.85 --percent efficiency converting chemical kw into mechanical kw
-
-ACF.LiIonED = 0.458 -- li-ion energy density: kw hours / liter
-ACF.CuIToLiter = 0.0163871 -- cubic inches to liters
 
 ACF.RefillDistance = 300 --Distance in which ammo crate starts refilling.
 ACF.RefillSpeed = 700 -- (ACF.RefillSpeed / RoundMass) / Distance 
+
+ACF.Year = 1945
 
 ACF.DebrisScale = 20 -- Ignore debris that is less than this bounding radius.
 ACF.SpreadScale = 4		-- The maximum amount that damage can decrease a gun's accuracy.  Default 4x
@@ -311,6 +311,7 @@ function ACF_UpdateChecking( )
 			print("[ACF] ACF Is Up To Date, Latest Version: "..rev)
 		elseif !rev then
 			print("[ACF] No Internet Connection Detected! ACF Update Check Failed")
+			rev = ACF.Version
 		else
 			print("[ACF] A newer version of ACF is available! Version: "..rev..", You have Version: "..ACF.Version)
 			if CLIENT then chat.AddText( Color( 255, 0, 0 ), "A newer version of ACF is available!" ) end
@@ -323,6 +324,7 @@ function ACF_UpdateChecking( )
 			print("[ACF] ACF Custom Is Up To Date, Latest Version: "..rev2)
 		elseif !rev2 then
 			print("[ACF] No Internet Connection Detected! ACF Custom Update Check Failed")
+			rev2 = ACF.Version2
 		else
 			print("[ACF] A newer version of ACF Custom is available! Version: "..rev2..", You have Version: "..ACF.Version2)
 			if CLIENT then chat.AddText( Color( 255, 0, 0 ), "A newer version of ACF Custom is available!" ) end

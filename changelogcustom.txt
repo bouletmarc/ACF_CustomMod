@@ -28,3 +28,12 @@ r94
 --Fixed help menu page2
 
 --Work with original acf v.502
+
+*r101
+-8.51
+--Fixed ACFMenu no internet
+--Improved Engine Maker
+--Added E2 Functions
+--Added Old Single/Vtwin Models
+
+--Updated for original acf V.506

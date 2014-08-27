@@ -33,7 +33,7 @@ local function CreateSoundBrowser()
 	
 	StartBrowserPanel:SetSizable(false)
 	StartBrowserPanel:SetDeleteOnClose( true )
-	StartBrowserPanel:SetTitle("Engine Menu V8.1 - SETUP MENU")
+	StartBrowserPanel:SetTitle("Engine Menu V8.5 - SETUP MENU")
 	StartBrowserPanel:SetVisible(false)
 	StartBrowserPanel:SetCookieName( "wire_sound_browser" )
 	StartBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
@@ -47,14 +47,7 @@ local function CreateSoundBrowser()
 		local FuelTypeValue = 0		--Petrol, Diesel, etc...
 		local EngTypeValue = 0		--I4, I6, etc..
 		local EngSizeValue = 0		--Small, Medium, Fat
-		local ModelTxt1 = "inline4"
-		local ModelTxt2 = "s"
-		local ModelTxt3 = "2"	--This is for 2nd electric engine model
-		local ModelTxtSize1 = "s"
-		local ModelTxtSize2 = "m"
-		local ModelTxtSize3 = "l"
-		local ModelTxtSizing = 0
-		local MdlText = "models/engines/"..ModelTxt1..ModelTxt2..".mdl"
+		local MdlText = ""
 		local iSelectVal = "false"
 		local IsTransVal = "false"
 		RunConsoleCommand( "acfmenu_data4", "Petrol" )
@@ -91,19 +84,16 @@ local function CreateSoundBrowser()
 		FuelTypeButton:SetWide( 60 )
 		FuelTypeButton:SetTall( 40 )
 		
-		EngineTypeButton = ButtonsSidePanel:Add("DButton")
-		EngineTypeButton:SetText("Inline 4")
-		EngineTypeButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		EngineTypeButton:SetPos( 70, 60 )
-		EngineTypeButton:SetWide( 60 )
-		EngineTypeButton:SetTall( 40 )
-		
-		EngineSizeButton = ButtonsSidePanel:Add("DButton")
-		EngineSizeButton:SetText("Small")
-		EngineSizeButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		EngineSizeButton:SetPos( 140, 60 )
-		EngineSizeButton:SetWide( 60 )
-		EngineSizeButton:SetTall( 40 )
+		ModelsList = ButtonsSidePanel:Add("DComboBox")
+		ModelsList:SetPos(70,70)
+		ModelsList:SetSize( 120, 20 )
+		ModelsList.OnSelect = function( panel, index, value )
+			MdlText = "models/engines/"..tostring(value)
+			EngineModel2:SetText( "Models :\n"..MdlText )
+			EngineModel2:SizeToContents()
+			DisplayModel:SetModel( MdlText )
+			RunConsoleCommand("acf_menudata3", MdlText)
+		end
 		
 		--#######################
 		EngineModel2 = ButtonsSidePanel:Add( "DLabel" )
@@ -278,11 +268,6 @@ local function CreateSoundBrowser()
 				RunConsoleCommand( "acfmenu_data14", "false" )
 				iSelectVal = "true"
 				IsTransVal = "false"
-				--Reset Values
-				EngTypeValue = 0
-				ModelTxt1 = "emotor"
-				ModelTxtSizing = 1
-				EngineTypeButton:SetText("Electric 1")
 				--Set False Values
 				IdleEntry:SetText( "10" )
 				PeakMinEntry:SetText( "10" )
@@ -308,11 +293,6 @@ local function CreateSoundBrowser()
 				RunConsoleCommand( "acfmenu_data14", "true" )
 				iSelectVal = "true"
 				IsTransVal = "true"
-				--Reset Values
-				EngTypeValue = 0
-				ModelTxt1 = "gasturbine_"
-				ModelTxtSizing = 0
-				EngineTypeButton:SetText("Turbine")
 				--Set False Values
 				IdleEntry:SetText( "1" )
 				PeakMinEntry:SetText( "1" )
@@ -326,7 +306,6 @@ local function CreateSoundBrowser()
 				RunConsoleCommand( "acfmenu_data7", 1 )
 				RunConsoleCommand( "acfmenu_data8", 1 )
 				RunConsoleCommand( "acfmenu_data9", 1 )
-				EngineTypeButton:SetDisabled(true)
 				--Set True Value
 				FlywheelOverEntry:SetDrawBackground(true)
 				FlywheelOverEntry:SetEditable(true)
@@ -339,11 +318,6 @@ local function CreateSoundBrowser()
 				RunConsoleCommand( "acfmenu_data14", "false" )
 				iSelectVal = "false"
 				IsTransVal = "false"
-				--Reset Values
-				EngTypeValue = 0
-				ModelTxt1 = "inline4"
-				ModelTxtSizing = 0
-				EngineTypeButton:SetText("Inline 4")
 				--Reset True Value
 				IdleEntry:SetText( "Idle Number" )
 				PeakMinEntry:SetText( "PeakMin RPM Number" )
@@ -357,263 +331,26 @@ local function CreateSoundBrowser()
 				RunConsoleCommand( "acfmenu_data7", 500 )
 				RunConsoleCommand( "acfmenu_data8", 1200 )
 				RunConsoleCommand( "acfmenu_data9", 3500 )
-				EngineTypeButton:SetDisabled(false)
 				--Reset False Value
 				FlywheelOverEntry:SetDrawBackground(false)
 				FlywheelOverEntry:SetEditable(false)
 				FlywheelOverEntry:SetText( "Override Number" )
 			end
-			--Reload Models
-			if ModelTxtSizing == 0 then
-				ModelTxtSize1 = "s"
-				ModelTxtSize2 = "m"
-				ModelTxtSize3 = "l"
-			elseif ModelTxtSizing == 1 then
-				ModelTxtSize1 = "small"
-				ModelTxtSize2 = "med"
-				ModelTxtSize3 = "large"
-			elseif ModelTxtSizing == 2 then
-				ModelTxtSize1 = "s"
-				ModelTxtSize2 = "m"
-				ModelTxtSize3 = "b"
-			elseif ModelTxtSizing == 3 then
-				ModelTxtSize1 = "sml"
-				ModelTxtSize2 = "med"
-				ModelTxtSize3 = "big"
-			end
-			if ModelTxt2 != ModelTxtSize1 or ModelTxt2 != ModelTxtSize2 or ModelTxt2 != ModelTxtSize3 then
-				if EngSizeValue == 0 then 	--Get Small Engines
-					ModelTxt2 = ModelTxtSize1
-				elseif EngSizeValue == 1 then	--Get Medium Engine
-					ModelTxt2 = ModelTxtSize2
-				elseif EngSizeValue == 2 then	--Get Large Engine
-					ModelTxt2 = ModelTxtSize3
-				end
-			end
-			MdlText = "models/engines/"..ModelTxt1..ModelTxt2..".mdl"
-			EngineModel2:SetText( "Models :\n"..MdlText )
-			EngineModel2:SizeToContents()
-			DisplayModel:SetModel( MdlText )
-			RunConsoleCommand("acf_menudata3", MdlText)
 		end
-		--Engine Type Do clic
-		EngineTypeButton.DoClick = function()
-			--If its Electric
-			if FuelTypeValue == 2 then
-				if EngTypeValue == 0 then
-					EngTypeValue = 1
-					ModelTxt1 = "emotor"
-					EngineTypeButton:SetText("Electric 2")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 1 then
-					EngTypeValue = 0
-					ModelTxt1 = "emotor"
-					EngineTypeButton:SetText("Electric 1")
-					ModelTxtSizing = 1
-				end
-			else	--If its others
-				if EngTypeValue == 0 then
-					EngTypeValue = 1
-					ModelTxt1 = "inline6"
-					EngineTypeButton:SetText("Inline 6")
-					ModelTxtSizing = 0
-				elseif EngTypeValue == 1 then
-					EngTypeValue = 2
-					ModelTxt1 = "v6"
-					EngineTypeButton:SetText("V6")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 2 then
-					EngTypeValue = 3
-					ModelTxt1 = "v8"
-					EngineTypeButton:SetText("V8")
-					ModelTxtSizing = 0
-				elseif EngTypeValue == 3 then
-					EngTypeValue = 4
-					ModelTxt1 = "v12"
-					EngineTypeButton:SetText("V12")
-					ModelTxtSizing = 0
-				elseif EngTypeValue == 4 then
-					EngTypeValue = 5
-					ModelTxt1 = "b4"
-					EngineTypeButton:SetText("Boxer 4")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 5 then
-					EngTypeValue = 6
-					ModelTxt1 = "b6"
-					EngineTypeButton:SetText("Boxer 6")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 6 then
-					EngTypeValue = 7
-					ModelTxt1 = "radial7"
-					EngineTypeButton:SetText("Radial")
-					ModelTxtSizing = 0
-				elseif EngTypeValue == 7 then
-					EngTypeValue = 8
-					ModelTxt1 = "wankel_2_"
-					EngineTypeButton:SetText("Rotary 2")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 8 then
-					EngTypeValue = 9
-					ModelTxt1 = "wankel_3_"
-					EngineTypeButton:SetText("Rotary 3")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 9 then
-					EngTypeValue = 10
-					ModelTxt1 = "wankel_4_"
-					EngineTypeButton:SetText("Rotary 4")
-					ModelTxtSizing = 1
-				elseif EngTypeValue == 10 then
-					EngTypeValue = 11
-					ModelTxt1 = "1cyl"
-					EngineTypeButton:SetText("Single")
-					ModelTxtSizing = 2
-				elseif EngTypeValue == 11 then
-					EngTypeValue = 12
-					ModelTxt1 = "v-twin"
-					EngineTypeButton:SetText("Vtwins")
-					ModelTxtSizing = 2
-				elseif EngTypeValue == 12 then
-					EngTypeValue = 13
-					ModelTxt1 = "inline5"
-					EngineTypeButton:SetText("Inline 5")
-					ModelTxtSizing = 2
-				elseif EngTypeValue == 13 then
-					EngTypeValue = 14
-					ModelTxt1 = "v10"
-					EngineTypeButton:SetText("V10")
-					ModelTxtSizing = 3
-				elseif EngTypeValue == 14 then
-					EngTypeValue = 0
-					ModelTxt1 = "inline4"
-					EngineTypeButton:SetText("Inline 4")
-					ModelTxtSizing = 0
-				end
-			end
-			--##
-			if ModelTxtSizing == 0 then
-				ModelTxtSize1 = "s"
-				ModelTxtSize2 = "m"
-				ModelTxtSize3 = "l"
-			elseif ModelTxtSizing == 1 then
-				ModelTxtSize1 = "small"
-				ModelTxtSize2 = "med"
-				ModelTxtSize3 = "large"
-			elseif ModelTxtSizing == 2 then
-				ModelTxtSize1 = "s"
-				ModelTxtSize2 = "m"
-				ModelTxtSize3 = "b"
-			elseif ModelTxtSizing == 3 then
-				ModelTxtSize1 = "sml"
-				ModelTxtSize2 = "med"
-				ModelTxtSize3 = "big"
-			end
-			if ModelTxt2 != ModelTxtSize1 or ModelTxt2 != ModelTxtSize2 or ModelTxt2 != ModelTxtSize3 then
-				if EngSizeValue == 0 then 	--Get Small Engines
-					if EngTypeValue == 9 or EngTypeValue == 10 then	--Not Allow Small on Wankel3 and Wankel4
-						ModelTxt2 = ModelTxtSize2
-					else
-						ModelTxt2 = ModelTxtSize1
-					end
-				elseif EngSizeValue == 1 then	--Get Medium Engine
-					ModelTxt2 = ModelTxtSize2
-				elseif EngSizeValue == 2 then	--Get Large Engine
-					if EngTypeValue == 5 or EngTypeValue == 8 or EngTypeValue == 9 or EngTypeValue == 10 then	--Not Allow Large on B4 and Wankels
-						ModelTxt2 = ModelTxtSize2
-						EngSizeValue = 1
-						EngineSizeButton:SetText("Medium") --Set button back to medium
-					else
-						ModelTxt2 = ModelTxtSize3
-					end
-				end
-			end
-			--Set Size button disabled for Wankel-3 and Wankel-4
-			if EngTypeValue == 9 or EngTypeValue == 10 then
-				EngSizeValue = 1
-				EngineSizeButton:SetText("Medium")
-				EngineSizeButton:SetDisabled(true)
-			else EngineSizeButton:SetDisabled(false) end
-			
-			--Put Special "2" at end for Electric 2
-			if FuelTypeValue == 2 and EngTypeValue == 1 then
-				MdlText = "models/engines/"..ModelTxt1..ModelTxt2..ModelTxt3..".mdl"
-				EngineModel2:SetText( "Models :\n"..MdlText )
-				EngineModel2:SizeToContents()
-				DisplayModel:SetModel( MdlText )
-				RunConsoleCommand("acf_menudata3", MdlText)
-			else
-				MdlText = "models/engines/"..ModelTxt1..ModelTxt2..".mdl"
-				EngineModel2:SetText( "Models :\n"..MdlText )
-				EngineModel2:SizeToContents()
-				DisplayModel:SetModel( MdlText )
-				RunConsoleCommand("acf_menudata3", MdlText)
-			end
+		
+		--Load all models
+		local Name, Ext = file.Find("models/engines/*.mdl", "GAME")
+		ModelsList:SetValue(Name[1])
+		MdlText = "models/engines/"..tostring(Name[1])
+		EngineModel2:SetText( "Models :\n"..MdlText )
+		EngineModel2:SizeToContents()
+		DisplayModel:SetModel( MdlText )
+		RunConsoleCommand("acf_menudata3", MdlText)
+		for k, v in pairs(Name) do
+			ModelsList:AddChoice(v)
 		end
-		--Engine Size Do Clic
-		EngineSizeButton.DoClick = function()
-			if EngSizeValue == 0 then
-				EngSizeValue = 1
-				EngineSizeButton:SetText("Medium")
-				if ModelTxtSizing == 0 then ModelTxt2 = "m"
-				elseif ModelTxtSizing == 1 then ModelTxt2 = "med"
-				elseif ModelTxtSizing == 2 then ModelTxt2 = "m"
-				elseif ModelTxtSizing == 3 then ModelTxt2 = "med"
-				end
-			elseif EngSizeValue == 1 then
-				if EngTypeValue == 5 or EngTypeValue == 8 or EngTypeValue == 9 then	--not allow Large on B4 and Wankels
-					EngSizeValue = 0
-					EngineSizeButton:SetText("Small")
-					if ModelTxtSizing == 0 then ModelTxt2 = "s"
-					elseif ModelTxtSizing == 1 then ModelTxt2 = "small"
-					elseif ModelTxtSizing == 2 then ModelTxt2 = "s"
-					elseif ModelTxtSizing == 3 then ModelTxt2 = "sml"
-					end
-				else
-					EngSizeValue = 2
-					EngineSizeButton:SetText("Large")
-					if ModelTxtSizing == 0 then ModelTxt2 = "l"
-					elseif ModelTxtSizing == 1 then ModelTxt2 = "large"
-					elseif ModelTxtSizing == 2 then ModelTxt2 = "b"
-					elseif ModelTxtSizing == 3 then ModelTxt2 = "big"
-					end
-				end
-			elseif EngSizeValue == 2 then
-				if EngTypeValue == 8 then
-					ModelTxt1 = "wankel_2_"
-				end
-				EngSizeValue = 0
-				EngineSizeButton:SetText("Small")
-				if ModelTxtSizing == 0 then ModelTxt2 = "s"
-				elseif ModelTxtSizing == 1 then ModelTxt2 = "small"
-				elseif ModelTxtSizing == 2 then ModelTxt2 = "s"
-				elseif ModelTxtSizing == 3 then ModelTxt2 = "sml"
-				end
-			end
-			--Just do nothing for Wankel3 and Wankel4
-			if EngTypeValue == 9 or EngTypeValue == 10 then
-				EngSizeValue = 1
-				EngineSizeButton:SetText("Medium")
-				if ModelTxtSizing == 0 then ModelTxt2 = "m"
-				elseif ModelTxtSizing == 1 then ModelTxt2 = "med"
-				elseif ModelTxtSizing == 2 then ModelTxt2 = "m"
-				elseif ModelTxtSizing == 3 then ModelTxt2 = "med"
-				end
-			end
-			
-			--Put Special "2" at end for Electric 2
-			if FuelTypeValue == 2 and EngTypeValue == 1 then
-				MdlText = "models/engines/"..ModelTxt1..ModelTxt2..ModelTxt3..".mdl"
-				EngineModel2:SetText( "Models :\n"..MdlText )
-				EngineModel2:SizeToContents()
-				DisplayModel:SetModel( MdlText )
-				RunConsoleCommand("acf_menudata3", MdlText)
-			else
-				MdlText = "models/engines/"..ModelTxt1..ModelTxt2..".mdl"
-				EngineModel2:SetText( "Models :\n"..MdlText )
-				EngineModel2:SizeToContents()
-				DisplayModel:SetModel( MdlText )
-				RunConsoleCommand("acf_menudata3", MdlText)
-			end
-		end
+		
+		
 		--########################
 		--Back and Next Button
 		BackButton	= ButtonsSidePanel:Add("DButton")
@@ -671,6 +408,7 @@ local function CreateSoundBrowser()
 				FuelTypeLoadT = "Any"
 				EngineTypeLoadT = "Turbine"
 			end
+			
 			local txt = NameLoadT..","..SoundLoadT..","..MdlText..","..FuelTypeLoadT..","..EngineTypeLoadT..","..TorqueLoadT..","
 			txt = txt ..IdleLoadT..","..PeakMinLoadT..","..PeakMaxLoadT..","..LimitRpmLoadT..","..FlywheelLoadT..","..WeightLoadT..","
 			txt = txt ..EngSizeValue..","..EngTypeValue..","..iSelectVal..","..IsTransVal..","..FlywheelOverLoadT

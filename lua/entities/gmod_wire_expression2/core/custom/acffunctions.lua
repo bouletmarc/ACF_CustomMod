@@ -26,12 +26,12 @@ CreateConVar("sbox_acf_e2restrictinfo", 1) -- 0=any, 1=owned
 
 local function isEngine(ent)
 	if not validPhysics(ent) then return false end
-	if (ent:GetClass() == "acf_engine" or ent:GetClass() == "acf_engine2" or ent:GetClass() == "acf_engine3" or ent:GetClass() == "acf_engine4" or ent:GetClass() == "acf_engine5") then return true else return false end
+	if (ent:GetClass() == "acf_engine") then return true else return false end
 end
 
 local function isGearbox(ent)
 	if not validPhysics(ent) then return false end
-	if (ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox2" or ent:GetClass() == "acf_gearbox3") then return true else return false end
+	if (ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" or ent:GetClass() == "acf_gearboxauto") then return true else return false end
 end
 
 local function isGun(ent)
@@ -51,7 +51,7 @@ end
 
 local function isChips(ent)
 	if not validPhysics(ent) then return false end
-	if (ent:GetClass() == "acf_chips" or ent:GetClass() == "acf_nos" or ent:GetClass() == "acf_vtec") then return true else return false end
+	if (ent:GetClass() == "acf_chips" or ent:GetClass() == "acf_nos") then return true else return false end
 end
 
 local function restrictInfo(ply, ent)
@@ -299,6 +299,48 @@ e2function void entity:acfThrottle( number throttle )
 	if not isEngine(this) then return end
 	if not isOwner(self, this) then return end
 	this:TriggerInput("Throttle", throttle)
+end
+
+-- Sets the TorqueAdd value for an ACF engine
+e2function void entity:acfTqAdd( number torque )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("TqAdd", torque)
+end
+
+-- Sets the MaxRpmAdd value for an ACF engine
+e2function void entity:acfMaxRpmAdd( number maxrpm )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("MaxRpmAdd", maxrpm)
+end
+
+-- Sets the LimitRpmAdd value for an ACF engine
+e2function void entity:acfLimitRpmAdd( number limitrpm )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("LimitRpmAdd", limitrpm)
+end
+
+-- Sets the FlywheelMass value for an ACF engine
+e2function void entity:acfFlywheelMass( number flywheelmass )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("FlywheelMass", flywheelmass)
+end
+
+-- Sets the Idle value for an ACF engine
+e2function void entity:acfIdle( number idle )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("Idle", idle)
+end
+
+-- Sets the DisableCut value for an ACF engine
+e2function void entity:acfDisableCut( number cutoff )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("DisableCut", cutoff)
 end
 
 

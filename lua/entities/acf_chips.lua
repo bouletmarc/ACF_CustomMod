@@ -163,7 +163,6 @@ end
 function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 
 	if not Owner:CheckLimit("_acf_extra") then return false end
-	print(GetConVarNumber("sbox_max_acf_extra"))
 	local Chips = ents.Create("acf_chips")
 	if not IsValid( Chips ) then return false end
 	
