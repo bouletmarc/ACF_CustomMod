@@ -216,7 +216,6 @@ function ENT:Initialize()
 	self.CutMode = 0
 	self.CutValue = 0
 	self.CutRpm = 0
-	self.DisableAutoClutch = 0
 	self.Fuelusing = 0
 	self.DisableCut = 0
 	self.ExtraLink = {}
@@ -326,7 +325,7 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		if tonumber(EngineMaker.Mod15) != nil then EngineMaker.FlywheelOverride = tonumber(EngineMaker.Mod15) else EngineMaker.FlywheelOverride = 1200  end
 		--Set Original Values
 		EngineMaker.PeakTorqueHeld = EngineMaker.PeakTorque
-		EngineMaker.CutValue = EngineMaker.LimitRPM / 40
+		EngineMaker.CutValue = EngineMaker.LimitRPM / 20
 		EngineMaker.CutRpm = EngineMaker.LimitRPM - 100
 		EngineMaker.Inertia = EngineMaker.FlywheelMassValue*(3.1416)^2
 		--Set Custom Values
@@ -366,7 +365,6 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 				table.insert(Inputs, "LimitRpmAdd")
 				table.insert(Inputs, "FlywheelMass")
 				table.insert(Inputs, "Override")
-				table.insert(Inputs, "Gearbox RPM")
 			else		 --Create inputs others engines
 				table.insert(Inputs, "TqAdd")
 				table.insert(Inputs, "MaxRpmAdd")
@@ -374,7 +372,6 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 				table.insert(Inputs, "FlywheelMass")
 				table.insert(Inputs, "Idle")
 				table.insert(Inputs, "Disable Cutoff")
-				table.insert(Inputs, "Gearbox RPM")
 			end
 		end
 		EngineMaker.Inputs = Wire_CreateInputs( EngineMaker, Inputs )
@@ -514,7 +511,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	if tonumber(self.Mod15) != nil then self.FlywheelOverride = tonumber(self.Mod15) else self.FlywheelOverride = 1200 end
 	--Set Original Values
 	self.PeakTorqueHeld = self.PeakTorque
-	self.CutValue = self.LimitRPM / 40
+	self.CutValue = self.LimitRPM / 20
 	self.CutRpm = self.LimitRPM - 100
 	self.Inertia = self.FlywheelMass3*(3.1416)^2
 	--Set Custom Values
@@ -554,7 +551,6 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 			table.insert(Inputs, "LimitRpmAdd")
 			table.insert(Inputs, "FlywheelMass")
 			table.insert(Inputs, "Override")
-			table.insert(Inputs, "Gearbox RPM")
 		else 		--Create inputs others engines
 			table.insert(Inputs, "TqAdd")
 			table.insert(Inputs, "MaxRpmAdd")
@@ -562,7 +558,6 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 			table.insert(Inputs, "FlywheelMass")
 			table.insert(Inputs, "Idle")
 			table.insert(Inputs, "Disable Cutoff")
-			table.insert(Inputs, "Gearbox RPM")
 		end
 	end
 	self.Inputs = Wire_CreateInputs( self, Inputs )
@@ -714,12 +709,12 @@ function ENT:TriggerInput( iname, value )
 	elseif (iname == "LimitRpmAdd") then
 		if (value ~= 0 ) then
 			self.LimitRPM = self.LimitRPM2+value
-			self.CutValue = self.LimitRPM / 40
+			self.CutValue = self.LimitRPM / 20
 			self.CutRpm = self.LimitRPM - 100
 			self:UpdateEngineConsumption()
 		elseif (value == 0 ) then
 			self.LimitRPM = self.LimitRPM2
-			self.CutValue = self.LimitRPM / 40
+			self.CutValue = self.LimitRPM / 20
 			self.CutRpm = self.LimitRPM - 100
 			self:UpdateEngineConsumption()
 		end
@@ -754,15 +749,6 @@ function ENT:TriggerInput( iname, value )
 			self.DisableCut = 1
 		elseif (value <= 0 ) then
 			self.DisableCut = 0
-		end
-	--Disabling AutoClutch on Engine while Moving
-	elseif (iname == "Gearbox RPM") then
-		if ((value*0.8) > self.IdleRPM and self.Throttle == 0) then
-			self.DisableAutoClutch = 1
-			self.GearboxRpm = value
-		elseif (value <= self.IdleRPM or self.Throttle > 0 and self.DisableAutoClutch == 1) then
-			self.DisableAutoClutch = 0
-			self.GearboxRpm = 0
 		end
 	end
 end
@@ -980,33 +966,29 @@ function ENT:CalcRPM()
 	local Drag
 	local TorqueDiff
 	if self.Active then
-	if( self.CutMode == 0 ) then
-		self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
+		if( self.CutMode == 0 ) then
+			self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
+			
+			if self.iselec == true then
+				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - self.Throttle) / self.Inertia
+			else
+				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - self.Throttle) / self.Inertia
+			end
 		
-		if self.iselec == true then
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - self.Throttle) / self.Inertia
-		else
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - self.Throttle) / self.Inertia
-		end
-	
-	elseif( self.CutMode == 1 ) then
-		self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
-		
-		if self.iselec == true then
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
-		else
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - 0) / self.Inertia
-		end
-		
-	end 
+		elseif( self.CutMode == 1 ) then
+			self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
+			
+			if self.iselec == true then
+				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
+			else
+				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - 0) / self.Inertia
+			end
+			
+		end 
 	-- Let's accelerate the flywheel based on that torque
 	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-	if self.DisableAutoClutch == 0 then
-		-- This is the presently avaliable torque from the engine
-		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
-	elseif self.DisableAutoClutch == 1 then
-		TorqueDiff = 0
-	end
+	-- This is the presently avaliable torque from the engine
+	TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
 
 	end
 	
@@ -1043,29 +1025,26 @@ function ENT:CalcRPM()
 		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime )
 	end
 
-	if self.DisableAutoClutch == 0 then
-		self.FlyRPM = self.FlyRPM - math.min( TorqueDiff, TotalReqTq ) / self.Inertia
-	elseif self.DisableAutoClutch == 1 then
-		self.FlyRPM = self.GearboxRpm*0.8
-	end
+	self.FlyRPM = self.FlyRPM - math.min( TorqueDiff, TotalReqTq ) / self.Inertia
 	--#######################################
 	if( self.DisableCut == 0 ) then
-		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 and self.DisableAutoClutch == 0 ) then
+		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 ) then
 			self.CutMode = 1
 			if self.Sound then
 				self.Sound:Stop()
 			end
 			self.Sound = nil
-			self.Sound2 = CreateSound(self, "acf_other/penetratingshots/00000293.wav")
-			self.Sound2:PlayEx(0.5,100)
+			local MakeSound = math.random(1,4)
+			if MakeSound <= 1 and self.Sound2 and self.Sound2:IsPlaying() then self.Sound2:Stop() end
+			if MakeSound <= 1 then
+				self.Sound2 = CreateSound(self, "ambient/explosions/explode_4.wav")
+				self.Sound2:PlayEx(0.5,100)
+			end
 		end
 		if( self.FlyRPM <= self.CutRpm - self.CutValue and self.CutMode == 1 ) then
 			self.CutMode = 0
 			self.Sound = CreateSound(self, self.SoundPath)
 			self.Sound:PlayEx(0.5,100)
-			if self.Sound2 then
-				self.Sound2:Stop()
-			end
 		end
 	elseif( self.DisableCut == 1 ) then
 		self.CutMode = 0

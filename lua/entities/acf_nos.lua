@@ -39,11 +39,9 @@ if CLIENT then
 		end
 		
 		acfmenupanel.CustomDisplay:PerformLayout()
-		
 	end
 
 	function ACF_NosSlider1(Mod, Value, ID, Desc)
-
 		if Mod and not acfmenupanel.CData[Mod] then	
 			acfmenupanel.CData[Mod] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
 				acfmenupanel.CData[Mod]:SetText( Desc or "Torque Adding "..Mod )
@@ -62,18 +60,13 @@ if CLIENT then
 				end
 			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Mod] )
 		end
-
 	end
 	
 	return
-	
 end
 
 function ENT:Initialize()
-	
 	--input
-	self.ActiveNos = false
-
 	self.UsableNos = 1
 	
 	--Timer setup
@@ -87,7 +80,7 @@ function ENT:Initialize()
 	self.LastActive = 0
 	self.Master = {}
 	
-	self.Inputs = Wire_CreateInputs( self, { "ActiveNos" } )
+	self.Inputs = Wire_CreateInputs( self, { "Active" } )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, { "TqAdd", "Active", "Usable" }, { "NORMAL", "NORMAL", "NORMAL" } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Nos"
@@ -102,7 +95,7 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	
 	local EID
 	local List = list.Get("ACFEnts")
-	if List.Mobility[Id] then EID = Id else EID = "5.7-V8" end
+	if List.Mobility[Id] then EID = Id else EID = "NosBottle" end
 	local Lookup = List.Mobility[EID]
 	
 	Nos:SetAngles(Angle)
@@ -222,7 +215,7 @@ function ENT:UpdateOverlayText()
 end
 
 function ENT:TriggerInput( iname , value )
-	if (iname == "ActiveNos") then
+	if (iname == "Active") then
 		if (value > 0 and self.UsableNos == 1) then
 			--calling the timer
 			self:PowerUp(math.floor(1))

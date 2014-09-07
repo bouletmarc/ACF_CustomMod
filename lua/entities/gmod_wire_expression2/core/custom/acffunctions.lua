@@ -302,10 +302,10 @@ e2function void entity:acfThrottle( number throttle )
 end
 
 -- Sets the TorqueAdd value for an ACF engine
-e2function void entity:acfTqAdd( number torque )
+e2function void entity:acfTqAdd( number torqueadd )
 	if not isEngine(this) then return end
 	if not isOwner(self, this) then return end
-	this:TriggerInput("TqAdd", torque)
+	this:TriggerInput("TqAdd", torqueadd)
 end
 
 -- Sets the MaxRpmAdd value for an ACF engine

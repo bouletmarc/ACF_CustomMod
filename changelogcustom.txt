@@ -37,3 +37,14 @@ r94
 --Added Old Single/Vtwin Models
 
 --Updated for original acf V.506
+
+*r102
+--Added i3 engines
+--Added Active inputs for Chips
+--Added New Rev Limiter Sound
+
+--Fixed Acf_Chips Glitch
+
+--Removed "Gearbox RPM" inputs
+
+--Updated for original acf V.507

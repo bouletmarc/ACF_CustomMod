@@ -149,12 +149,13 @@ end
 
 function ENT:Initialize()
 
+	--think
 	self.Master = {}
 	self.CanUpdate = true
 	self.Legal = true
 	self.LastActive = 0
+	self.LegalThink = 0
 	
-	self.Inputs = Wire_CreateInputs( self, { } )
 	Wire_TriggerOutput(self, "Entity", self)
 	self.WireDebugName = "ACF Chips"
 
@@ -163,6 +164,7 @@ end
 function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 
 	if not Owner:CheckLimit("_acf_extra") then return false end
+	
 	local Chips = ents.Create("acf_chips")
 	if not IsValid( Chips ) then return false end
 	
@@ -201,9 +203,12 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 	elseif Chips.KickRpmNumber > 0 then Chips.VtecUsing = 1 end
 	--Set Values
 	if Chips.VtecUsing == 0 then
-		Chips.TorqueAdd = Chips.Mods1
-		Chips.MaxRPMAdd = Chips.Mods2
-		Chips.LimitRPMAdd = Chips.Mods3
+		Chips.TorqueAdd = 0
+		Chips.MaxRPMAdd = 0
+		Chips.LimitRPMAdd = 0
+		Chips.TorqueAddVtec = Chips.Mods1
+		Chips.MaxRPMAddVtec = Chips.Mods2
+		Chips.LimitRPMAddVtec = Chips.Mods3
 	elseif Chips.VtecUsing == 1 then
 		Chips.TorqueAdd = 0
 		Chips.MaxRPMAdd = 0
@@ -213,12 +218,16 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 		Chips.LimitRPMAddVtec = Chips.Mods3
 	end
 	--Creating Wire Outputs
+	local Inputs = {}
 	local Outputs = {"TqAdd", "MaxRpmAdd", "LimitRpmAdd"}
 	local OutputsTypes = {"NORMAL", "NORMAL", "NORMAL"}
 	if Chips.VtecUsing == 1 then
 		table.insert(Outputs, "Vtec On")
 		table.insert(OutputsTypes, "NORMAL")
+	else
+		table.insert(Inputs, "Active")
 	end
+	Chips.Inputs = Wire_CreateInputs( Chips, Inputs )
 	Chips.Outputs = WireLib.CreateSpecialOutputs( Chips, Outputs, OutputsTypes )
 	
 	Chips:SetModel( Chips.Model )	
@@ -288,9 +297,12 @@ function ENT:Update( ArgsTable )
 	elseif self.KickRpmNumber > 0 then self.VtecUsing = 1 end
 	--Set Values
 	if self.VtecUsing == 0 then
-		self.TorqueAdd = self.Mods1
-		self.MaxRPMAdd = self.Mods2
-		self.LimitRPMAdd = self.Mods3
+		self.TorqueAdd = 0
+		self.MaxRPMAdd = 0
+		self.LimitRPMAdd = 0
+		self.TorqueAddVtec = self.Mods1
+		self.MaxRPMAddVtec = self.Mods2
+		self.LimitRPMAddVtec = self.Mods3
 	elseif self.VtecUsing == 1 then
 		self.TorqueAdd = 0
 		self.MaxRPMAdd = 0
@@ -300,12 +312,16 @@ function ENT:Update( ArgsTable )
 		self.LimitRPMAddVtec = self.Mods3
 	end
 	--Creating Wire Outputs
+	local Inputs = {}
 	local Outputs = {"TqAdd", "MaxRpmAdd", "LimitRpmAdd"}
 	local OutputsTypes = {"NORMAL", "NORMAL", "NORMAL"}
 	if self.VtecUsing == 1 then
 		table.insert(Outputs, "Vtec On")
 		table.insert(OutputsTypes, "NORMAL")
+	else
+		table.insert(Inputs, "Active")
 	end
+	self.Inputs = Wire_CreateInputs( self, Inputs )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputsTypes )
 	
 	self:SetNetworkedString( "WireName", Lookup.name )
@@ -327,14 +343,15 @@ end
 function ENT:UpdateOverlayText()
 	local text = ""
 	if self.VtecUsing == 0 then
-		text = text .. "Torque Add: " .. math.Round(self.TorqueAdd,0) .. "Tq\n"
-		text = text .. "Max Rpm Add: " .. math.Round(self.MaxRPMAdd,0) .. "Rpm\n"
-		text = text .. "Limit Rpm Add: " .. math.Round(self.LimitRPMAdd,0) .. "Rpm\n"
+		text = text .. "Torque Add: " .. math.Round(self.TorqueAddVtec,0) .. "Tq\n"
+		text = text .. "Max Rpm Add: " .. math.Round(self.MaxRPMAddVtec,0) .. "Rpm\n"
+		text = text .. "Limit Rpm Add: " .. math.Round(self.LimitRPMAddVtec,0) .. "Rpm\n"
+		text = text .. "Active: " .. self.KickActive .. "\n"
 		text = text .. "Weight: " .. self.Weight .. "Kg"
 	elseif self.VtecUsing == 1 then
 		text = text .. "Torque Add: " .. math.Round(self.TorqueAddVtec,0) .. "Tq\n"
-		text = text .. "Max Rpm Add: " .. math.Round(self.TorqueAddVtec,0) .. "Rpm\n"
-		text = text .. "Limit Rpm Add: " .. math.Round(self.TorqueAddVtec,0) .. "Rpm\n"
+		text = text .. "Max Rpm Add: " .. math.Round(self.MaxRPMAddVtec,0) .. "Rpm\n"
+		text = text .. "Limit Rpm Add: " .. math.Round(self.LimitRPMAddVtec,0) .. "Rpm\n"
 		text = text .. "Kick Rpm: " .. math.Round(self.KickRpm,0) .. "Rpm\n"
 		text = text .. "Vtec On: " .. self.KickActive .. "\n"
 		text = text .. "Weight: " .. self.Weight .. "Kg"
@@ -343,31 +360,40 @@ function ENT:UpdateOverlayText()
 	self:SetOverlayText( text )
 end
 
+function ENT:TriggerInput( iname , value )
+	if (iname == "Active") then
+		if self.VtecUsing == 0 then
+			if (value > 0) then
+				self.TorqueAdd = self.TorqueAddVtec
+				self.MaxRPMAdd = self.MaxRPMAddVtec
+				self.LimitRPMAdd = self.LimitRPMAddVtec
+				self.KickActive = 1
+			elseif (value == 0) then
+				self.TorqueAdd = 0
+				self.MaxRPMAdd = 0
+				self.LimitRPMAdd = 0
+				self.KickActive = 0
+			end
+		end
+	end
+end
+
+--think
 function ENT:Think()
 	local Time = CurTime()
 	
-	if self.LastActive + 2 > Time then
-		self:CheckRopes()
+	if self.LegalThink < Time and self.LastActive+2 > Time then
+		if self:GetPhysicsObject():GetMass() < self.Mass or self:GetParent():IsValid() then
+			self.Legal = false
+		else 
+			self.Legal = true
+		end
+		self.LegalThink = Time + (math.floor(1))
 	end
 	
-	self.Legal = self:CheckLegal()
-	self:NextThink( Time + math.random( 5, 10 ) )
+	self:NextThink(Time+1)
 	return true
-end
-
-function ENT:CheckLegal()
-	-- make sure weight is not below stock
-	if self:GetPhysicsObject():GetMass() < self.Weight then return false end
-	-- if it's not parented we're fine
-	if not IsValid( self:GetParent() ) then return true end
-	-- but not if it's parented to a parented prop
-	if IsValid( self:GetParent():GetParent() ) then return false end
-	-- parenting is only legal if it's also welded
-	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
-		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
-	end
 	
-	return false
 end
 
 --Get RPM for Vtec Chips ONLY
