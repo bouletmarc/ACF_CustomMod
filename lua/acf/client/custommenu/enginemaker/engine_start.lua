@@ -43,9 +43,9 @@ local function CreateSoundBrowser()
 			Redcolor = 0
 			Greencolor = 0
 			Bluecolor = 200
-			RunConsoleCommand( "acfmenu_red", Redcolor )
-			RunConsoleCommand( "acfmenu_green", Greencolor )
-			RunConsoleCommand( "acfmenu_blue", Bluecolor )
+			RunConsoleCommand( "acfcustom_red", Redcolor )
+			RunConsoleCommand( "acfcustom_green", Greencolor )
+			RunConsoleCommand( "acfcustom_blue", Bluecolor )
 			SaveFunc()
 		end
 		--###########################################

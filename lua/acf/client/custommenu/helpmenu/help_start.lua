@@ -84,17 +84,6 @@ local function CreateSoundBrowser()
 			StartBrowserPanel:Close()
 		end
 		
-		HelpCustom = ButtonsSidePanel:Add("DButton")
-		HelpCustom:SetText("Help me to install Custom ACF")
-		HelpCustom:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		HelpCustom:SetPos( 20, 240 )
-		HelpCustom:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
-		HelpCustom:SetTall( 40 )
-		HelpCustom.DoClick = function()
-			RunConsoleCommand("acf_helpinstall_browser_open")
-			StartBrowserPanel:Close()
-		end
-		
 		BMText1 = ButtonsSidePanel:Add("DLabel")
 		BMText1:SetText("Made by Bouletmarc\n      (B0ul3Tm@rc)")
 		BMText1:SetTextColor(Color(0,255,0,255))

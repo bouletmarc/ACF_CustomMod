@@ -14,53 +14,56 @@ end
 local function ReplaceSound( ply , Entity , data)
 	if !IsValid( Entity ) then return end
 	local sound = data[1]
-	local pitch = data[2] or 1
 	timer.Simple(1, function()
 		if Entity:GetClass() == "acf_engine" or Entity:GetClass() == "acf_enginemaker" then
 			Entity.SoundPath = sound
-			Entity.SoundPitch = pitch
+			Entity.SoundPitch = ply:GetInfo("acfsound_pitch")
 		elseif Entity:GetClass() == "acf_gun" then
 			Entity.Sound = sound
 			Entity:SetNWString( "Sound", sound )
 		end
 	end)
 			
-	duplicator.StoreEntityModifier( Entity, "acf_replacesound", {sound, pitch} )
+	duplicator.StoreEntityModifier( Entity, "acf_replacesound", {sound} )
 end
 
 duplicator.RegisterEntityModifier( "acf_replacesound", ReplaceSound )
 
 local function IsReallyValid(trace, ply)
 	local True = true
+	local pl = ply;
 	if not trace.Entity:IsValid() then True = false end
 	if trace.Entity:IsPlayer() then True = false end
 	if trace.Entity:GetClass() ~= "acf_gun" and trace.Entity:GetClass() ~= "acf_engine" and trace.Entity:GetClass() ~= "acf_enginemaker" then True = false end
 	if SERVER and not trace.Entity:GetPhysicsObject():IsValid() then True = false end
 	
-	
 	if True then
 		return false
 	else
-		ply:PrintMessage(HUD_PRINTNOTIFY , "You need to aim at engine or gun to change it's sound" )
+		ACF_SendNotify( pl, true, "You need to aim at engine or gun to change it's sound" );
 		return true
 	end
 end
 
-function TOOL:LeftClick( trace )
+function TOOL:LeftClick(trace)
 	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
 	local sound = self:GetOwner():GetInfo("wire_soundemitter_sound")
-	local pitch = self:GetOwner():GetInfo("acfsound_pitch")
-	ReplaceSound( self:GetOwner(), trace.Entity, {sound, pitch} )
+	ReplaceSound( self:GetOwner(), trace.Entity, {sound} )
+	local pl = self:GetOwner();
+	ACF_SendNotify( pl, true, "Sound Pasted successfully!" );
 	return true
 end
 
-function TOOL:RightClick( trace )
+function TOOL:RightClick(trace)
 	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
+	local pl = self:GetOwner();
 	if trace.Entity:GetClass() == "acf_engine" or trace.Entity:GetClass() == "acf_enginemaker" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
 		self:GetOwner():ConCommand("acfsound_pitch "..trace.Entity.SoundPitch);
+		ACF_SendNotify( pl, true, "Engine Sound copied successfully!" );
 	elseif trace.Entity:GetClass() == "acf_gun" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.Sound);
+		ACF_SendNotify( pl, true, "Gun Sound copied successfully!" );
 	end
 	return true
 end
@@ -70,9 +73,8 @@ function TOOL:Reload( trace )
 	if trace.Entity:GetClass() == "acf_engine" or trace.Entity:GetClass() == "acf_enginemaker" then
 		local Id = trace.Entity.Id
 		local List = list.Get("ACFEnts")
-		local pitch = List["Mobility"][Id]["pitch"] or 1
-		self:GetOwner():ConCommand("acfsound_pitch " ..pitch);
-		ReplaceSound( self:GetOwner(), trace.Entity, {List["Mobility"][Id]["sound"], pitch} )
+		self:GetOwner():ConCommand("acfsound_pitch " ..(List["Mobility"][Id]["pitch"] or 1));
+		ReplaceSound( self:GetOwner(), trace.Entity, {List["Mobility"][Id]["sound"]} )
 	elseif trace.Entity:GetClass() == "acf_gun" then
 		local Class = trace.Entity.Class
 		local Classes = list.Get("ACFClasses")

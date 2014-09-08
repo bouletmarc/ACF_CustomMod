@@ -9,87 +9,31 @@ if CLIENT then
 	
 	function ACFRadsGUICreate( Table )
 		
-		if not acfmenupanel.ModData then
-			acfmenupanel.ModData = {}
+		if not acfmenupanelcustom.ModData then
+			acfmenupanelcustom.ModData = {}
 		end
-		if not acfmenupanel.ModData[Table.id] then
-			acfmenupanel.ModData[Table.id] = {}
-			acfmenupanel.ModData[Table.id].ModTable = Table.modtable
+		if not acfmenupanelcustom.ModData[Table.id] then
+			acfmenupanelcustom.ModData[Table.id] = {}
+			acfmenupanelcustom.ModData[Table.id].ModTable = Table.modtable
 		end
 			
-		acfmenupanel:CPanelText("Name", Table.name)
+		acfmenupanelcustom:CPanelText("Name", Table.name)
 		
-		acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
-			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
-			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetFOV( 20 )
-			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
-			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
+		acfmenupanelcustom.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanelcustom.CustomDisplay )
+			acfmenupanelcustom.CData.DisplayModel:SetModel( Table.model )
+			acfmenupanelcustom.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetFOV( 20 )
+			acfmenupanelcustom.CData.DisplayModel:SetSize(acfmenupanelcustom:GetWide(),acfmenupanelcustom:GetWide())
+			acfmenupanelcustom.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
+		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData.DisplayModel )
 		
-		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
-		acfmenupanel:CPanelText("Weight", "Weight : "..Table.weight)
+		acfmenupanelcustom:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanelcustom:CPanelText("Weight", "Weight : "..Table.weight)
 		
-		/*for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
-			if ID == 1 then
-				ACF_RadsSliders(ID, Value)
-			end
-		end*/
-		
-		acfmenupanel.CustomDisplay:PerformLayout()
+		acfmenupanelcustom.CustomDisplay:PerformLayout()
 		
 	end
-
-	/*function ACF_RadsSliders(ID, Value)
-		--loading colors
-		local Redcolor = 0
-		local Greencolor = 0
-		local Bluecolor = 200
-		if file.Exists("acf/menucolor.txt", "DATA") then
-			local MenuColor = file.Read("acf/menucolor.txt")
-			local MenuColorTable = {}
-			for w in string.gmatch(MenuColor, "([^,]+)") do
-				table.insert(MenuColorTable, w)
-			end
-			Redcolor = tonumber(MenuColorTable[1])
-			Greencolor = tonumber(MenuColorTable[2])
-			Bluecolor = tonumber(MenuColorTable[3])
-		end
-		--loading values
-		local RadsSize = Value
-		local RadsWeight = math.Round(RadsSize*30,1)
-		RunConsoleCommand( "acfmenu_data1", RadsSize )
-		RunConsoleCommand( "acfmenu_data2", RadsWeight )
-		acfmenupanel.ModData["V3_Rads"]["ModTable"][2] = RadsWeight
-		
-		
-		SliderWide = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-		SliderWide:SetText( "Radiator Size" )
-		SliderWide.Label:SizeToContents()
-		SliderWide:SetMin( 0.2 )
-		SliderWide:SetMax( 2 )
-		SliderWide:SetDecimals( 2 )
-		SliderWide:SetValue(RadsSize)
-		SliderWide:SetDark( true )
-		SliderWide.OnValueChanged = function( slider, val )
-			acfmenupanel.ModData["V3_Rads"]["ModTable"][1] = val
-			RunConsoleCommand( "acfmenu_data1", val )
-			--Reset Weight
-			RadsSize = val
-			RadsWeight = math.Round(RadsSize*30,1)
-			WeightText:SetText("Weight : "..RadsWeight.." Kg")
-			RunConsoleCommand( "acfmenu_data2", RadsWeight )
-			acfmenupanel.ModData["V3_Rads"]["ModTable"][2] = RadsWeight
-		end
-		acfmenupanel.CustomDisplay:AddItem( SliderWide )
-		
-		WeightText = vgui.Create( "DLabel", acfmenupanel.CustomDisplay )
-		WeightText:SetText("Weight : "..RadsWeight.." Kg")
-		WeightText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		acfmenupanel.CustomDisplay:AddItem(WeightText)
-
-	end*/
 	
 	return
 	
@@ -129,9 +73,9 @@ function MakeACF_Rads(Owner, Pos, Angle, Id)
 	if not IsValid( Rads ) then return false end
 	
 	local EID
-	local List = list.Get("ACFEnts")
-	if List.Mobility[Id] then EID = Id else EID = "V3_Rads" end
-	local Lookup = List.Mobility[EID]
+	local List = list.Get("ACFCUSTOMEnts")
+	if List.MobilityCustom[Id] then EID = Id else EID = "V3_Rads" end
+	local Lookup = List.MobilityCustom[EID]
 	
 	Rads:SetAngles(Angle)
 	Rads:SetPos(Pos)
@@ -142,22 +86,11 @@ function MakeACF_Rads(Owner, Pos, Angle, Id)
 	Rads.Id = EID
 	Rads.Model = Lookup.model
 	
-	/*Rads.ModTable = Lookup.modtable
-		Rads.ModTable[1] = Data1
-		Rads.ModTable[2] = Data2
-		--Set All Mods
-		Rads.Mods1 = Data1	--size
-		Rads.Mods2 = Data2	--weight
-	--Set Mods Values
-	Rads.SizeVal = math.Round(tonumber(Rads.Mods1),1)
-	Rads.Weight = math.Round(tonumber(Rads.Mods2),0)*/
-	
 	Rads.Weight = Lookup.weight
 	--Set Radiator Values
 	Rads.HealthVal = 100 --Health
 	
 	Rads:SetModel( Rads.Model )
-	--Rads:SetModelScale( Rads:GetModelScale()*Rads.SizeVal, 0)
 
 	Rads:PhysicsInit( SOLID_VPHYSICS )      	
 	Rads:SetMoveType( MOVETYPE_VPHYSICS )     	
@@ -169,7 +102,7 @@ function MakeACF_Rads(Owner, Pos, Angle, Id)
 	end
 	
 	Owner:AddCount("_acf_rads", Rads)
-	Owner:AddCleanup( "acfmenu", Rads )
+	Owner:AddCleanup( "acfcustom", Rads )
 	
 	Rads:SetNetworkedString( "WireName", Lookup.name )
 	Rads:UpdateOverlayText()
@@ -190,7 +123,7 @@ function ENT:Update( ArgsTable )
 	end
 	
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
-	local Lookup = list.Get("ACFEnts").Mobility[Id]
+	local Lookup = list.Get("ACFCUSTOMEnts").MobilityCustom[Id]
 	
 	if Lookup.model ~= self.Model then
 		return false, "The new Engine Radiator must have the same model!"
@@ -200,15 +133,6 @@ function ENT:Update( ArgsTable )
 		self.Id = Id
 		self.Model = Lookup.model
 	end
-	
-	/*self.ModTable[1] = ArgsTable[5]
-	self.ModTable[2] = ArgsTable[6]
-	--Set Mods
-	self.Mods1 = ArgsTable[5]	--Size
-	self.Mods2 = ArgsTable[6]	--Weight
-	--Set Mods Values
-	self.SizeVal = math.Round(tonumber(self.Mods1),1)
-	self.Weight = math.Round(tonumber(self.Mods2),0)*/
 	
 	self.Weight = Lookup.weight
 	--Set Radiator Values

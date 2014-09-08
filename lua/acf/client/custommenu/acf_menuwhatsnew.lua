@@ -2,6 +2,8 @@
 
 local StartBrowserPanel = nil
 
+local Changelog = {}
+
 local function CreateSoundBrowser()
 
 	StartBrowserPanel = vgui.Create("DFrame") // The main frame.
@@ -42,16 +44,16 @@ local function CreateSoundBrowser()
 			Redcolor = 0
 			Greencolor = 0
 			Bluecolor = 200
-			RunConsoleCommand( "acfmenu_red", Redcolor )
-			RunConsoleCommand( "acfmenu_green", Greencolor )
-			RunConsoleCommand( "acfmenu_blue", Bluecolor )
+			RunConsoleCommand( "acfcustom_red", Redcolor )
+			RunConsoleCommand( "acfcustom_green", Greencolor )
+			RunConsoleCommand( "acfcustom_blue", Bluecolor )
 			SaveFunc()
 		end
 		--###########################################
 		CurrentText = ButtonsSidePanel:Add("DLabel")
 		CurrentText:SetPos(70,20)
 		CurrentText:SetFont( "DefaultBold" )
-		CurrentText:SetText("Whats New in ACF Custom Rev : "..ACF.Version2)
+		CurrentText:SetText("Whats New in ACF Custom Rev : "..ACFCUSTOM.Version2)
 		CurrentText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 		CurrentText:SizeToContents()
 		

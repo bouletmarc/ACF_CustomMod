@@ -8,21 +8,21 @@ ENT.WireDebugName = "ACF Gearbox AIR"
 if CLIENT then
 	function ACFGearboxAirGUICreate( Table )
 			
-		acfmenupanel:CPanelText("Name", Table.name)
+		acfmenupanelcustom:CPanelText("Name", Table.name)
 		
-		acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
-			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
-			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetFOV( 20 )
-			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
-			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
+		acfmenupanelcustom.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanelcustom.CustomDisplay )
+			acfmenupanelcustom.CData.DisplayModel:SetModel( Table.model )
+			acfmenupanelcustom.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetFOV( 20 )
+			acfmenupanelcustom.CData.DisplayModel:SetSize(acfmenupanelcustom:GetWide(),acfmenupanelcustom:GetWide())
+			acfmenupanelcustom.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
+		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData.DisplayModel )
 		
-		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
-		acfmenupanel:CPanelText("MaxTq", "Max Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb\nWeight : "..(Table.weight).." kg")
+		acfmenupanelcustom:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanelcustom:CPanelText("MaxTq", "Max Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb\nWeight : "..(Table.weight).." kg")
 		
-		acfmenupanel.CustomDisplay:PerformLayout()
+		acfmenupanelcustom.CustomDisplay:PerformLayout()
 		maxtorque = Table.maxtq
 	end
 	
@@ -66,7 +66,7 @@ function MakeACF_GearboxAIR(Owner, Pos, Angle, Id)
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local GearboxAIR = ents.Create("acf_gearboxair")
-	local List = list.Get("ACFEnts")
+	local List = list.Get("ACFCUSTOMEnts")
 	local Classes = list.Get("ACFClasses")
 	if not IsValid( GearboxAIR ) then return false end
 	GearboxAIR:SetAngles(Angle)
@@ -76,9 +76,9 @@ function MakeACF_GearboxAIR(Owner, Pos, Angle, Id)
 	GearboxAIR:SetPlayer(Owner)
 	GearboxAIR.Owner = Owner
 	GearboxAIR.Id = Id
-	GearboxAIR.Model = List.Mobility[Id].model
-	GearboxAIR.Mass = List.Mobility[Id].weight
-	GearboxAIR.MaxTorque = List.Mobility[Id].maxtq
+	GearboxAIR.Model = List.MobilityCustom[Id].model
+	GearboxAIR.Mass = List.MobilityCustom[Id].weight
+	GearboxAIR.MaxTorque = List.MobilityCustom[Id].maxtq
 	
 	GearboxAIR:SetModel( GearboxAIR.Model )
 	
@@ -99,11 +99,11 @@ function MakeACF_GearboxAIR(Owner, Pos, Angle, Id)
 	GearboxAIR.OutR = GearboxAIR:WorldToLocal(GearboxAIR:GetAttachment(GearboxAIR:LookupAttachment( "driveshaftR" )).Pos)
 	
 	Owner:AddCount("_acf_gearboxair", GearboxAIR)
-	Owner:AddCleanup( "acfmenu", GearboxAIR )
+	Owner:AddCleanup( "acfcustom", GearboxAIR )
 	
 	GearboxAIR:SetBodygroup(1, 0)
 	
-	GearboxAIR:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	GearboxAIR:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
 	GearboxAIR:UpdateOverlayText()
 	--GearboxAIR:SetModelScaling()
 		
@@ -121,7 +121,7 @@ function ENT:Update( ArgsTable )
 	end
 	
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
-	local List = list.Get("ACFEnts")
+	local List = list.Get("ACFCUSTOMEnts")
 	
 	if List.Mobility[Id].model ~= self.Model then
 		return false, "The new gearbox must have the same model!"
@@ -129,8 +129,8 @@ function ENT:Update( ArgsTable )
 		
 	if self.Id != Id then
 		self.Id = Id
-		self.Mass = List.Mobility[Id].weight
-		self.MaxTorque = List.Mobility[Id].maxtq
+		self.Mass = List.MobilityCustom[Id].weight
+		self.MaxTorque = List.MobilityCustom[Id].maxtq
 		
 		local phys = self:GetPhysicsObject()    
 		if IsValid( phys ) then 
@@ -140,30 +140,11 @@ function ENT:Update( ArgsTable )
 	
 	self:SetBodygroup(1, 0)
 	
-	self:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	self:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
 	self:UpdateOverlayText()
 	
 	return true, "AIR Gearbox updated successfully!"
 end
-
-/*function ENT:SetModelScaling()
-	local scale = Vector(1,0.3,1)
-	local count = self:GetBoneCount() or -1
-	if count > 1 then
-		for i = 0, count do
-			self:ManipulateBoneScale(i, scale)
-		end
-	elseif self.EnableMatrix then
-		local mat = Matrix()
-		mat:Scale( Vector(scale.y, scale.x, scale.z) )
-		self:EnableMatrix( "RenderMultiply", mat )
-	end
-	local propmax = self:OBBMaxs()
-	local propmin = self:OBBMins()
-	local VectorStart = Vector(scale.x * propmax.x, scale.y * propmax.y, scale.z * propmax.z)
-	local VectorEnd = Vector(scale.x * propmin.x, scale.y * propmin.y, scale.z * propmin.z)
-	self:SetCollisionBounds(VectorStart, VectorEnd)
-end*/
 
 function ENT:UpdateOverlayText()
 	local text = ""

@@ -9,56 +9,56 @@ if CLIENT then
 	
 	function ACFNosGUICreate( Table )
 		
-		if not acfmenupanel.ModData then
-			acfmenupanel.ModData = {}
+		if not acfmenupanelcustom.ModData then
+			acfmenupanelcustom.ModData = {}
 		end
-		if not acfmenupanel.ModData[Table.id] then
-			acfmenupanel.ModData[Table.id] = {}
-			acfmenupanel.ModData[Table.id].ModTable = Table.modtable
+		if not acfmenupanelcustom.ModData[Table.id] then
+			acfmenupanelcustom.ModData[Table.id] = {}
+			acfmenupanelcustom.ModData[Table.id].ModTable = Table.modtable
 		end
 			
-		acfmenupanel:CPanelText("Name", Table.name)
+		acfmenupanelcustom:CPanelText("Name", Table.name)
 		
-		acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
-			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
-			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetColor(Color(0,0,255))
-			acfmenupanel.CData.DisplayModel:SetFOV( 4 )
-			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
-			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
+		acfmenupanelcustom.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanelcustom.CustomDisplay )
+			acfmenupanelcustom.CData.DisplayModel:SetModel( Table.model )
+			acfmenupanelcustom.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetColor(Color(0,0,255))
+			acfmenupanelcustom.CData.DisplayModel:SetFOV( 4 )
+			acfmenupanelcustom.CData.DisplayModel:SetSize(acfmenupanelcustom:GetWide(),acfmenupanelcustom:GetWide())
+			acfmenupanelcustom.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
+		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData.DisplayModel )
 		
-		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
-		acfmenupanel:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
+		acfmenupanelcustom:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanelcustom:CPanelText("Weight", "Weight : "..(Table.weight).." kg")
 		
-		for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
+		for ID,Value in pairs(acfmenupanelcustom.ModData[Table.id]["ModTable"]) do
 			if ID == 1 then
 				ACF_NosSlider1(1, Value, Table.id, "Torque Adding")
 			end
 		end
 		
-		acfmenupanel.CustomDisplay:PerformLayout()
+		acfmenupanelcustom.CustomDisplay:PerformLayout()
 	end
 
 	function ACF_NosSlider1(Mod, Value, ID, Desc)
-		if Mod and not acfmenupanel.CData[Mod] then	
-			acfmenupanel.CData[Mod] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Mod]:SetText( Desc or "Torque Adding "..Mod )
-				acfmenupanel.CData[Mod].Label:SizeToContents()
-				acfmenupanel.CData[Mod]:SetMin( 20 )
-				acfmenupanel.CData[Mod]:SetMax( 200 )
-				acfmenupanel.CData[Mod]:SetDecimals( 0 )
-				acfmenupanel.CData[Mod]["Mod"] = Mod
-				acfmenupanel.CData[Mod]["ID"] = ID
-				acfmenupanel.CData[Mod]:SetValue(Value)
-				acfmenupanel.CData[Mod]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Mod, Value )
-				acfmenupanel.CData[Mod].OnValueChanged = function( slider, val )
-					acfmenupanel.ModData[slider.ID]["ModTable"][slider.Mod] = val
-					RunConsoleCommand( "acfmenu_data"..Mod, val )
+		if Mod and not acfmenupanelcustom.CData[Mod] then	
+			acfmenupanelcustom.CData[Mod] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Mod]:SetText( Desc or "Torque Adding "..Mod )
+				acfmenupanelcustom.CData[Mod].Label:SizeToContents()
+				acfmenupanelcustom.CData[Mod]:SetMin( 20 )
+				acfmenupanelcustom.CData[Mod]:SetMax( 200 )
+				acfmenupanelcustom.CData[Mod]:SetDecimals( 0 )
+				acfmenupanelcustom.CData[Mod]["Mod"] = Mod
+				acfmenupanelcustom.CData[Mod]["ID"] = ID
+				acfmenupanelcustom.CData[Mod]:SetValue(Value)
+				acfmenupanelcustom.CData[Mod]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Mod, Value )
+				acfmenupanelcustom.CData[Mod].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.ModData[slider.ID]["ModTable"][slider.Mod] = val
+					RunConsoleCommand( "acfcustom_data"..Mod, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Mod] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Mod] )
 		end
 	end
 	
@@ -94,9 +94,9 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	if not IsValid( Nos ) then return false end
 	
 	local EID
-	local List = list.Get("ACFEnts")
-	if List.Mobility[Id] then EID = Id else EID = "NosBottle" end
-	local Lookup = List.Mobility[EID]
+	local List = list.Get("ACFCUSTOMEnts")
+	if List.MobilityCustom[Id] then EID = Id else EID = "NosBottle" end
+	local Lookup = List.MobilityCustom[EID]
 	
 	Nos:SetAngles(Angle)
 	Nos:SetPos(Pos)
@@ -167,7 +167,7 @@ function ENT:Update( ArgsTable )
 	end
 	
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
-	local Lookup = list.Get("ACFEnts").Mobility[Id]
+	local Lookup = list.Get("ACFCUSTOMEnts").MobilityCustom[Id]
 	
 	if Lookup.model ~= self.Model then
 		return false, "The new Nos bottle must have the same model!"

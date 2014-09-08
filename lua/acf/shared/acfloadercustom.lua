@@ -4,87 +4,58 @@
 
 AddCSLuaFile()
 
-local GunClasses = {}
-local GunTable = {}
 local MobilityTable = {}
-local FuelTankTable = {}
 
 -- setup base classes
-local gun_base = {
-	ent = "acf_gun",
-	type = "Guns"
+local enginecustom_base = {
+	ent = "acf_engine_custom",
+	type = "MobilityCustom"
 }
-
-local engine_base = {
-	ent = "acf_engine",
-	type = "Mobility"
-}
-
-local gearbox_base = {
-	ent = "acf_gearbox",
-	type = "Mobility",
-	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
-}
-
-local fueltank_base = {
-	ent = "acf_fueltank",
-	type = "Mobility"
-}
-
---##############################
---##	setup base			####
---##############################
 --engine maker
 local enginemaker_base = {
 	ent = "acf_enginemaker",
-	type = "Mobility"
+	type = "MobilityCustom"
 }
 --chips
 local chips_base = {
 	ent = "acf_chips",
-	type = "Mobility"
+	type = "MobilityCustom"
 }
 --nos
 local nos_base = {
 	ent = "acf_nos",
-	type = "Mobility"
+	type = "MobilityCustom"
 }
 --cvt
 local cvt_base = {
 	ent = "acf_gearboxcvt",
-	type = "Mobility",
+	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
 --airplane
 local air_base = {
 	ent = "acf_gearboxair",
-	type = "Mobility",
+	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
 --automatic
 local auto_base = {
 	ent = "acf_gearboxauto",
-	type = "Mobility",
+	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
 --radiator
 local rads_base = {
 	ent = "acf_rads",
-	type = "Mobility"
+	type = "MobilityCustom"
 }
 
 --##############################
 --##		set gui			####
 --##############################
 if CLIENT then
-	gun_base.guicreate = function( Panel, Table ) ACFGunGUICreate( Table ) end or nil
-	gun_base.guiupdate = function() return end
-	engine_base.guicreate = function( panel, tbl ) ACFEngineGUICreate( tbl ) end or nil
-	engine_base.guiupdate = function() return end
-	gearbox_base.guicreate = function( panel, tbl ) ACFGearboxGUICreate( tbl ) end or nil
-	gearbox_base.guiupdate = function() return end
-	fueltank_base.guicreate = function( panel, tbl ) ACFFuelTankGUICreate( tbl ) end or nil
-	fueltank_base.guiupdate = function( panel, tbl ) ACFFuelTankGUIUpdate( tbl ) end or nil
+	enginecustom_base.guicreate = function( panel, tbl ) ACFEngineCustomGUICreate( tbl ) end or nil
+	enginecustom_base.guiupdate = function() return end
 	--engine maker
 	enginemaker_base.guicreate = function( panel, tbl ) ACFEngineMakerGUICreate( tbl ) end or nil
 	enginemaker_base.guiupdate = function() return end
@@ -111,40 +82,10 @@ end
 --##############################
 --##	define functions	####
 --##############################
-function ACF_defineGunClass( id, data )
-	data.id = id
-	GunClasses[ id ] = data
-end
-
-function ACF_defineGun( id, data )
-	data.id = id
-	data.round.id = id
-	table.Inherit( data, gun_base )
-	GunTable[ id ] = data
-end
-
 function ACF_DefineEngine( id, data )
 	data.id = id
-	table.Inherit( data, engine_base )
+	table.Inherit( data, enginecustom_base )
 	MobilityTable[ id ] = data
-end
-
-function ACF_DefineGearbox( id, data )
-	data.id = id
-	table.Inherit( data, gearbox_base )
-	MobilityTable[ id ] = data
-end
-
-function ACF_DefineFuelTank( id, data )
-	data.id = id
-	table.Inherit( data, fueltank_base )
-	MobilityTable[ id ] = data
-end
-
-function ACF_DefineFuelTankSize( id, data )
-	data.id = id
-	table.Inherit( data, fueltank_base )
-	FuelTankTable[ id ] = data
 end
 --engine maker
 function ACF_DefineEngineMaker( id, data )
@@ -192,28 +133,10 @@ end
 --##############################
 --##	search and load		####
 --##############################
-local guns = file.Find( "acf/shared/guns/*.lua", "LUA" )
-for k, v in pairs( guns ) do
-	AddCSLuaFile( "acf/shared/guns/" .. v )
-	include( "acf/shared/guns/" .. v )
-end
-
-local engines = file.Find( "acf/shared/engines/*.lua", "LUA" )
+local engines = file.Find( "acf/shared/enginescustom/*.lua", "LUA" )
 for k, v in pairs( engines ) do
-	AddCSLuaFile( "acf/shared/engines/" .. v )
-	include( "acf/shared/engines/" .. v )
-end
-
-local gearboxes = file.Find( "acf/shared/gearboxes/*.lua", "LUA" )
-for k, v in pairs( gearboxes ) do
-	AddCSLuaFile( "acf/shared/gearboxes/" .. v )
-	include( "acf/shared/gearboxes/" .. v )
-end
-
-local fueltanks = file.Find( "acf/shared/fueltanks/*.lua", "LUA" )
-for k, v in pairs( fueltanks ) do
-	AddCSLuaFile( "acf/shared/fueltanks/" .. v )
-	include( "acf/shared/fueltanks/" .. v )
+	AddCSLuaFile( "acf/shared/enginescustom/" .. v )
+	include( "acf/shared/enginescustom/" .. v )
 end
 --custom files
 local custom = file.Find( "acf/shared/customs/*.lua", "LUA" )
@@ -223,7 +146,4 @@ for k, v in pairs( custom ) do
 end
 
 -- now that the mobility table is populated, throw it in the acf ents list
-list.Set( "ACFClasses", "GunClass", GunClasses )
-list.Set( "ACFEnts", "Guns", GunTable )
-list.Set( "ACFEnts", "Mobility", MobilityTable )
-list.Set( "ACFEnts", "FuelTanks", FuelTankTable )
+list.Set( "ACFCUSTOMEnts", "MobilityCustom", MobilityTable )

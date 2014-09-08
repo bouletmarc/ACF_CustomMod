@@ -8,28 +8,28 @@ ENT.WireDebugName = "ACF Gearbox CVT"
 if CLIENT then
 	function ACFGearboxCVTGUICreate( Table )
 	
-		if not acfmenupanel.GearboxData then
-			acfmenupanel.GearboxData = {}
+		if not acfmenupanelcustom.GearboxData then
+			acfmenupanelcustom.GearboxData = {}
 		end
-		if not acfmenupanel.GearboxData[Table.id] then
-			acfmenupanel.GearboxData[Table.id] = {}
-			acfmenupanel.GearboxData[Table.id].GearTable = Table.geartable
+		if not acfmenupanelcustom.GearboxData[Table.id] then
+			acfmenupanelcustom.GearboxData[Table.id] = {}
+			acfmenupanelcustom.GearboxData[Table.id].GearTable = Table.geartable
 		end
 			
-		acfmenupanel:CPanelText("Name", Table.name)
+		acfmenupanelcustom:CPanelText("Name", Table.name)
 		
-		acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
-			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
-			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetFOV( 20 )
-			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
-			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
+		acfmenupanelcustom.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanelcustom.CustomDisplay )
+			acfmenupanelcustom.CData.DisplayModel:SetModel( Table.model )
+			acfmenupanelcustom.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetFOV( 20 )
+			acfmenupanelcustom.CData.DisplayModel:SetSize(acfmenupanelcustom:GetWide(),acfmenupanelcustom:GetWide())
+			acfmenupanelcustom.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
+		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData.DisplayModel )
 		
-		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
-		acfmenupanel:CPanelText("MaxTq", "Max Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb\nWeight : "..(Table.weight).." kg")
-		for ID,Value in pairs(acfmenupanel.GearboxData[Table.id]["GearTable"]) do
+		acfmenupanelcustom:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanelcustom:CPanelText("MaxTq", "Max Torque Rating : "..(Table.maxtq).."n-m / "..math.Round(Table.maxtq*0.73).."ft-lb\nWeight : "..(Table.weight).." kg")
+		for ID,Value in pairs(acfmenupanelcustom.GearboxData[Table.id]["GearTable"]) do
 			if ID > 0 and ID < 3 then
 				ACF_CvtSlider1(ID, Value, Table.id)
 			elseif ID == 3 then
@@ -45,133 +45,133 @@ if CLIENT then
 			end
 		end
 		
-		acfmenupanel.CustomDisplay:PerformLayout()
+		acfmenupanelcustom.CustomDisplay:PerformLayout()
 		maxtorque = Table.maxtq
 	end
 
 	function ACF_CvtSlider1(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Gear "..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( -1 )
-				acfmenupanel.CData[Gear]:SetMax( 1 )
-				acfmenupanel.CData[Gear]:SetDecimals( 2 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
-					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
-					RunConsoleCommand( "acfmenu_data"..Gear, val )
+		if Gear and not acfmenupanelcustom.CData[Gear] then	
+			acfmenupanelcustom.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Gear]:SetText( Desc or "Gear "..Gear )
+				acfmenupanelcustom.CData[Gear].Label:SizeToContents()
+				acfmenupanelcustom.CData[Gear]:SetMin( -1 )
+				acfmenupanelcustom.CData[Gear]:SetMax( 1 )
+				acfmenupanelcustom.CData[Gear]:SetDecimals( 2 )
+				acfmenupanelcustom.CData[Gear]["Gear"] = Gear
+				acfmenupanelcustom.CData[Gear]["ID"] = ID
+				acfmenupanelcustom.CData[Gear]:SetValue(Value)
+				acfmenupanelcustom.CData[Gear]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Gear, Value )
+				acfmenupanelcustom.CData[Gear].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+					RunConsoleCommand( "acfcustom_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Gear] )
 		end
 	end
 
 	function ACF_CvtSlider2(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Rpm maximum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 3000 )
-				acfmenupanel.CData[Gear]:SetMax( 10000 )
-				acfmenupanel.CData[Gear]:SetDecimals( 0 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
-					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
-					RunConsoleCommand( "acfmenu_data"..Gear, val )
+		if Gear and not acfmenupanelcustom.CData[Gear] then	
+			acfmenupanelcustom.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Gear]:SetText( Desc or "Rpm maximum"..Gear )
+				acfmenupanelcustom.CData[Gear].Label:SizeToContents()
+				acfmenupanelcustom.CData[Gear]:SetMin( 3000 )
+				acfmenupanelcustom.CData[Gear]:SetMax( 10000 )
+				acfmenupanelcustom.CData[Gear]:SetDecimals( 0 )
+				acfmenupanelcustom.CData[Gear]["Gear"] = Gear
+				acfmenupanelcustom.CData[Gear]["ID"] = ID
+				acfmenupanelcustom.CData[Gear]:SetValue(Value)
+				acfmenupanelcustom.CData[Gear]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Gear, Value )
+				acfmenupanelcustom.CData[Gear].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+					RunConsoleCommand( "acfcustom_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Gear] )
 		end
 	end
 
 	function ACF_CvtSlider3(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Ratio Minimum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 0.001 )
-				acfmenupanel.CData[Gear]:SetMax( 0.5 )
-				acfmenupanel.CData[Gear]:SetDecimals( 3 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
-					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
-					RunConsoleCommand( "acfmenu_data"..Gear, val )
+		if Gear and not acfmenupanelcustom.CData[Gear] then	
+			acfmenupanelcustom.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Gear]:SetText( Desc or "Ratio Minimum"..Gear )
+				acfmenupanelcustom.CData[Gear].Label:SizeToContents()
+				acfmenupanelcustom.CData[Gear]:SetMin( 0.001 )
+				acfmenupanelcustom.CData[Gear]:SetMax( 0.5 )
+				acfmenupanelcustom.CData[Gear]:SetDecimals( 3 )
+				acfmenupanelcustom.CData[Gear]["Gear"] = Gear
+				acfmenupanelcustom.CData[Gear]["ID"] = ID
+				acfmenupanelcustom.CData[Gear]:SetValue(Value)
+				acfmenupanelcustom.CData[Gear]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Gear, Value )
+				acfmenupanelcustom.CData[Gear].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+					RunConsoleCommand( "acfcustom_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Gear] )
 		end
 	end
 
 	function ACF_CvtSlider4(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Ratio Maximum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 0.3 )
-				acfmenupanel.CData[Gear]:SetMax( 4 )
-				acfmenupanel.CData[Gear]:SetDecimals( 1 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
-					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
-					RunConsoleCommand( "acfmenu_data"..Gear, val )
+		if Gear and not acfmenupanelcustom.CData[Gear] then	
+			acfmenupanelcustom.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Gear]:SetText( Desc or "Ratio Maximum"..Gear )
+				acfmenupanelcustom.CData[Gear].Label:SizeToContents()
+				acfmenupanelcustom.CData[Gear]:SetMin( 0.3 )
+				acfmenupanelcustom.CData[Gear]:SetMax( 4 )
+				acfmenupanelcustom.CData[Gear]:SetDecimals( 1 )
+				acfmenupanelcustom.CData[Gear]["Gear"] = Gear
+				acfmenupanelcustom.CData[Gear]["ID"] = ID
+				acfmenupanelcustom.CData[Gear]:SetValue(Value)
+				acfmenupanelcustom.CData[Gear]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Gear, Value )
+				acfmenupanelcustom.CData[Gear].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+					RunConsoleCommand( "acfcustom_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Gear] )
 		end
 	end
 
 	function ACF_CvtSlider5(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Rpm minimum"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 2000 )
-				acfmenupanel.CData[Gear]:SetMax( 7000 )
-				acfmenupanel.CData[Gear]:SetDecimals( 0 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
-					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
-					RunConsoleCommand( "acfmenu_data"..Gear, val )
+		if Gear and not acfmenupanelcustom.CData[Gear] then	
+			acfmenupanelcustom.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Gear]:SetText( Desc or "Rpm minimum"..Gear )
+				acfmenupanelcustom.CData[Gear].Label:SizeToContents()
+				acfmenupanelcustom.CData[Gear]:SetMin( 2000 )
+				acfmenupanelcustom.CData[Gear]:SetMax( 7000 )
+				acfmenupanelcustom.CData[Gear]:SetDecimals( 0 )
+				acfmenupanelcustom.CData[Gear]["Gear"] = Gear
+				acfmenupanelcustom.CData[Gear]["ID"] = ID
+				acfmenupanelcustom.CData[Gear]:SetValue(Value)
+				acfmenupanelcustom.CData[Gear]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Gear, Value )
+				acfmenupanelcustom.CData[Gear].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+					RunConsoleCommand( "acfcustom_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Gear] )
 		end
 	end
 
 	function ACF_CvtSlider6(Gear, Value, ID, Desc)
-		if Gear and not acfmenupanel.CData[Gear] then	
-			acfmenupanel.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanel.CustomDisplay )
-				acfmenupanel.CData[Gear]:SetText( Desc or "Declutch Rpm"..Gear )
-				acfmenupanel.CData[Gear].Label:SizeToContents()
-				acfmenupanel.CData[Gear]:SetMin( 1000 )
-				acfmenupanel.CData[Gear]:SetMax( 4000 )
-				acfmenupanel.CData[Gear]:SetDecimals( 0 )
-				acfmenupanel.CData[Gear]["Gear"] = Gear
-				acfmenupanel.CData[Gear]["ID"] = ID
-				acfmenupanel.CData[Gear]:SetValue(Value)
-				acfmenupanel.CData[Gear]:SetDark( true )
-				RunConsoleCommand( "acfmenu_data"..Gear, Value )
-				acfmenupanel.CData[Gear].OnValueChanged = function( slider, val )
-					acfmenupanel.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
-					RunConsoleCommand( "acfmenu_data"..Gear, val )
+		if Gear and not acfmenupanelcustom.CData[Gear] then	
+			acfmenupanelcustom.CData[Gear] = vgui.Create( "DNumSlider", acfmenupanelcustom.CustomDisplay )
+				acfmenupanelcustom.CData[Gear]:SetText( Desc or "Declutch Rpm"..Gear )
+				acfmenupanelcustom.CData[Gear].Label:SizeToContents()
+				acfmenupanelcustom.CData[Gear]:SetMin( 1000 )
+				acfmenupanelcustom.CData[Gear]:SetMax( 4000 )
+				acfmenupanelcustom.CData[Gear]:SetDecimals( 0 )
+				acfmenupanelcustom.CData[Gear]["Gear"] = Gear
+				acfmenupanelcustom.CData[Gear]["ID"] = ID
+				acfmenupanelcustom.CData[Gear]:SetValue(Value)
+				acfmenupanelcustom.CData[Gear]:SetDark( true )
+				RunConsoleCommand( "acfcustom_data"..Gear, Value )
+				acfmenupanelcustom.CData[Gear].OnValueChanged = function( slider, val )
+					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
+					RunConsoleCommand( "acfcustom_data"..Gear, val )
 				end
-			acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData[Gear] )
+			acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData[Gear] )
 		end
 	end
 	
@@ -219,7 +219,7 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 	if not Owner:CheckLimit("_acf_misc") then return false end
 	
 	local GearboxCVT = ents.Create("acf_gearboxcvt")
-	local List = list.Get("ACFEnts")
+	local List = list.Get("ACFCUSTOMEnts")
 	local Classes = list.Get("ACFClasses")
 	if not IsValid( GearboxCVT ) then return false end
 	GearboxCVT:SetAngles(Angle)
@@ -229,13 +229,13 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 	GearboxCVT:SetPlayer(Owner)
 	GearboxCVT.Owner = Owner
 	GearboxCVT.Id = Id
-	GearboxCVT.Model = List.Mobility[Id].model
-	GearboxCVT.Mass = List.Mobility[Id].weight
-	GearboxCVT.SwitchTime = List.Mobility[Id].switch
-	GearboxCVT.MaxTorque = List.Mobility[Id].maxtq
-	GearboxCVT.Gears = List.Mobility[Id].gears
-	GearboxCVT.Dual = List.Mobility[Id].doubleclutch
-	GearboxCVT.GearTable = List.Mobility[Id].geartable
+	GearboxCVT.Model = List.MobilityCustom[Id].model
+	GearboxCVT.Mass = List.MobilityCustom[Id].weight
+	GearboxCVT.SwitchTime = List.MobilityCustom[Id].switch
+	GearboxCVT.MaxTorque = List.MobilityCustom[Id].maxtq
+	GearboxCVT.Gears = List.MobilityCustom[Id].gears
+	GearboxCVT.Dual = List.MobilityCustom[Id].doubleclutch
+	GearboxCVT.GearTable = List.MobilityCustom[Id].geartable
 		GearboxCVT.GearTable.Final = Data10
 		GearboxCVT.GearTable[1] = Data1
 		GearboxCVT.GearTable[2] = Data2
@@ -301,7 +301,7 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 	GearboxCVT.OutR = GearboxCVT:WorldToLocal(GearboxCVT:GetAttachment(GearboxCVT:LookupAttachment( "driveshaftR" )).Pos)
 	
 	Owner:AddCount("_acf_gearboxcvt", GearboxCVT)
-	Owner:AddCleanup( "acfmenu", GearboxCVT )
+	Owner:AddCleanup( "acfcustom", GearboxCVT )
 	
 	GearboxCVT:ChangeGear(1)
 	
@@ -311,7 +311,7 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 		GearboxCVT:SetBodygroup(1, 0)
 	end
 	
-	GearboxCVT:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	GearboxCVT:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
 	GearboxCVT:UpdateOverlayText()
 		
 	return GearboxCVT
@@ -328,20 +328,20 @@ function ENT:Update( ArgsTable )
 	end
 	
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
-	local List = list.Get("ACFEnts")
+	local List = list.Get("ACFCUSTOMEnts")
 	
-	if List.Mobility[Id].model ~= self.Model then
+	if List.MobilityCustom[Id].model ~= self.Model then
 		return false, "The new gearbox must have the same model!"
 	end
 		
 	if self.Id != Id then
 	
 		self.Id = Id
-		self.Mass = List.Mobility[Id].weight
-		self.SwitchTime = List.Mobility[Id].switch
-		self.MaxTorque = List.Mobility[Id].maxtq
-		self.Gears = List.Mobility[Id].gears
-		self.Dual = List.Mobility[Id].doubleclutch
+		self.Mass = List.MobilityCustom[Id].weight
+		self.SwitchTime = List.MobilityCustom[Id].switch
+		self.MaxTorque = List.MobilityCustom[Id].maxtq
+		self.Gears = List.MobilityCustom[Id].gears
+		self.Dual = List.MobilityCustom[Id].doubleclutch
 		
 		local Inputs = {"Gear","Gear Up","Gear Down"}
 		if self.Dual then
@@ -403,7 +403,7 @@ function ENT:Update( ArgsTable )
 		self:SetBodygroup(1, 0)
 	end	
 	
-	self:SetNetworkedString( "WireName", List.Mobility[Id].name )
+	self:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
 	self:UpdateOverlayText()
 	
 	return true, "CVT Gearbox updated successfully!"

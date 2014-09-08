@@ -48,9 +48,9 @@ local function CreateSoundBrowser( )
 			Redcolor = 0
 			Greencolor = 0
 			Bluecolor = 200
-			RunConsoleCommand( "acfmenu_red", Redcolor )
-			RunConsoleCommand( "acfmenu_green", Greencolor )
-			RunConsoleCommand( "acfmenu_blue", Bluecolor )
+			RunConsoleCommand( "acfcustom_red", Redcolor )
+			RunConsoleCommand( "acfcustom_green", Greencolor )
+			RunConsoleCommand( "acfcustom_blue", Bluecolor )
 			SaveFunc()
 		end
 		--###########################################
@@ -125,9 +125,9 @@ local function CreateSoundBrowser( )
 			else
 				Bluecolor = tonumber(b)
 			end
-			RunConsoleCommand( "acfmenu_red", Redcolor )
-			RunConsoleCommand( "acfmenu_green", Greencolor )
-			RunConsoleCommand( "acfmenu_blue", Bluecolor )
+			RunConsoleCommand( "acfcustom_red", Redcolor )
+			RunConsoleCommand( "acfcustom_green", Greencolor )
+			RunConsoleCommand( "acfcustom_blue", Bluecolor )
 			CurrentText:SetText("Current Color :\n  ("..Redcolor..","..Greencolor..","..Bluecolor..")")
 			CurrentText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 			HelpText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
@@ -144,9 +144,9 @@ end
 
 --Saving
 function SaveFunc()
-	local RedcolorT = math.Round(GetConVarNumber("acfmenu_red"))
-	local GreencolorT = math.Round(GetConVarNumber("acfmenu_green"))
-	local BluecolorT = math.Round(GetConVarNumber("acfmenu_blue"))
+	local RedcolorT = math.Round(GetConVarNumber("acfcustom_red"))
+	local GreencolorT = math.Round(GetConVarNumber("acfcustom_green"))
+	local BluecolorT = math.Round(GetConVarNumber("acfcustom_blue"))
 	local txt = RedcolorT..","..GreencolorT..","..BluecolorT
 	file.CreateDir("acf")
 	file.Write("acf/menucolor.txt", txt)

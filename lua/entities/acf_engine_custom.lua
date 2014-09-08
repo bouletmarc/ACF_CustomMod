@@ -8,21 +8,21 @@ ENT.WireDebugName = "ACF Engine"
 
 if CLIENT then
 	
-	function ACFEngineGUICreate( Table )
+	function ACFEngineCustomGUICreate( Table )
 
-		acfmenupanel:CPanelText("Name", Table.name)
+		acfmenupanelcustom:CPanelText("Name", Table.name)
 		
-		acfmenupanel.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
-			acfmenupanel.CData.DisplayModel:SetModel( Table.model )
-			acfmenupanel.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
-			acfmenupanel.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
-			acfmenupanel.CData.DisplayModel:SetFOV( 20 )
-			acfmenupanel.CData.DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
-			acfmenupanel.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
-		acfmenupanel.CustomDisplay:AddItem( acfmenupanel.CData.DisplayModel )
+		acfmenupanelcustom.CData.DisplayModel = vgui.Create( "DModelPanel", acfmenupanelcustom.CustomDisplay )
+			acfmenupanelcustom.CData.DisplayModel:SetModel( Table.model )
+			acfmenupanelcustom.CData.DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
+			acfmenupanelcustom.CData.DisplayModel:SetFOV( 20 )
+			acfmenupanelcustom.CData.DisplayModel:SetSize(acfmenupanelcustom:GetWide(),acfmenupanelcustom:GetWide())
+			acfmenupanelcustom.CData.DisplayModel.LayoutEntity = function( panel, entity ) end
+		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom.CData.DisplayModel )
 		
-		acfmenupanel:CPanelText("Desc", Table.desc)
-		acfmenupanel:CPanelText("RPM", "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitrpm).." RPM\nWeight : "..(Table.weight).." kg\nFlywheelMass : "..(Table.flywheelmass).." kg\nFuel Type : "..(Table.fuel))
+		acfmenupanelcustom:CPanelText("Desc", Table.desc)
+		acfmenupanelcustom:CPanelText("RPM", "Idle : "..(Table.idlerpm).." RPM\nIdeal RPM Range : "..(Table.peakminrpm).."-"..(Table.peakmaxrpm).." RPM\nRedline : "..(Table.limitrpm).." RPM\nWeight : "..(Table.weight).." kg\nFlywheelMass : "..(Table.flywheelmass).." kg\nFuel Type : "..(Table.fuel))
 		
 		local peakkw
 		local peakkwrpm
@@ -37,29 +37,29 @@ if CLIENT then
 		TextNeedFuel = vgui.Create( "DLabel" )
 		TextNeedFuel:SetText( "When supplied with fuel:")
 		TextNeedFuel:SetTextColor(Color(0,150,0,255))
-		acfmenupanel.CustomDisplay:AddItem( TextNeedFuel )
-		acfmenupanel:CPanelText("WhenFuel2", "Peak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM\nPeak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
+		acfmenupanelcustom.CustomDisplay:AddItem( TextNeedFuel )
+		acfmenupanelcustom:CPanelText("WhenFuel2", "Peak Power : "..math.floor(peakkw*ACF.TorqueBoost).." kW / "..math.Round(peakkw*ACF.TorqueBoost*1.34).." HP @ "..peakkwrpm.." RPM\nPeak Torque : "..(Table.torque*ACF.TorqueBoost).." n/m  / "..math.Round(Table.torque*ACF.TorqueBoost*0.73).." ft-lb")
 			
 		if Table.fuel == "Electric" then
 			local cons = ACF.ElecRate * peakkw / ACF.Efficiency[Table.enginetype]
-			acfmenupanel:CPanelText("FuelCons", "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
+			acfmenupanelcustom:CPanelText("FuelCons", "Peak energy use : "..math.Round(cons,1).." kW / "..math.Round(0.06*cons,1).." MJ/min")
 		elseif Table.fuel == "Any" then
 			local petrolcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity.Petrol)
 			local dieselcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity.Diesel)
-			acfmenupanel:CPanelText("FuelConsP", "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
-			acfmenupanel:CPanelText("FuelConsD", "Diesel Use at "..peakkwrpm.." rpm : "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min")
+			acfmenupanelcustom:CPanelText("FuelConsP", "Petrol Use at "..peakkwrpm.." rpm : "..math.Round(petrolcons,2).." liters/min / "..math.Round(0.264*petrolcons,2).." gallons/min")
+			acfmenupanelcustom:CPanelText("FuelConsD", "Diesel Use at "..peakkwrpm.." rpm : "..math.Round(dieselcons,2).." liters/min / "..math.Round(0.264*dieselcons,2).." gallons/min")
 		else
 			local fuelcons = ACF.FuelRate * ACF.Efficiency[Table.enginetype] * ACF.TorqueBoost * peakkw / (60 * ACF.FuelDensity[Table.fuel])
-			acfmenupanel:CPanelText("FuelCons", (Table.fuel).." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
+			acfmenupanelcustom:CPanelText("FuelCons", (Table.fuel).." Use at "..peakkwrpm.." rpm : "..math.Round(fuelcons,2).." liters/min / "..math.Round(0.264*fuelcons,2).." gallons/min")
 		end
 		
 		TextNotFuel = vgui.Create( "DLabel" )
 		TextNotFuel:SetText( "When NOT supplied with fuel:")
 		TextNotFuel:SetTextColor(Color(200,0,0,255))
-		acfmenupanel.CustomDisplay:AddItem( TextNotFuel )
-		acfmenupanel:CPanelText("WhenNotFuel2", "Peak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM\nPeak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
+		acfmenupanelcustom.CustomDisplay:AddItem( TextNotFuel )
+		acfmenupanelcustom:CPanelText("WhenNotFuel2", "Peak Power : "..math.floor(peakkw).." kW / "..math.Round(peakkw*1.34).." HP @ "..peakkwrpm.." RPM\nPeak Torque : "..(Table.torque).." n/m  / "..math.Round(Table.torque*0.73).." ft-lb")
 	
-	acfmenupanel.CustomDisplay:PerformLayout()	
+	acfmenupanelcustom.CustomDisplay:PerformLayout()	
 	
 	end
 	
@@ -119,13 +119,13 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 
 	if not Owner:CheckLimit("_acf_misc") then return false end
 
-	local Engine = ents.Create( "acf_engine" )
+	local Engine = ents.Create( "acf_engine_custom" )
 	if not IsValid( Engine ) then return false end
 	
 	local EID
-	local List = list.Get("ACFEnts")
-	if List.Mobility[Id] then EID = Id else EID = "5.7-V8" end
-	local Lookup = List.Mobility[EID]
+	local List = list.Get("ACFCUSTOMEnts")
+	if List.MobilityCustom[Id] then EID = Id else EID = "5.7-V8" end
+	local Lookup = List.MobilityCustom[EID]
 	
 	Engine:SetAngles(Angle)
 	Engine:SetPos(Pos)
@@ -221,14 +221,14 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine:UpdateOverlayText()
 	
 	Owner:AddCount("_acf_engine", Engine)
-	Owner:AddCleanup( "acfmenu", Engine )
+	Owner:AddCleanup( "acfcustom", Engine )
 	
 	ACF_Activate( Engine, 0 )
 
 	return Engine
 end
-list.Set( "ACFCvars", "acf_engine", {"id"} )
-duplicator.RegisterEntityClass("acf_engine", MakeACF_Engine, "Pos", "Angle", "Id")
+list.Set( "ACFCvars", "acf_engine_custom", {"id"} )
+duplicator.RegisterEntityClass("acf_engine_custom", MakeACF_Engine, "Pos", "Angle", "Id")
 
 --###################################################
 --##### 		UPDATE ENGINE					#####
@@ -247,7 +247,7 @@ function ENT:Update( ArgsTable )
 	end
 
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
-	local Lookup = list.Get("ACFEnts").Mobility[Id]
+	local Lookup = list.Get("ACFCUSTOMEnts").MobilityCustom[Id]
 
 	if Lookup.model ~= self.Model then
 		return false, "The new engine must have the same model!"
@@ -380,7 +380,7 @@ function ENT:UpdateOverlayText()
 		text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
 		text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
 		if self.RequiresFuel == 1 then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
-		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg\n"
+		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	else --Set Gui on Others
 		text = text .. "Powerband: " .. math.Round(self.PeakMinRPM) .. " - " .. math.Round((self.PeakMaxRPM+self.PeakMaxRPMExtra)) .. " RPM\n"
 		text = text .. "Redline: " .. math.Round((self.LimitRPM+self.LimitRPMExtra)) .. " RPM\n"
@@ -388,7 +388,7 @@ function ENT:UpdateOverlayText()
 		text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
 		if self.RequiresFuel == 1 then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
 		text = text .. "Idle: " .. math.Round(self.IdleRPM) .. " RPM\n"
-		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg\n"
+		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	end
 	self:SetOverlayText( text )
 	
@@ -761,7 +761,7 @@ function ENT:CalcRPM()
 				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - 0) / self.Inertia
 			end
 			
-		end
+		end 
 	-- Let's accelerate the flywheel based on that torque
 	self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
 	-- This is the presently avaliable torque from the engine

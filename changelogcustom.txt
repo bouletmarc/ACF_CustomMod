@@ -48,3 +48,19 @@ r94
 --Removed "Gearbox RPM" inputs
 
 --Updated for original acf V.507
+
+*r103
+-9.01 V3
+--Added ACF Custom Menu
+--Added Lot's acfCustom E2 fucntions
+--Added All Engines to the List
+
+--Removed Changelog Menu
+--Removed Help Install Menu
+
+-------BIG UPDATE-------
+--Converted Custom Mod
+--Custom Mod going to V3
+--Custom Mod is now apart of original
+--Installation easier, no more merge
+--THIS CHANGE IS TO MAKE IT BETTER

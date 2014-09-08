@@ -8,24 +8,24 @@ ENT.WireDebugName = "ACF Engine Maker"
 if CLIENT then
 	
 	function ACFEngineMakerGUICreate( Table )
-		if not acfmenupanel.ModData then
-			acfmenupanel.ModData = {}
+		if not acfmenupanelcustom.ModData then
+			acfmenupanelcustom.ModData = {}
 		end
-		if not acfmenupanel.ModData[Table.id] then
-			acfmenupanel.ModData[Table.id] = {}
-			acfmenupanel.ModData[Table.id]["ModTable"] = Table.modtable
+		if not acfmenupanelcustom.ModData[Table.id] then
+			acfmenupanelcustom.ModData[Table.id] = {}
+			acfmenupanelcustom.ModData[Table.id]["ModTable"] = Table.modtable
 		end
 		
-		acfmenupanel:CPanelText("Name", Table.name)
-		acfmenupanel:CPanelText("Desc", "Desc : "..Table.desc)
+		acfmenupanelcustom:CPanelText("Name", Table.name)
+		acfmenupanelcustom:CPanelText("Desc", "Desc : "..Table.desc)
 		
-		for ID,Value in pairs(acfmenupanel.ModData[Table.id]["ModTable"]) do
+		for ID,Value in pairs(acfmenupanelcustom.ModData[Table.id]["ModTable"]) do
 			if ID == 1 then
 				ACF_ModingEngine()
 			end
 		end
 				
-	acfmenupanel.CustomDisplay:PerformLayout()
+	acfmenupanelcustom.CustomDisplay:PerformLayout()
 	
 	end
 	
@@ -78,10 +78,10 @@ if CLIENT then
 			file.CreateDir("acf")
 			file.CreateDir("acf/custom.engines")
 			file.Write("acf/lastengine.txt", txt)
-			acfmenupanel.CustomDisplay:PerformLayout()
+			acfmenupanelcustom.CustomDisplay:PerformLayout()
 		end
 		--###########################################
-		local wide = acfmenupanel.CustomDisplay:GetWide()
+		local wide = acfmenupanelcustom.CustomDisplay:GetWide()
 		
 		Open = vgui.Create("DButton")
 		Open:SetText("Open Engine Menu")
@@ -92,29 +92,29 @@ if CLIENT then
 		Open.DoClick = function()
 			RunConsoleCommand("acf_enginestart_browser_open")
 		end
-		acfmenupanel.CustomDisplay:AddItem(Open)
+		acfmenupanelcustom.CustomDisplay:AddItem(Open)
 		
-		DisplayModel = vgui.Create( "DModelPanel", acfmenupanel.CustomDisplay )
+		DisplayModel = vgui.Create( "DModelPanel", acfmenupanelcustom.CustomDisplay )
 		DisplayModel:SetModel( ModelLoad )
 		DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
 		DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
 		DisplayModel:SetFOV( 20 )
-		DisplayModel:SetSize(acfmenupanel:GetWide(),acfmenupanel:GetWide())
+		DisplayModel:SetSize(acfmenupanelcustom:GetWide(),acfmenupanelcustom:GetWide())
 		DisplayModel.LayoutEntity = function( panel, entity ) end
-		acfmenupanel.CustomDisplay:AddItem( DisplayModel )
+		acfmenupanelcustom.CustomDisplay:AddItem( DisplayModel )
 		
-		acfmenupanel:CPanelText("EngName", "Engine Name : "..NameLoad)
-		acfmenupanel:CPanelText("EngSound", "Sound : "..SoundLoad)
-		acfmenupanel:CPanelText("EngModel", "Model : "..ModelLoad)
-		acfmenupanel:CPanelText("EngFuel", "Fuel Type : "..FuelTypeLoad)
-		acfmenupanel:CPanelText("EngType", "Engine Type : "..EngineTypeLoad)
-		acfmenupanel:CPanelText("EngTorque", "Torque : "..TorqueLoad)
-		acfmenupanel:CPanelText("EngIdle", "Idle Rpm : "..IdleLoad)
-		acfmenupanel:CPanelText("EngPeakMin", "Peak Min Rpm : "..PeakMinLoad)
-		acfmenupanel:CPanelText("EngPeakMax", "Peak Max Rpm : "..PeakMaxLoad)
-		acfmenupanel:CPanelText("EngLimit", "Limit Rpm : "..LimitRpmLoad)
-		acfmenupanel:CPanelText("EngFly", "Flywheel Mass : "..FlywheelLoad)
-		acfmenupanel:CPanelText("EngWeight", "Weight : "..WeightLoad)
+		acfmenupanelcustom:CPanelText("EngName", "Engine Name : "..NameLoad)
+		acfmenupanelcustom:CPanelText("EngSound", "Sound : "..SoundLoad)
+		acfmenupanelcustom:CPanelText("EngModel", "Model : "..ModelLoad)
+		acfmenupanelcustom:CPanelText("EngFuel", "Fuel Type : "..FuelTypeLoad)
+		acfmenupanelcustom:CPanelText("EngType", "Engine Type : "..EngineTypeLoad)
+		acfmenupanelcustom:CPanelText("EngTorque", "Torque : "..TorqueLoad)
+		acfmenupanelcustom:CPanelText("EngIdle", "Idle Rpm : "..IdleLoad)
+		acfmenupanelcustom:CPanelText("EngPeakMin", "Peak Min Rpm : "..PeakMinLoad)
+		acfmenupanelcustom:CPanelText("EngPeakMax", "Peak Max Rpm : "..PeakMaxLoad)
+		acfmenupanelcustom:CPanelText("EngLimit", "Limit Rpm : "..LimitRpmLoad)
+		acfmenupanelcustom:CPanelText("EngFly", "Flywheel Mass : "..FlywheelLoad)
+		acfmenupanelcustom:CPanelText("EngWeight", "Weight : "..WeightLoad)
 		
 		Help = vgui.Create("DButton")
 		Help:SetToolTip("1.Create/Load a engine in the Engine menu\n2.Update the text by selecting again Engine Maker\n3.Spawn the Engine !")
@@ -123,7 +123,7 @@ if CLIENT then
 		Help:SetTall(30)
 		Help:SetVisible(true)
 		Help:SetText("Help")
-		acfmenupanel.CustomDisplay:AddItem(Help)
+		acfmenupanelcustom.CustomDisplay:AddItem(Help)
 		--Reload Last Engine
 		if file.Exists("acf/lastengine.txt", "DATA") then
 			local LastEngineText = file.Read("acf/lastengine.txt")
@@ -147,37 +147,37 @@ if CLIENT then
 			IselectText = tostring(LastEngineTable[15])
 			IsTransText = tostring(LastEngineTable[16])
 			FlywheelOverNumber = tonumber(LastEngineTable[17])
-			RunConsoleCommand( "acfmenu_data1", NameLoad )
-			RunConsoleCommand( "acfmenu_data2", SoundLoad )
-			RunConsoleCommand( "acfmenu_data3", ModelLoad )
-			RunConsoleCommand( "acfmenu_data4", FuelTypeLoad )
-			RunConsoleCommand( "acfmenu_data5", EngineTypeLoad )
-			RunConsoleCommand( "acfmenu_data6", TorqueLoad )
-			RunConsoleCommand( "acfmenu_data7", IdleLoad )
-			RunConsoleCommand( "acfmenu_data8", PeakMinLoad )
-			RunConsoleCommand( "acfmenu_data9", PeakMaxLoad )
-			RunConsoleCommand( "acfmenu_data10", LimitRpmLoad )
-			RunConsoleCommand( "acfmenu_data11", FlywheelLoad )
-			RunConsoleCommand( "acfmenu_data12", WeightLoad )
-			RunConsoleCommand( "acfmenu_data13", IselectText )
-			RunConsoleCommand( "acfmenu_data14", IsTransText )
-			RunConsoleCommand( "acfmenu_data15", FlywheelOverNumber )
+			RunConsoleCommand( "acfcustom_data1", NameLoad )
+			RunConsoleCommand( "acfcustom_data2", SoundLoad )
+			RunConsoleCommand( "acfcustom_data3", ModelLoad )
+			RunConsoleCommand( "acfcustom_data4", FuelTypeLoad )
+			RunConsoleCommand( "acfcustom_data5", EngineTypeLoad )
+			RunConsoleCommand( "acfcustom_data6", TorqueLoad )
+			RunConsoleCommand( "acfcustom_data7", IdleLoad )
+			RunConsoleCommand( "acfcustom_data8", PeakMinLoad )
+			RunConsoleCommand( "acfcustom_data9", PeakMaxLoad )
+			RunConsoleCommand( "acfcustom_data10", LimitRpmLoad )
+			RunConsoleCommand( "acfcustom_data11", FlywheelLoad )
+			RunConsoleCommand( "acfcustom_data12", WeightLoad )
+			RunConsoleCommand( "acfcustom_data13", IselectText )
+			RunConsoleCommand( "acfcustom_data14", IsTransText )
+			RunConsoleCommand( "acfcustom_data15", FlywheelOverNumber )
 			--###
-			acfmenupanel:CPanelText("EngName", "Engine Name : "..NameLoad)
-			acfmenupanel:CPanelText("EngSound", "Sound : "..SoundLoad)
-			acfmenupanel:CPanelText("EngModel", "Model : "..ModelLoad)
-			acfmenupanel:CPanelText("EngFuel", "Fuel Type : "..FuelTypeLoad)
-			acfmenupanel:CPanelText("EngType", "Engine Type : "..EngineTypeLoad)
-			acfmenupanel:CPanelText("EngTorque", "Torque : "..TorqueLoad)
-			acfmenupanel:CPanelText("EngIdle", "Idle Rpm : "..IdleLoad)
-			acfmenupanel:CPanelText("EngPeakMin", "Peak Min Rpm : "..PeakMinLoad)
-			acfmenupanel:CPanelText("EngPeakMax", "Peak Max Rpm : "..PeakMaxLoad)
-			acfmenupanel:CPanelText("EngLimit", "Limit Rpm : "..LimitRpmLoad)
-			acfmenupanel:CPanelText("EngFly", "Flywheel Mass : "..FlywheelLoad)
-			acfmenupanel:CPanelText("EngWeight", "Weight : "..WeightLoad)
+			acfmenupanelcustom:CPanelText("EngName", "Engine Name : "..NameLoad)
+			acfmenupanelcustom:CPanelText("EngSound", "Sound : "..SoundLoad)
+			acfmenupanelcustom:CPanelText("EngModel", "Model : "..ModelLoad)
+			acfmenupanelcustom:CPanelText("EngFuel", "Fuel Type : "..FuelTypeLoad)
+			acfmenupanelcustom:CPanelText("EngType", "Engine Type : "..EngineTypeLoad)
+			acfmenupanelcustom:CPanelText("EngTorque", "Torque : "..TorqueLoad)
+			acfmenupanelcustom:CPanelText("EngIdle", "Idle Rpm : "..IdleLoad)
+			acfmenupanelcustom:CPanelText("EngPeakMin", "Peak Min Rpm : "..PeakMinLoad)
+			acfmenupanelcustom:CPanelText("EngPeakMax", "Peak Max Rpm : "..PeakMaxLoad)
+			acfmenupanelcustom:CPanelText("EngLimit", "Limit Rpm : "..LimitRpmLoad)
+			acfmenupanelcustom:CPanelText("EngFly", "Flywheel Mass : "..FlywheelLoad)
+			acfmenupanelcustom:CPanelText("EngWeight", "Weight : "..WeightLoad)
 			DisplayModel:SetModel( ModelLoad )
 			
-			acfmenupanel.CustomDisplay:PerformLayout()
+			acfmenupanelcustom.CustomDisplay:PerformLayout()
 		end
 	
 	end
@@ -242,9 +242,9 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 	if not IsValid( EngineMaker ) then return false end
 	
 	local EID
-	local List = list.Get("ACFEnts")
-	if List["Mobility"][Id] then EID = Id else EID = "Maker" end
-	local Lookup = List.Mobility[EID]
+	local List = list.Get("ACFCUSTOMEnts")
+	if List["MobilityCustom"][Id] then EID = Id else EID = "Maker" end
+	local Lookup = List.MobilityCustom[EID]
 	
 	EngineMaker:SetAngles(Angle)
 	EngineMaker:SetPos(Pos)
@@ -424,7 +424,7 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	end
 
 	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
-	local Lookup = list.Get("ACFEnts").Mobility[Id]
+	local Lookup = list.Get("ACFCUSTOMEnts").MobilityCustom[Id]
 
 	if ArgsTable[7] ~= self.Model then
 		return false, "The new engine must have the same model!"
@@ -603,7 +603,7 @@ function ENT:UpdateOverlayText()
 		text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
 		text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
 		text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n"
-		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg\n"
+		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	else --Set Gui on Others
 		text = text .. "Powerband: " .. math.Round(self.PeakMinRPM) .. " - " .. math.Round((self.PeakMaxRPM+self.PeakMaxRPMExtra)) .. " RPM\n"
 		text = text .. "Redline: " .. math.Round((self.LimitRPM+self.LimitRPMExtra)) .. " RPM\n"
@@ -611,7 +611,7 @@ function ENT:UpdateOverlayText()
 		text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
 		text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n"
 		text = text .. "Idle: " .. math.Round(self.IdleRPM) .. " RPM\n"
-		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg\n"
+		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	end
 	self:SetOverlayText( text )
 	

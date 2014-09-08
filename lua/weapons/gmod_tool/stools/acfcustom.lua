@@ -1,14 +1,14 @@
 
 TOOL.Category		= "Construction"
-TOOL.Name			= "#Tool.acfmenu.listname"
+TOOL.Name			= "#Tool.acfcustom.listname"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
 
-TOOL.ClientConVar[ "type" ] = "gun"
-TOOL.ClientConVar[ "id" ] = "12.7mmMG"
+TOOL.ClientConVar[ "type" ] = "MobilityCustom"
+TOOL.ClientConVar[ "id" ] = "1.0L-I4"
 
-TOOL.ClientConVar[ "data1" ] = "12.7mmMG"
-TOOL.ClientConVar[ "data2" ] = "AP"
+TOOL.ClientConVar[ "data1" ] = "1.0L-I4"
+TOOL.ClientConVar[ "data2" ] = 0
 TOOL.ClientConVar[ "data3" ] = 0
 TOOL.ClientConVar[ "data4" ] = 0
 TOOL.ClientConVar[ "data5" ] = 0
@@ -28,40 +28,33 @@ TOOL.ClientConVar[ "green" ] = 0
 TOOL.ClientConVar[ "blue" ] = 0
 --#####################################
 
-cleanup.Register( "acfmenu" )
+cleanup.Register( "acfcustom" )
 
 if CLIENT then	
-	language.Add( "Tool.acfmenu.listname", "ACF Menu" )
-	language.Add( "Tool.acfmenu.name", "ACF Custom V2" )
-	language.Add( "Tool.acfmenu.desc", "Spawn the ACF weapons and ammo" )
-	language.Add( "Tool.acfmenu.0", "Left click to spawn the entity, Right click to link an entity to another (+Use to unlink)" )
-	language.Add( "Tool.acfmenu.1", "Right click to link the selected sensor to a pod" )
+	language.Add( "Tool.acfcustom.listname", "ACF Custom" )
+	language.Add( "Tool.acfcustom.name", "ACF Custom V3" )
+	language.Add( "Tool.acfcustom.desc", "Spawn the ACF Custom Entity" )
+	language.Add( "Tool.acfcustom.0", "Left click to spawn the entity, Right click to link an entity to another (+Use to unlink)" )
+	language.Add( "Tool.acfcustom.1", "Right click to link the selected sensor to a pod" )
 	
 	language.Add( "Undone_ACF Entity", "Undone ACF Entity" )
 	language.Add( "Undone_acf_engine", "Undone ACF Engine" )
 	language.Add( "Undone_acf_enginemaker", "Undone ACF Engine Maker" )
-	language.Add( "Undone_acf_gearbox", "Undone ACF Gearbox" )
 	language.Add( "Undone_acf_gearboxcvt", "Undone ACF Gearbox CVT" )
 	language.Add( "Undone_acf_gearboxauto", "Undone ACF Gearbox Automatic" )
 	language.Add( "Undone_acf_chips", "Undone ACF Engine Chips" )
 	language.Add( "Undone_acf_vtec", "Undone ACF Vtec Chip" )
 	language.Add( "Undone_acf_nos", "Undone ACF Nos Bottle" )
-	language.Add( "Undone_acf_ammo", "Undone ACF Ammo" )
-	language.Add( "Undone_acf_gun", "Undone ACF Gun" )
-	language.Add( "SBoxLimit_acf_gun", "You've reached the ACF Guns limit!" )
-	language.Add( "SBoxLimit_acf_rack", "You've reached the ACF Launchers limit!" )
-	language.Add( "SBoxLimit_acf_ammo", "You've reached the ACF Explosives limit!" )
-	language.Add( "SBoxLimit_acf_sensor", "You've reached the ACF Sensors limit!" )
 
 	/*------------------------------------
 		BuildCPanel
 	------------------------------------*/
 	function TOOL.BuildCPanel( CPanel )
 	
-		local pnldef_ACFmenu = vgui.RegisterFile( "acf/client/cl_acfmenu_gui.lua" )
+		local pnldef_ACFcustom = vgui.RegisterFile( "acf/client/cl_acfcustom_gui.lua" )
 		
 		// create
-		local DPanel = vgui.CreateFromTable( pnldef_ACFmenu )
+		local DPanel = vgui.CreateFromTable( pnldef_ACFcustom )
 		CPanel:AddPanel( DPanel )
 	
 	end
@@ -77,7 +70,7 @@ function TOOL:LeftClick( trace )
 	local Type = self:GetClientInfo( "type" )
 	local Id = self:GetClientInfo( "id" )
 	
-	local DupeClass = duplicator.FindEntityClass( ACF.Weapons[Type][Id]["ent"] ) 
+	local DupeClass = duplicator.FindEntityClass( ACFCUSTOM.Weapons[Type][Id]["ent"] ) 
 	
 	if DupeClass then
 		local ArgTable = {}
@@ -87,21 +80,21 @@ function TOOL:LeftClick( trace )
 		local ArgList = list.Get("ACFCvars")
 		
 		-- Reading the list packaged with the ent to see what client CVar it needs
-		for Number, Key in pairs( ArgList[ACF.Weapons[Type][Id]["ent"]] ) do
+		for Number, Key in pairs( ArgList[ACFCUSTOM.Weapons[Type][Id]["ent"]] ) do
 			ArgTable[ Number+2 ] = self:GetClientInfo( Key )
 		end
 		
-		if trace.Entity:GetClass() == ACF.Weapons[Type][Id]["ent"] and trace.Entity.CanUpdate then
+		if trace.Entity:GetClass() == ACFCUSTOM.Weapons[Type][Id]["ent"] and trace.Entity.CanUpdate then
 			table.insert( ArgTable, 1, ply )
 			local success, msg = trace.Entity:Update( ArgTable )
-			ACF_SendNotify( ply, success, msg )
+			ACFCUSTOM_SendNotify( ply, success, msg )
 		else
 			-- Using the Duplicator entity register to find the right factory function
 			local Ent = DupeClass.Func( ply, unpack( ArgTable ) )
 			Ent:Activate()
 			Ent:GetPhysicsObject():Wake()
 			
-			undo.Create( ACF.Weapons[Type][Id]["ent"] )
+			undo.Create( ACFCUSTOM.Weapons[Type][Id]["ent"] )
 				undo.AddEntity( Ent )
 				undo.SetPlayer( ply )
 			undo.Finish()
@@ -135,7 +128,7 @@ function TOOL:RightClick( trace )
 			success, msg = self.Master:Link( trace.Entity )
 		end
 		
-		ACF_SendNotify( ply, success, msg )
+		ACFCUSTOM_SendNotify( ply, success, msg )
 		
 		self:SetStage( 0 )
 		self.Master = nil

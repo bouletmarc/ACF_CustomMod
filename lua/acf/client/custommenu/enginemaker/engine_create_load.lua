@@ -50,10 +50,10 @@ local function CreateSoundBrowser()
 		local MdlText = ""
 		local iSelectVal = "false"
 		local IsTransVal = "false"
-		RunConsoleCommand( "acfmenu_data4", "Petrol" )
-		RunConsoleCommand( "acfmenu_data5", "GenericPetrol" )
-		RunConsoleCommand( "acfmenu_data13", "false" )
-		RunConsoleCommand( "acfmenu_data14", "false" )
+		RunConsoleCommand( "acfcustom_data4", "Petrol" )
+		RunConsoleCommand( "acfcustom_data5", "GenericPetrol" )
+		RunConsoleCommand( "acfcustom_data13", "false" )
+		RunConsoleCommand( "acfcustom_data14", "false" )
 		
 		EngineNameTitle = ButtonsSidePanel:Add( "DLabel" )
 		EngineNameTitle:SetText( "Engine Name :" )
@@ -72,7 +72,7 @@ local function CreateSoundBrowser()
 				EngineName:SetText( "PUT NAME HERE" )
 				EngineName:SetTextColor(Color(200,0,0,255))
 			else
-				RunConsoleCommand( "acfmenu_data1", EngineName:GetValue() )
+				RunConsoleCommand( "acfcustom_data1", EngineName:GetValue() )
 				EngineName:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
 			end
 		end
@@ -128,7 +128,7 @@ local function CreateSoundBrowser()
 		TorqueEntry:SetPos( 320, 50 )
 		TorqueEntry:SetWide( 120 )
 		TorqueEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data6", TorqueEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data6", TorqueEntry:GetValue() )
 		end
 		
 		IdleHint = ButtonsSidePanel:Add("DButton")
@@ -145,7 +145,7 @@ local function CreateSoundBrowser()
 		IdleEntry:SetPos( 320, 90 )
 		IdleEntry:SetWide( 120 )
 		IdleEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data7", IdleEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data7", IdleEntry:GetValue() )
 		end
 		
 		PeakMinHint = ButtonsSidePanel:Add("DButton")
@@ -162,7 +162,7 @@ local function CreateSoundBrowser()
 		PeakMinEntry:SetPos( 320, 130 )
 		PeakMinEntry:SetWide( 120 )
 		PeakMinEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data8", PeakMinEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data8", PeakMinEntry:GetValue() )
 		end
 		
 		PeakMaxHint = ButtonsSidePanel:Add("DButton")
@@ -179,7 +179,7 @@ local function CreateSoundBrowser()
 		PeakMaxEntry:SetPos( 320, 170 )
 		PeakMaxEntry:SetWide( 120 )
 		PeakMaxEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data9", PeakMaxEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data9", PeakMaxEntry:GetValue() )
 		end
 		
 		LimitHint = ButtonsSidePanel:Add("DButton")
@@ -196,7 +196,7 @@ local function CreateSoundBrowser()
 		LimitEntry:SetPos( 320, 210 )
 		LimitEntry:SetWide( 120 )
 		LimitEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data10", LimitEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data10", LimitEntry:GetValue() )
 		end
 		
 		FlywheelHint = ButtonsSidePanel:Add("DButton")
@@ -213,7 +213,7 @@ local function CreateSoundBrowser()
 		FlywheelEntry:SetPos( 320, 250 )
 		FlywheelEntry:SetWide( 120 )
 		FlywheelEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data11", FlywheelEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data11", FlywheelEntry:GetValue() )
 		end
 		
 		FlywheelOverHint = ButtonsSidePanel:Add("DButton")
@@ -230,7 +230,7 @@ local function CreateSoundBrowser()
 		FlywheelOverEntry:SetPos( 320, 290 )
 		FlywheelOverEntry:SetWide( 120 )
 		FlywheelOverEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data15", FlywheelOverEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data15", FlywheelOverEntry:GetValue() )
 		end
 		FlywheelOverEntry:SetDrawBackground(false)
 		FlywheelOverEntry:SetEditable(false)
@@ -249,7 +249,7 @@ local function CreateSoundBrowser()
 		WeightEntry:SetPos( 320, 330 )
 		WeightEntry:SetWide( 120 )
 		WeightEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfmenu_data12", WeightEntry:GetValue() )
+			RunConsoleCommand( "acfcustom_data12", WeightEntry:GetValue() )
 		end
 		--#######################
 		--Fuel Do clic
@@ -257,15 +257,15 @@ local function CreateSoundBrowser()
 			if FuelTypeValue == 0 then
 				FuelTypeValue = 1
 				FuelTypeButton:SetText("Diesel")
-				RunConsoleCommand( "acfmenu_data4", "Diesel" )
-				RunConsoleCommand( "acfmenu_data5", "GenericDiesel" )
+				RunConsoleCommand( "acfcustom_data4", "Diesel" )
+				RunConsoleCommand( "acfcustom_data5", "GenericDiesel" )
 			elseif FuelTypeValue == 1 then
 				FuelTypeValue = 2
 				FuelTypeButton:SetText("Electric")
-				RunConsoleCommand( "acfmenu_data4", "Electric" )
-				RunConsoleCommand( "acfmenu_data5", "Electric" )
-				RunConsoleCommand( "acfmenu_data13", "true" )
-				RunConsoleCommand( "acfmenu_data14", "false" )
+				RunConsoleCommand( "acfcustom_data4", "Electric" )
+				RunConsoleCommand( "acfcustom_data5", "Electric" )
+				RunConsoleCommand( "acfcustom_data13", "true" )
+				RunConsoleCommand( "acfcustom_data14", "false" )
 				iSelectVal = "true"
 				IsTransVal = "false"
 				--Set False Values
@@ -278,19 +278,19 @@ local function CreateSoundBrowser()
 				IdleEntry:SetDrawBackground(false)
 				PeakMinEntry:SetDrawBackground(false)
 				PeakMaxEntry:SetDrawBackground(false)
-				RunConsoleCommand( "acfmenu_data7", 10 )
-				RunConsoleCommand( "acfmenu_data8", 10 )
-				RunConsoleCommand( "acfmenu_data9", 10 )
+				RunConsoleCommand( "acfcustom_data7", 10 )
+				RunConsoleCommand( "acfcustom_data8", 10 )
+				RunConsoleCommand( "acfcustom_data9", 10 )
 				--Set True Value
 				FlywheelOverEntry:SetDrawBackground(true)
 				FlywheelOverEntry:SetEditable(true)
 			elseif FuelTypeValue == 2 then
 				FuelTypeValue = 3
 				FuelTypeButton:SetText("Turbine")
-				RunConsoleCommand( "acfmenu_data4", "Any" )
-				RunConsoleCommand( "acfmenu_data5", "Turbine" )
-				RunConsoleCommand( "acfmenu_data13", "true" )
-				RunConsoleCommand( "acfmenu_data14", "true" )
+				RunConsoleCommand( "acfcustom_data4", "Any" )
+				RunConsoleCommand( "acfcustom_data5", "Turbine" )
+				RunConsoleCommand( "acfcustom_data13", "true" )
+				RunConsoleCommand( "acfcustom_data14", "true" )
 				iSelectVal = "true"
 				IsTransVal = "true"
 				--Set False Values
@@ -303,19 +303,19 @@ local function CreateSoundBrowser()
 				IdleEntry:SetDrawBackground(false)
 				PeakMinEntry:SetDrawBackground(false)
 				PeakMaxEntry:SetDrawBackground(false)
-				RunConsoleCommand( "acfmenu_data7", 1 )
-				RunConsoleCommand( "acfmenu_data8", 1 )
-				RunConsoleCommand( "acfmenu_data9", 1 )
+				RunConsoleCommand( "acfcustom_data7", 1 )
+				RunConsoleCommand( "acfcustom_data8", 1 )
+				RunConsoleCommand( "acfcustom_data9", 1 )
 				--Set True Value
 				FlywheelOverEntry:SetDrawBackground(true)
 				FlywheelOverEntry:SetEditable(true)
 			elseif FuelTypeValue == 3 then
 				FuelTypeValue = 0
 				FuelTypeButton:SetText("Petrol")
-				RunConsoleCommand( "acfmenu_data4", "Petrol" )
-				RunConsoleCommand( "acfmenu_data5", "GenericPetrol" )
-				RunConsoleCommand( "acfmenu_data13", "false" )
-				RunConsoleCommand( "acfmenu_data14", "false" )
+				RunConsoleCommand( "acfcustom_data4", "Petrol" )
+				RunConsoleCommand( "acfcustom_data5", "GenericPetrol" )
+				RunConsoleCommand( "acfcustom_data13", "false" )
+				RunConsoleCommand( "acfcustom_data14", "false" )
 				iSelectVal = "false"
 				IsTransVal = "false"
 				--Reset True Value
@@ -328,9 +328,9 @@ local function CreateSoundBrowser()
 				IdleEntry:SetDrawBackground(true)
 				PeakMinEntry:SetDrawBackground(true)
 				PeakMaxEntry:SetDrawBackground(true)
-				RunConsoleCommand( "acfmenu_data7", 500 )
-				RunConsoleCommand( "acfmenu_data8", 1200 )
-				RunConsoleCommand( "acfmenu_data9", 3500 )
+				RunConsoleCommand( "acfcustom_data7", 500 )
+				RunConsoleCommand( "acfcustom_data8", 1200 )
+				RunConsoleCommand( "acfcustom_data9", 3500 )
 				--Reset False Value
 				FlywheelOverEntry:SetDrawBackground(false)
 				FlywheelOverEntry:SetEditable(false)
