@@ -408,7 +408,9 @@ local function CreateSoundBrowser()
 	--Load all models
 	local Name, Ext = file.Find("models/engines/*.mdl", "GAME")
 	for k, v in pairs(Name) do
-		ModelsList:AddChoice(v)
+		if not table.HasValue( { "linear_l.mdl", "linear_m.mdl", "linear_s.mdl", "t5large.mdl", "t5med.mdl", "t5small.mdl", "transaxial_l.mdl", "transaxial_m.mdl", "transaxial_s.mdl" }, v ) then
+			ModelsList:AddChoice(v)
+		end
 	end
 		
 	local CustomEngineTable = {}
@@ -433,7 +435,8 @@ local function CreateSoundBrowser()
 	IsTransLoad = tostring(CustomEngineTable[16])
 	FlywheelOverNumber = tonumber(CustomEngineTable[17])
 	
-	ModelsList:SetValue(ModelLoad)
+	local ModelListLoading = string.gsub(ModelLoad,"models/engines/","")
+	ModelsList:SetValue(ModelListLoading)
 	--Set Fuel Type
 	if FuelTypeLoad == "Petrol" then
 		FuelTypeValue = 0

@@ -1,9 +1,9 @@
 ACFCUSTOM = {}
 --##############
-ACFCUSTOM.VersionCustom = 9.01
-ACFCUSTOM.Version2 = 103
+ACFCUSTOM.VersionCustom = 9.11
+ACFCUSTOM.Version2 = 104
 ACFCUSTOM.CurrentVersion2 = 0
-print("[[ ACF Loaded ]]")
+print("[[ ACF Custom Loaded ]]")
 
 --Customs Cvars
 CreateConVar('sbox_max_acf_modding', 1)
@@ -25,9 +25,9 @@ end
 for k, v in pairs( customfilesenginemaker ) do
 	AddCSLuaFile( "acf/client/custommenu/enginemaker/" .. v )
 end
-----------------------
+
 if SERVER then
-	util.AddNetworkString( "ACF_Notify" )
+	util.AddNetworkString( "ACFCUSTOM_Notify" )
 elseif CLIENT then
 	--Loading Customs Files
 	local customfiles2 = file.Find( "acf/client/custommenu/*.lua", "LUA" )
@@ -42,12 +42,12 @@ elseif CLIENT then
 	for k, v in pairs( customfilesenginemaker2 ) do
 		include( "acf/client/custommenu/enginemaker/" .. v )
 	end
-	----------------------
 end
 
 include("acf/shared/acfloadercustom.lua")
 ACFCUSTOM.Weapons = list.Get("ACFCUSTOMEnts")
 
+--Notify
 if SERVER then
 	function ACFCUSTOM_SendNotify( ply, success, msg )
 		net.Start( "ACFCUSTOM_Notify" )
@@ -65,7 +65,7 @@ else
 	net.Receive( "ACFCUSTOM_Notify", ACFCUSTOM_Notify )
 end
 
---################################################################################################
+--Updating Checking
 function ACFCUSTOM_UpdateChecking( )
 	print("[ACF] Checking for updates....")
 	http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/",function(contents,size)
@@ -83,4 +83,3 @@ function ACFCUSTOM_UpdateChecking( )
 	end, function() end)
 end
 ACFCUSTOM_UpdateChecking( )
---################################################################################################

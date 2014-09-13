@@ -41,11 +41,12 @@ end
 
 function ENT:Initialize()
 
-	self.EngineLink = {}
-	self.IsMaster = true
+	self.Master = {}
 	self.CanUpdate = true
 	self.Legal = true
 	self.LastActive = 0
+	
+	self.GetRpm = true --This extra need to get the Rpm
 	
 	self.LinkedEng = 0	--set linked
 	self.TempRpmHighPercent = 0	--set the rpm fast increaser
@@ -54,8 +55,8 @@ function ENT:Initialize()
 	self.TempMax = 112 --while overheat
 	self.TempBlow = 125 --Auto Blow overheat
 	
-	self.HeatSpeed = 25 --Set the Heat Speed
-	self.HealthSpeed = 5 --Set the Health Descreaser Speed
+	self.HeatSpeed = 5 --Set the Heat Speed
+	self.HealthSpeed = 0.1 --Set the Health Descreaser Speed
 	
 	self.Inputs = Wire_CreateInputs( self, { } )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, {"Temperature", "Health"}, {"NORMAL", "NORMAL", "NORMAL"} )
@@ -109,20 +110,16 @@ function MakeACF_Rads(Owner, Pos, Angle, Id)
 		
 	return Rads
 end
---list.Set( "ACFCvars", "acf_rads" , {"id", "data1", "data2"} )
---duplicator.RegisterEntityClass("acf_rads", MakeACF_Rads, "Pos", "Angle", "Id", "Mods1", "Mods2")
 list.Set( "ACFCvars", "acf_rads" , {"id"} )
 duplicator.RegisterEntityClass("acf_rads", MakeACF_Rads, "Pos", "Angle", "Id")
 
 function ENT:Update( ArgsTable )
-	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
-	-- and pos and angle of the tool trace inserted at the start
 	
 	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
 		return false, "You don't own that engine radiator!"
 	end
 	
-	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
+	local Id = ArgsTable[4]	-- Argtable[4] is the rad ID
 	local Lookup = list.Get("ACFCUSTOMEnts").MobilityCustom[Id]
 	
 	if Lookup.model ~= self.Model then
@@ -137,8 +134,6 @@ function ENT:Update( ArgsTable )
 	self.Weight = Lookup.weight
 	--Set Radiator Values
 	self.HealthVal = 100 --Health
-	--Reset Size
-	--self:SetModelScale( self:GetModelScale()*self.SizeVal, 0)
 	
 	local phys = self:GetPhysicsObject()    
 	if IsValid( phys ) then 
@@ -171,13 +166,6 @@ end
 function ENT:Think()
 	local Time = CurTime()
 	
-	if self.LastActive + 2 > Time then
-		self:CheckRopes()
-	end
-	--Get Linked
-	if self.LinkedEng > 0 then self:CalcTemp()
-	else self:ResetValues() end
-	
 	self.Legal = self:CheckLegal()
 	self:NextThink( Time + 0.1 )
 	return true
@@ -208,149 +196,61 @@ function ENT:ResetValues()
 end
 
 --THE RADIATOR CALCUL FUNCTION
-function ENT:CalcTemp()
-	for Key, Engine in pairs(self.EngineLink) do
-		if IsValid( Engine ) then
-			--Get The RPM Teamperature fast increaser
-			self.TempRpmHighPercent = Engine.LimitRPM * 0.9 --Getting 90% of the Rpm Band
-			if self.TempRpmHighPercent <= Engine.PeakMaxRPM then
-				self.TempRpmHigh = Engine.PeakMaxRPM
-			end
-			--set values
-			local HealthDecreaser = self.HealthSpeed/10
-			local increaser = 0
-			if Engine.FlyRPM <= self.TempRpmHigh then
-				increaser = (self.HeatSpeed/100)/1.5
-			elseif Engine.FlyRPM > self.TempRpmHigh then
-				increaser = self.HeatSpeed/100
-			end
-			--Set Temperature
-			if Engine.Active2 then	--Get the engine running
-				--increase
-				if self.Temp <= self.TempEnd/2 then	--heating bit faster, too cold
-					self.Temp = self.Temp+(increaser*1.5)
-				elseif self.Temp > self.TempEnd/2 and self.Temp < self.TempEnd-1 then --heating regular
-					self.Temp = self.Temp+increaser
-				--Decrease while safe
-				elseif self.Temp > (self.TempEnd + 1) and Engine.FlyRPM <= self.TempRpmHigh then
-					self.Temp = self.Temp-increaser
-				--Increase while not safe
-				elseif Engine.FlyRPM > self.TempRpmHigh and self.Temp > self.TempEnd-1 then
-					self.Temp = self.Temp+increaser
-				end
-					
-				-------------------------------------	
-				--Apply Damage if at Dangerous Temp--
-				if self.Temp > self.TempMax and self.Temp < self.TempBlow then
-					self.HealthVal = self.HealthVal-HealthDecreaser
-				--AUTO Blowing Up
-				elseif self.Temp >= self.TempBlow then
-					self.HealthVal = 0
-					self.Temp = self.TempBlow
-					Engine:SetBlow()
-				end
-				--Apply Damage at Dangerous RPM without autoclutch
-				if Engine.DisableAutoClutch == 1 and Engine.FlyRPM > Engine.LimitRPM then
-					self.HealthVal = self.HealthVal-HealthDecreaser
-				end
-				--Blowing up
-				if self.HealthVal <= 0 then
-					self.HealthVal = 0
-					Engine:SetBlow()	--Set the Engine Blowed
-				else
-					Engine:SetEngineHealth(self.HealthVal) --Set the Engine Health
-				end
-			else	--Decreasing its not running
-				if self.Temp > 0 then	--heating bit faster, too cold
-					self.Temp = self.Temp-increaser
-				elseif self.Temp <= 0 then
-					self.Temp = 0
-				end
-			end
-			--Reset GUI
-			self:UpdateOverlayText()
-		else continue end
+function ENT:GetRPM(IntputRPM, LimitRPM, Active)
+	--Get The RPM Teamperature fast increaser
+	self.TempRpmHighPercent = LimitRPM * 0.9 --Getting 90% of the Rpm Band
+	--set values
+	local HealthDecreaser = self.HealthSpeed
+	local increaser = 0
+	if IntputRPM <= self.TempRpmHighPercent then
+		increaser = (self.HeatSpeed/100)/1.5
+	elseif IntputRPM > self.TempRpmHighPercent then
+		increaser = self.HeatSpeed/100
 	end
-end
-
-function ENT:Link( Target )
-	--Allowable Target
-	if not IsValid( Target ) or not table.HasValue( { "acf_engine", "acf_enginemaker" }, Target:GetClass() ) then
-		return false, "Can only link to engines!"
-	end
-	
-	for Key,Value in pairs(self.EngineLink) do
-		if Value == Target then 
-			return false, "It's already linked to this radiator!"
-		end
-	end
-	
-	if self:GetPos():Distance( Target:GetPos() ) > 512 then
-		return false, "The engine is too far away."
-	end
-	
-	table.insert( self.EngineLink, Target )
-	table.insert( Target.Master, self )
-	
-	self.LinkedEng = 1
-	
-	return true, "Link successful!"
-end
-
-function ENT:Unlink( Target )
-
-	if Target:GetClass() == "acf_engine" or Target:GetClass() == "acf_enginemaker" then
-		for Key, Value in pairs( self.EngineLink ) do
-			if Value == Target then
-				self:ResetValues()
-				table.remove( self.EngineLink, Key )
-				return true, "Unlink successful!"
-			end
+	--Set Temperature
+	if Active then	--Get the engine running
+		--increase
+		if self.Temp <= self.TempEnd/2 then	--heating bit faster, too cold
+			self.Temp = self.Temp+(increaser*1.5)
+		elseif self.Temp > self.TempEnd/2 and self.Temp < self.TempEnd-1 then --heating regular
+			self.Temp = self.Temp+increaser
+		--Decrease while safe
+		elseif self.Temp > (self.TempEnd + 1) and IntputRPM <= self.TempRpmHighPercent then
+			self.Temp = self.Temp-increaser
+		--Increase while not safe
+		elseif IntputRPM > self.TempRpmHighPercent and self.Temp > self.TempEnd-1 then
+			self.Temp = self.Temp+increaser
 		end
 		
-		return false, "That's not linked to this radiator!"
+		--Apply Damage if at Dangerous Temp--
+		if self.Temp > self.TempMax and self.Temp < self.TempBlow then
+			self.HealthVal = self.HealthVal-HealthDecreaser
+		--Blowing Up By Temp
+		elseif self.Temp >= self.TempBlow then
+			self.HealthVal = 0
+			self.Temp = self.TempBlow
+		end
+		--Blowing up By Health
+		if self.HealthVal <= 0 then
+			self.HealthVal = 0
+		end
+	else	--Decreasing its not running
+		if self.Temp > 0 then	--heating bit faster, too cold
+			self.Temp = self.Temp-increaser
+		elseif self.Temp <= 0 then
+			self.Temp = 0
+		end
 	end
-	
-	return false, "That's not linked to this radiator!"
-	
+	--Reset GUI
+	self:UpdateOverlayText()
 end
 
 function ENT:PreEntityCopy()
-	--extra link saving
-	local rads_info = {}
-	local rads_entids = {}
-	for Key, Value in pairs(self.EngineLink) do	--First clean the table of any invalid entities
-		if not Value:IsValid() then
-			table.remove(self.EngineLink, Value)
-		end
-	end
-	for Key, Value in pairs(self.EngineLink) do	--Then save it
-		table.insert(rads_entids, Value:EntIndex())
-	end
-	
-	rads_info.entities = rads_entids
-	if rads_info.entities then
-		duplicator.StoreEntityModifier( self, "EngineLink", rads_info )
-	end
 	//Wire dupe info
 	self.BaseClass.PreEntityCopy( self )
 end
 
 function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
-	--Extra link Pasting
-	if (Ent.EntityMods) and (Ent.EntityMods.EngineLink) and (Ent.EntityMods.EngineLink.entities) then
-		local EngineLink = Ent.EntityMods.EngineLink
-		if EngineLink.entities and table.Count(EngineLink.entities) > 0 then
-			for _,ID in pairs(EngineLink.entities) do
-				local Linked = CreatedEntities[ ID ]
-				if IsValid( Linked ) then
-					self:Link( Linked )
-					self.LinkedEng = 1
-				end
-			end
-		end
-		Ent.EntityMods.EngineLink = nil
-	end
 	//Wire dupe info
 	self.BaseClass.PostEntityPaste( self, Player, Ent, CreatedEntities )
 end

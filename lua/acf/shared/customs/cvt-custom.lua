@@ -23,8 +23,7 @@ ACF_DefineCvt( "2Gear-S-S2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -46,8 +45,7 @@ ACF_DefineCvt( "2Gear-S-M2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -69,8 +67,7 @@ ACF_DefineCvt( "2Gear-S-L2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -94,8 +91,7 @@ ACF_DefineCvt( "2Gear-L-S2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -117,8 +113,7 @@ ACF_DefineCvt( "2Gear-L-M2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -140,8 +135,7 @@ ACF_DefineCvt( "2Gear-L-L2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -166,8 +160,7 @@ ACF_DefineCvt( "2Gear-L-S2D", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -190,8 +183,7 @@ ACF_DefineCvt( "2Gear-L-M2D", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -214,8 +206,7 @@ ACF_DefineCvt( "2Gear-L-L2D", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -239,8 +230,7 @@ ACF_DefineCvt( "2Gear-T-S2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -262,8 +252,7 @@ ACF_DefineCvt( "2Gear-T-M2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -285,8 +274,7 @@ ACF_DefineCvt( "2Gear-T-L2", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -311,8 +299,7 @@ ACF_DefineCvt( "2Gear-T-S2D", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -335,8 +322,7 @@ ACF_DefineCvt( "2Gear-T-M2D", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )
 
@@ -359,7 +345,6 @@ ACF_DefineCvt( "2Gear-T-L2D", {
 		[4] = 0.8,		--Maximum Ratio
 		[5] = 6500,		--Max rpm
 		[6] = 5500,		--Min rpm
-		[7] = 2500,		--Declutch rpm
-		[17] = 0		--Custom Gui
+		[7] = 2500		--Declutch rpm
 	}
 } )

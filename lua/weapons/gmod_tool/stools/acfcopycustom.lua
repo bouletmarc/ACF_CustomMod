@@ -1,20 +1,20 @@
 
 TOOL.Category		= "Construction";
-TOOL.Name			= "#Tool.acfcopy.listname";
-TOOL.Author 		= "looter";
+TOOL.Name			= "#Tool.acfcopycustom.listname";
+TOOL.Author 		= "looter and bouletmarc";
 TOOL.Command		= nil;
 TOOL.ConfigName		= "";
 
 TOOL.GearboxCopyData = {};
-TOOL.AmmoCopyData = {};
 TOOL.EngineMakerCopyData = {};
+TOOL.ChipsData = {};
 
 if CLIENT then
 
-	language.Add( "Tool.acfcopy.listname", "ACF Copy Tool" );
-	language.Add( "Tool.acfcopy.name", "ACF Copy Tool Custom" );
-	language.Add( "Tool.acfcopy.desc", "Copy ammo or gearbox data from one object to another" );
-	language.Add( "Tool.acfcopy.0", "Left click to paste data, Right click to copy data" );
+	language.Add( "Tool.acfcopycustom.listname", "ACF Custom Copy Tool" );
+	language.Add( "Tool.acfcopycustom.name", "ACF Custom Copy Tool Custom" );
+	language.Add( "Tool.acfcopycustom.desc", "Copy gearbox/custom data from one object to another" );
+	language.Add( "Tool.acfcopycustom.0", "Left click to paste data, Right click to copy data" );
 
 	function TOOL.BuildCPanel( CPanel )
 	
@@ -35,32 +35,22 @@ function TOOL:LeftClick( trace )
 
 	local pl = self:GetOwner();
 
-	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" and #self.GearboxCopyData > 1 and ent.CanUpdate ) then
-
+	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" or ent:GetClass() == "acf_gearboxauto" and #self.GearboxCopyData > 1 and ent.CanUpdate ) then
 		local success, msg = ent:Update( self.GearboxCopyData );
-
-		ACF_SendNotify( pl, success, msg );
-
-	end
-
-	if( ent:GetClass() == "acf_ammo" and #self.AmmoCopyData > 1 and ent.CanUpdate ) then
-
-		local success, msg = ent:Update( self.AmmoCopyData );
-
-		ACF_SendNotify( pl, success, msg );
-
+		ACFCUSTOM_SendNotify( pl, success, msg );
 	end
 	
 	if( ent:GetClass() == "acf_enginemaker" and #self.EngineMakerCopyData > 1 and ent.CanUpdate ) then
-
 		local success, msg = ent:Update( self.EngineMakerCopyData );
-
-		ACF_SendNotify( pl, success, msg );
-
+		ACFCUSTOM_SendNotify( pl, success, msg );
+	end
+	
+	if( ent:GetClass() == "acf_chips" and #self.ChipsData > 1 and ent.CanUpdate ) then
+		local success, msg = ent:Update( self.ChipsData );
+		ACFCUSTOM_SendNotify( pl, success, msg );
 	end
 
 	return true;
-
 end
 
 -- Copy
@@ -76,16 +66,13 @@ function TOOL:RightClick( trace )
 
 	local pl = self:GetOwner();
 
-	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" ) then
-
+	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" or ent:GetClass() == "acf_gearboxauto" ) then
 		local ArgsTable = {};
-
 		-- zero out the un-needed tool trace information
 		ArgsTable[1] = pl;
 		ArgsTable[2] = 0;
 		ArgsTable[3] = 0;
 		ArgsTable[4] = ent.Id;
-
 		-- build gear data
 		ArgsTable[5] = ent.GearTable[1];
 		ArgsTable[6] = ent.GearTable[2];
@@ -100,48 +87,33 @@ function TOOL:RightClick( trace )
 
 		self.GearboxCopyData = ArgsTable;
 
-		ACF_SendNotify( pl, true, "Gearbox copied successfully!" );
-
-	end
-
-	if( ent:GetClass() == "acf_ammo" ) then
-
-		local ArgsTable = {};
-
-		-- zero out the un-needed tool trace information
-		ArgsTable[1] = pl;
-		ArgsTable[2] = 0;
-		ArgsTable[3] = 0;
-		ArgsTable[4] = 0; -- ArgsTable[4] isnt actually used anywhere within acf_ammo ENT:Update() and ENT:CreateAmmo(), just passed around?
-
-		-- build gear data
-		ArgsTable[5] = ent.RoundId;
-		ArgsTable[6] = ent.RoundType;
-		ArgsTable[7] = ent.RoundPropellant;
-		ArgsTable[8] = ent.RoundProjectile;
-		ArgsTable[9] = ent.RoundData5;
-		ArgsTable[10] = ent.RoundData6;
-		ArgsTable[11] = ent.RoundData7;
-		ArgsTable[12] = ent.RoundData8;
-		ArgsTable[13] = ent.RoundData9;
-		ArgsTable[14] = ent.RoundData10;
-
-		self.AmmoCopyData = ArgsTable;
-
-		ACF_SendNotify( pl, true, "Ammo copied successfully!" );
-
+		ACFCUSTOM_SendNotify( pl, true, "Gearbox copied successfully!" );
 	end
 	
-	if( ent:GetClass() == "acf_enginemaker" ) then
-
+	if( ent:GetClass() == "acf_chips" ) then
 		local ArgsTable = {};
-
 		-- zero out the un-needed tool trace information
 		ArgsTable[1] = pl;
 		ArgsTable[2] = 0;
 		ArgsTable[3] = 0;
 		ArgsTable[4] = ent.Id;
+		-- build gear data
+		ArgsTable[5] = ent.ModTable[1];
+		ArgsTable[6] = ent.ModTable[2];
+		ArgsTable[7] = ent.ModTable[3];
 
+		self.ChipsData = ArgsTable;
+
+		ACFCUSTOM_SendNotify( pl, true, "Chips copied successfully!" );
+	end
+	
+	if( ent:GetClass() == "acf_enginemaker" ) then
+		local ArgsTable = {};
+		-- zero out the un-needed tool trace information
+		ArgsTable[1] = pl;
+		ArgsTable[2] = 0;
+		ArgsTable[3] = 0;
+		ArgsTable[4] = ent.Id;
 		-- build gear data
 		ArgsTable[5] = ent.ModTable[1];
 		ArgsTable[6] = ent.ModTable[2];
@@ -153,20 +125,16 @@ function TOOL:RightClick( trace )
 		ArgsTable[12] = ent.ModTable[8];
 		ArgsTable[13] = ent.ModTable[9];
 		ArgsTable[14] = ent.ModTable[10];
-		ArgsTable[14] = ent.ModTable[11];
-		ArgsTable[14] = ent.ModTable[12];
-		ArgsTable[14] = ent.ModTable[13];
-		ArgsTable[14] = ent.ModTable[14];
-		ArgsTable[14] = ent.ModTable[15];
-		ArgsTable[14] = ent.ModTable[16];
-		ArgsTable[14] = ent.ModTable[17];
+		ArgsTable[15] = ent.ModTable[11];
+		ArgsTable[16] = ent.ModTable[12];
+		ArgsTable[17] = ent.ModTable[13];
+		ArgsTable[18] = ent.ModTable[14];
+		ArgsTable[19] = ent.ModTable[15];
 
 		self.EngineMakerCopyData = ArgsTable;
 
-		ACF_SendNotify( pl, true, "Engine Maker copied successfully!" );
-
+		ACFCUSTOM_SendNotify( pl, true, "Engine Maker copied successfully!" );
 	end
 
 	return true;
-	
 end

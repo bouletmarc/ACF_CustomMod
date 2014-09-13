@@ -8,8 +8,7 @@ ACF_DefineChips( "V3_Chips", {
 	weight = 1,
 	modtable = {
 		[1] = 60,	--Torque Adding
-		[2] = 1000,	--RpmMax Adding
-		[3] = 1000,	--RpmLimit Adding
-		[4] = 0		--Vtec Kick Rpm
+		[2] = 1000,	--Rpm Adding
+		[3] = 0		--Vtec Kick Rpm
 	}
 } )

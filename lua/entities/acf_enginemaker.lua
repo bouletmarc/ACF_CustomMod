@@ -206,23 +206,14 @@ function ENT:Initialize()
 	self.RequiresFuel = 0
 	
 	--####################
-	self.TqAdd = 0
-	self.MaxRpmAdd = 0
-	self.LimitRpmAdd = 0
-	self.FlywheelMass = 0
-	self.Override = 0
-	self.WeightKg = 0
-	self.idle = 0
 	self.CutMode = 0
-	self.CutValue = 0
 	self.CutRpm = 0
 	self.Fuelusing = 0
 	self.DisableCut = 0
 	self.ExtraLink = {}
-	self.Master = {}
+	self.RadiatorLink = {}
 	self.PeakTorqueExtra = 0
-	self.PeakMaxRPMExtra = 0
-	self.LimitRPMExtra = 0
+	self.RPMExtra = 0
 	self.ExtraUsing = 0
 	self.PeakTorqueHealth = 0
 	--#####################
@@ -329,33 +320,8 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		EngineMaker.CutRpm = EngineMaker.LimitRPM - 100
 		EngineMaker.Inertia = EngineMaker.FlywheelMassValue*(3.1416)^2
 		--Set Custom Values
-		EngineMaker.FlywheelMass3 = EngineMaker.FlywheelMassValue
-		EngineMaker.PeakTorqueLoad = EngineMaker.PeakTorque
-		EngineMaker.PeakTorqueAdd = EngineMaker.PeakTorque
-		EngineMaker.Idling = EngineMaker.IdleRPM
-		EngineMaker.PeakMaxRPM2 = EngineMaker.PeakMaxRPM
-		EngineMaker.LimitRPM2 = EngineMaker.LimitRPM
-		--calculate boosted peak kw
-		if EngineMaker.EngineType == "GenericDiesel" then
-			EngineMaker.TorqueScale = ACF.DieselTorqueScale
-		else
-			EngineMaker.TorqueScale = ACF.TorqueScale
-		end
-	
-		if EngineMaker.EngineType == "Turbine" or EngineMaker.EngineType == "Electric" then
-			EngineMaker.DisableCut = 1
-			EngineMaker.peakkw = EngineMaker.PeakTorque * EngineMaker.LimitRPM / (4 * 9548.8)
-			EngineMaker.PeakKwRPM = math.floor(EngineMaker.LimitRPM / 2)
-		else
-			EngineMaker.peakkw = EngineMaker.PeakTorque * EngineMaker.PeakMaxRPM / 9548.8
-			EngineMaker.PeakKwRPM = EngineMaker.PeakMaxRPM
-		end
-		--calculate base fuel usage
-		if EngineMaker.EngineType == "Electric" then
-			EngineMaker.FuelUse = ACF.ElecRate / (ACF.Efficiency[EngineMaker.EngineType] * 60 * 60) --elecs use current power output, not max
-		else
-			EngineMaker.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[EngineMaker.EngineType] * EngineMaker.peakkw / (60 * 60)
-		end
+		EngineMaker:FirstLoadCustom()
+		
 		--Creating Wire Inputs
 		EngineMaker.CustomLimit = GetConVarNumber("sbox_max_acf_modding")
 		local Inputs = {"Active", "Throttle"}
@@ -375,6 +341,27 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 			end
 		end
 		EngineMaker.Inputs = Wire_CreateInputs( EngineMaker, Inputs )
+		---------------------
+		if EngineMaker.EngineType == "GenericDiesel" then
+			EngineMaker.TorqueScale = ACF.DieselTorqueScale
+		else
+			EngineMaker.TorqueScale = ACF.TorqueScale
+		end
+		--calculate boosted peak kw
+		if EngineMaker.EngineType == "Turbine" or EngineMaker.EngineType == "Electric" then
+			EngineMaker.DisableCut = 1
+			EngineMaker.peakkw = EngineMaker.PeakTorque * EngineMaker.LimitRPM / (4 * 9548.8)
+			EngineMaker.PeakKwRPM = math.floor(EngineMaker.LimitRPM / 2)
+		else
+			EngineMaker.peakkw = EngineMaker.PeakTorque * EngineMaker.PeakMaxRPM / 9548.8
+			EngineMaker.PeakKwRPM = EngineMaker.PeakMaxRPM
+		end
+		--calculate base fuel usage
+		if EngineMaker.EngineType == "Electric" then
+			EngineMaker.FuelUse = ACF.ElecRate / (ACF.Efficiency[EngineMaker.EngineType] * 60 * 60) --elecs use current power output, not max
+		else
+			EngineMaker.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[EngineMaker.EngineType] * EngineMaker.peakkw / (60 * 60)
+		end
 	
 	EngineMaker.FlyRPM = 0
 	EngineMaker:SetModel( EngineMaker.Model )	
@@ -513,15 +500,30 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.PeakTorqueHeld = self.PeakTorque
 	self.CutValue = self.LimitRPM / 20
 	self.CutRpm = self.LimitRPM - 100
-	self.Inertia = self.FlywheelMass3*(3.1416)^2
+	self.Inertia = self.FlywheelMassValue*(3.1416)^2
 	--Set Custom Values
-	self.FlywheelMass3 = self.FlywheelMassValue
-	self.PeakTorqueLoad = self.PeakTorque
-	self.PeakTorqueAdd = self.PeakTorque
-	self.Idling = self.IdleRPM
-	self.PeakMaxRPM2 = self.PeakMaxRPM
-	self.LimitRPM2 = self.LimitRPM
+	self:FirstLoadCustom()
 	
+	--Creating Wire Inputs
+	self.CustomLimit = GetConVarNumber("sbox_max_acf_modding")
+	local Inputs = {"Active", "Throttle"}
+	if self.CustomLimit > 0 then
+		if self.EngineType == "Turbine" or self.EngineType == "Electric" then	--Create inputs for Electric&Turbine
+			table.insert(Inputs, "TqAdd")
+			table.insert(Inputs, "LimitRpmAdd")
+			table.insert(Inputs, "FlywheelMass")
+			table.insert(Inputs, "Override")
+		else 		--Create inputs others engines
+			table.insert(Inputs, "TqAdd")
+			table.insert(Inputs, "MaxRpmAdd")
+			table.insert(Inputs, "LimitRpmAdd")
+			table.insert(Inputs, "FlywheelMass")
+			table.insert(Inputs, "Idle")
+			table.insert(Inputs, "Disable Cutoff")
+		end
+	end
+	self.Inputs = Wire_CreateInputs( self, Inputs )
+	---------------------
 	if self.EngineType == "GenericDiesel" then
 		self.TorqueScale = ACF.DieselTorqueScale
 	else
@@ -542,25 +544,6 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	else
 		self.FuelUse = ACF.TorqueBoost * ACF.FuelRate * ACF.Efficiency[self.EngineType] * self.peakkw / (60 * 60)
 	end
-	--Creating Wire Inputs
-	self.CustomLimit = GetConVarNumber("sbox_max_acf_modding")
-	local Inputs = {"Active", "Throttle"}
-	if self.CustomLimit > 0 then
-		if self.EngineType == "Turbine" or self.EngineType == "Electric" then	--Create inputs for Electric&Turbine
-			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "LimitRpmAdd")
-			table.insert(Inputs, "FlywheelMass")
-			table.insert(Inputs, "Override")
-		else 		--Create inputs others engines
-			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "MaxRpmAdd")
-			table.insert(Inputs, "LimitRpmAdd")
-			table.insert(Inputs, "FlywheelMass")
-			table.insert(Inputs, "Idle")
-			table.insert(Inputs, "Disable Cutoff")
-		end
-	end
-	self.Inputs = Wire_CreateInputs( self, Inputs )
 	
 	self:SetModel( self.Model )	
 	self:SetSolid( SOLID_VPHYSICS )
@@ -585,45 +568,55 @@ end
 --##### 			FUNCTIONS					#####
 --###################################################
 
+function ENT:FirstLoadCustom( )
+	self.PeakTorqueNormal = self.PeakTorque
+	self.PeakMaxRPMNormal = self.PeakMaxRPM
+	self.LimitRPMNormal = self.LimitRPM
+	self.FlywheelMassNormal = self.FlywheelMassValue
+	self.IdleRPMNormal = self.IdleRPM
+	self.FlywheelOverrideNormal = self.FlywheelOverride
+	self.CutValue = self.LimitRPM / 20
+	self.CutRpm = self.LimitRPM - 100
+	self.PeakTorqueAdd = self.PeakTorque
+end
+
 function ENT:UpdateOverlayText()
-	--Better values for Power Gui and Torque Gui
 	if self.RequiresFuel == 1 then
 		self.PowerGUI = self.peakkw*ACF.TorqueBoost
-		self.TorqueGUI = (self.PeakTorqueAdd+self.PeakTorqueExtra)*ACF.TorqueBoost
+		self.TorqueGUI = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth)*ACF.TorqueBoost
 	else
 		self.PowerGUI = self.peakkw
-		self.TorqueGUI = (self.PeakTorqueAdd+self.PeakTorqueExtra)
+		self.TorqueGUI = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth)
 	end
 	
 	local text = "Power: " .. math.Round(self.PowerGUI) .. " kW / " .. math.Round(self.PowerGUI * 1.34) .. " hp\n"
 	text = text .. "Torque: " .. math.Round(self.TorqueGUI) .. " Nm / " .. math.Round(self.TorqueGUI * 0.73) .. " ft-lb\n"
 	if self.EngineType == "Turbine" or self.EngineType == "Electric" then	--Set Gui on electric&turbine
 		text = text .. "Override: " .. math.Round(self.FlywheelOverride) .. " RPM\n"
-		text = text .. "Redline: " .. math.Round((self.LimitRPM+self.LimitRPMExtra)) .. " RPM\n"
+		text = text .. "Redline: " .. math.Round((self.LimitRPM+self.RPMExtra)) .. " RPM\n"
 		text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
 		text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
-		text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n"
+		if self.RequiresFuel == 1 then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
 		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	else --Set Gui on Others
-		text = text .. "Powerband: " .. math.Round(self.PeakMinRPM) .. " - " .. math.Round((self.PeakMaxRPM+self.PeakMaxRPMExtra)) .. " RPM\n"
-		text = text .. "Redline: " .. math.Round((self.LimitRPM+self.LimitRPMExtra)) .. " RPM\n"
+		text = text .. "Powerband: " .. math.Round(self.PeakMinRPM) .. " - " .. math.Round((self.PeakMaxRPM+self.RPMExtra)) .. " RPM\n"
+		text = text .. "Redline: " .. math.Round((self.LimitRPM+self.RPMExtra)) .. " RPM\n"
 		text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
 		text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
-		text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n"
+		if self.RequiresFuel == 1 then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
 		text = text .. "Idle: " .. math.Round(self.IdleRPM) .. " RPM\n"
 		text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	end
 	self:SetOverlayText( text )
-	
 end
 
 function ENT:UpdateEngineConsumption()
 	if self.EngineType == "Turbine" or self.EngineType == "Electric" then
-		self.peakkw = (self.PeakTorqueAdd+self.PeakTorqueExtra) * (self.LimitRPM+self.LimitRPMExtra) / (4 * 9548.8)
-		self.PeakKwRPM = math.floor((self.LimitRPM+self.LimitRPMExtra) / 2)
+		self.peakkw = (self.PeakTorque+self.PeakTorqueExtra-self.PeakTorqueHealth) * (self.LimitRPM+self.RPMExtra) / (4 * 9548.8)
+		self.PeakKwRPM = math.floor((self.LimitRPM+self.RPMExtra) / 2)
 	else
-		self.peakkw = (self.PeakTorqueAdd+self.PeakTorqueExtra) * (self.PeakMaxRPM+self.PeakMaxRPMExtra) / 9548.8
-		self.PeakKwRPM = (self.PeakMaxRPM+self.PeakMaxRPMExtra)
+		self.peakkw = (self.PeakTorque+self.PeakTorqueExtra-self.PeakTorqueHealth) * (self.PeakMaxRPM+self.RPMExtra) / 9548.8
+		self.PeakKwRPM = (self.PeakMaxRPM+self.RPMExtra)
 	end
 	if self.EngineType == "Electric" then 
 		self.FuelUse = ACF.ElecRate / (ACF.Efficiency[self.EngineType] * 60 * 60) --elecs use current power output, not max
@@ -688,32 +681,22 @@ function ENT:TriggerInput( iname, value )
 	--##########################################
 	elseif (iname == "TqAdd") then
 		if (value ~= 0 ) then
-			self.PeakTorqueAdd = self.PeakTorqueLoad+value
+			self.PeakTorqueAdd = self.PeakTorqueNormal+value
 			self:UpdateEngineConsumption()
 		elseif (value == 0 ) then
-			self.PeakTorqueAdd = self.PeakTorqueLoad
+			self.PeakTorqueAdd = self.PeakTorqueNormal
 			self:UpdateEngineConsumption()
 		end
-	elseif (iname == "MaxRpmAdd") then
+	elseif (iname == "RpmAdd") then
 		if (value ~= 0 ) then
-			if( self.PeakMaxRPM2+value <= self.LimitRPM ) then
-				self.PeakMaxRPM = self.PeakMaxRPM2+value
-			elseif( self.PeakMaxRPM2+value > self.LimitRPM ) then
-				self.PeakMaxRPM = self.LimitRPM
-			end
-			self:UpdateEngineConsumption()
-		elseif (value == 0 ) then
-			self.PeakMaxRPM = self.PeakMaxRPM2
-			self:UpdateEngineConsumption()
-		end
-	elseif (iname == "LimitRpmAdd") then
-		if (value ~= 0 ) then
-			self.LimitRPM = self.LimitRPM2+value
+			self.PeakMaxRPM = self.PeakMaxRPMNormal+value
+			self.LimitRPM = self.LimitRPMNormal+value
 			self.CutValue = self.LimitRPM / 20
 			self.CutRpm = self.LimitRPM - 100
 			self:UpdateEngineConsumption()
 		elseif (value == 0 ) then
-			self.LimitRPM = self.LimitRPM2
+			self.PeakMaxRPM = self.PeakMaxRPMNormal
+			self.LimitRPM = self.LimitRPMNormal
 			self.CutValue = self.LimitRPM / 20
 			self.CutRpm = self.LimitRPM - 100
 			self:UpdateEngineConsumption()
@@ -724,7 +707,7 @@ function ENT:TriggerInput( iname, value )
 			self.FlywheelMassGUI = self.FlywheelMassValue
 			self:UpdateOverlayText()
 		elseif (value <= 0 ) then
-			self.FlywheelMassValue = self.FlywheelMass3
+			self.FlywheelMassValue = self.FlywheelMassNormal
 			self.FlywheelMassGUI = self.FlywheelMassValue
 			self:UpdateOverlayText()
 		end
@@ -733,7 +716,7 @@ function ENT:TriggerInput( iname, value )
 			self.FlywheelOverride = value
 			self:UpdateOverlayText()
 		elseif (value <= 0 ) then
-			self.FlywheelOverride = self.FlywheelOverride2
+			self.FlywheelOverride = self.FlywheelOverrideNormal
 			self:UpdateOverlayText()
 		end
 	elseif (iname == "Idle") then
@@ -741,7 +724,7 @@ function ENT:TriggerInput( iname, value )
 			self.IdleRPM = value
 			self:UpdateOverlayText()
 		elseif (value <= 0 ) then
-			self.IdleRPM = self.Idling
+			self.IdleRPM = self.IdleRPMNormal
 			self:UpdateOverlayText()
 		end
 	elseif (iname == "Disable Cutoff") then
@@ -831,12 +814,25 @@ function ENT:Think()
 			self:CheckRopes()
 			self:CheckFuel()
 			self:CheckExtra()
+			self:CheckRadiator()
 			self:CalcMassRatio()
 			self.Legal = self:CheckLegal()
 
 			self.LastCheck = Time + math.Rand(5, 10)
 		end
+	else
+		--SET VALUES FOR RADIATORS
+		for Key, Radiator in pairs(self.RadiatorLink) do
+			if IsValid( Radiator ) then
+				if Radiator.GetRpm == true then
+					if not Radiator.Legal then continue end
+					Radiator:GetRPM(0, self.LimitRPM, self.Active2)
+				end
+			end
+		end
 	end
+	
+	self:SetRadsInfos()
 
 	self.LastThink = Time
 	self:NextThink( Time )
@@ -909,7 +905,7 @@ function ENT:ACFInit()
 	self:CalcMassRatio()
 
 	self.LastThink = CurTime()
-	self.Torque = self.PeakTorqueAdd+self.PeakTorqueExtra
+	self.Torque = self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth
 	self.FlyRPM = self.IdleRPM * 1.5
 
 end
@@ -956,7 +952,7 @@ function ENT:CalcRPM()
 	
 	--adjusting performance based on damage
 	self.TorqueMult = math.Clamp(((1 - self.TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, self.TorqueScale, 1)
-	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra) * self.TorqueMult
+	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth) * self.TorqueMult
 	
 	-- Calculate the current torque from flywheel RPM
 	self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM, (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
@@ -967,21 +963,21 @@ function ENT:CalcRPM()
 	local TorqueDiff
 	if self.Active then
 		if( self.CutMode == 0 ) then
-			self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
+			self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
 			
 			if self.iselec == true then
 				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - self.Throttle) / self.Inertia
 			else
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - self.Throttle) / self.Inertia
+				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - self.Throttle) / self.Inertia
 			end
 		
 		elseif( self.CutMode == 1 ) then
-			self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
+			self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
 			
 			if self.iselec == true then
 				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
 			else
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - 0) / self.Inertia
+				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - 0) / self.Inertia
 			end
 			
 		end 
@@ -993,11 +989,11 @@ function ENT:CalcRPM()
 	end
 	
 	if( self.Active == false ) then
-		self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.LimitRPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.LimitRPMExtra) - (self.PeakMaxRPM+self.PeakMaxRPMExtra)), 1 ), 0 )
+		self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
 		if self.iselec == true then
 			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
 		else
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / (self.PeakMaxRPM+self.PeakMaxRPMExtra)) * ( 1 - 0) / self.Inertia
+			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - 0) / self.Inertia
 		end
 	
 	-- Let's accelerate the flywheel based on that torque
@@ -1059,12 +1055,21 @@ function ENT:CalcRPM()
 		self:UpdateOverlayText()
 	end
 	
-	--SET RPM FOR EXTRA
+	--SET VALUES FOR EXTRA
 	for Key, Extra in pairs(self.ExtraLink) do
 		if IsValid( Extra ) then
-			if Extra.KickRpmNumber > 0 then	--Send Rpm for vtec
+			if Extra.GetRpm == true then
 				if not Extra.Legal then continue end
-				Extra:GetRPM( self.FlyRPM )
+				Extra:GetRPM(self.FlyRPM)
+			end
+		end
+	end
+	--SET VALUES FOR RADIATORS
+	for Key, Radiator in pairs(self.RadiatorLink) do
+		if IsValid( Radiator ) then
+			if Radiator.GetRpm == true then
+				if not Radiator.Legal then continue end
+				Radiator:GetRPM(self.FlyRPM, self.LimitRPM, self.Active2)
 			end
 		end
 	end
@@ -1085,7 +1090,7 @@ function ENT:CalcRPM()
 	
 	if self.Sound then
 		self.Sound:ChangePitch( math.min( 20 + (SmoothRPM * self.SoundPitch) / 50, 255 ), 0 )
-		self.Sound:ChangeVolume( 0.25 + (0.1 + 0.9 * ((SmoothRPM / (self.LimitRPM+self.LimitRPMExtra)) ^ 1.5)) * self.Throttle / 1.5, 0 )
+		self.Sound:ChangeVolume( 0.25 + (0.1 + 0.9 * ((SmoothRPM / (self.LimitRPM+self.RPMExtra)) ^ 1.5)) * self.Throttle / 1.5, 0 )
 	end
 	
 	return RPM
@@ -1129,26 +1134,27 @@ end
 
 function ENT:Link( Target )
 	--Allowable Target
-	--if not IsValid( Target ) or Target:GetClass() ~= "acf_gearbox" and Target:GetClass() ~= "acf_fueltank" and Target:GetClass() ~= "acf_gearboxcvt" and Target:GetClass() ~= "acf_chips" and Target:GetClass() ~= "acf_nos" and  Target:GetClass() ~= "acf_gearboxauto" then
-	if not IsValid( Target ) or not table.HasValue( { "acf_gearbox", "acf_gearboxcvt", "acf_gearboxauto", "acf_fueltank", "acf_chips", "acf_nos" }, Target:GetClass() ) then
+	if not IsValid( Target ) or not table.HasValue( { "acf_gearbox", "acf_gearboxcvt", "acf_gearboxauto", "acf_fueltank", "acf_chips", "acf_nos", "acf_rads" }, Target:GetClass() ) then
 		return false, "Can only link to gearboxes, fuel tanks or engine extras!"
 	end
-	
+	--Fuel Tank Linking
 	if Target:GetClass() == "acf_fueltank" then
 		return self:LinkFuel( Target )
 	end
-	--Link Extra Object
-	if self.ExtraUsing == 1 then	--Not link severals Extra Object
-		return false, "You CAN'T use more that one Extra!"
-	end
+	--Extra Linking
 	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" then
-		if self.EngineType == "Turbine" or self.EngineType == "Electric" then
-			return false, "You CAN'T link Extra to this engine type!"
+		if self.ExtraUsing == 1 then	--Not link severals Extra Obje
+			return false, "You CAN'T use more that one Extra!"
 		else
 			return self:LinkExtra( Target )
 		end
 	end
+	--Radiators Linking
+	if Target:GetClass() == "acf_rads" then
+		return self:LinkRadiator( Target )
+	end
 	
+	-- Gearbox linking
 	-- Check if target is already linked
 	for Key, Link in pairs( self.GearLink ) do
 		if Link.Ent == Target then
@@ -1184,7 +1190,7 @@ function ENT:Link( Target )
 end
 
 function ENT:Unlink( Target )
-
+	--unlink fuel tank
 	if Target:GetClass() == "acf_fueltank" then
 		return self:UnlinkFuel( Target )
 	end
@@ -1192,7 +1198,11 @@ function ENT:Unlink( Target )
 	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" then
 		return self:UnlinkExtra( Target )
 	end
-	
+	--unlink radiator
+	if Target:GetClass() == "acf_rads" then
+		return self:UnlinkRadiator( Target )
+	end
+	--unlink gearboxes
 	for Key, Link in pairs( self.GearLink ) do
 		
 		if Link.Ent == Target then
@@ -1217,9 +1227,8 @@ function ENT:Unlink( Target )
 	end
 	
 	return false, "That gearbox is not linked to this engine!"
-	
 end
-
+--LINKING FUEL TANK
 function ENT:LinkFuel( Target )
 	
 	if not (self.FuelType == "Any" and not (Target.FuelType == "Electric")) then
@@ -1251,7 +1260,7 @@ function ENT:LinkFuel( Target )
 	return true, "Link successful! Now Require Fuel"
 	
 end
-
+--UNLINK FUEL TANK
 function ENT:UnlinkFuel( Target )
 	
 	for Key, Value in pairs( self.FuelLink ) do
@@ -1266,6 +1275,7 @@ function ENT:UnlinkFuel( Target )
 	return false, "That fuel tank is not linked to this engine!"
 	
 end
+--#####################################################
 --LINKING EXTRA
 function ENT:LinkExtra( Target )
 	
@@ -1289,7 +1299,6 @@ function ENT:LinkExtra( Target )
 end
 --UNLINK EXTRA
 function ENT:UnlinkExtra( Target )
-	
 	for Key, Value in pairs( self.ExtraLink ) do
 		if Value == Target then
 			self:RemoveExtraValue( )	--Remove values
@@ -1300,7 +1309,6 @@ function ENT:UnlinkExtra( Target )
 	end
 	
 	return false, "That's not linked to this engine!"
-	
 end
 --UNLINK EXTRA out of range
 function ENT:CheckExtra()
@@ -1319,36 +1327,76 @@ function ENT:AddExtraValue( )
 	for Key, Extra in pairs(self.ExtraLink) do
 		if IsValid( Extra ) then
 			self.PeakTorqueExtra = (Extra.TorqueAdd or 0)
-			self.PeakMaxRPMExtra = (Extra.MaxRPMAdd or 0)
-			self.LimitRPMExtra = (Extra.LimitRPMAdd or 0)
+			self.RPMExtra = (Extra.RPMAdd or 0)
 			self:UpdateEngineConsumption()
 		end
 	end
 end
 --REMOVE EXTRA SETTINGS FUNCTION
 function ENT:RemoveExtraValue( )
-	for Key, Extra in pairs(self.ExtraLink) do
-		if IsValid( Extra ) then
-			self.PeakTorqueExtra = 0
-			self.PeakMaxRPMExtra = 0
-			self.LimitRPMExtra = 0
+	self.PeakTorqueExtra = 0
+	self.RPMExtra = 0
+	self:UpdateEngineConsumption()
+end
+--LINKING RADIATOR
+function ENT:LinkRadiator( Target )
+	for Key,Value in pairs(self.RadiatorLink) do
+		if Value == Target then 
+			return false, "It's already linked to this engine!"
+		end
+	end
+	
+	if self:GetPos():Distance( Target:GetPos() ) > 512 then
+		return false, "The Radiator is too far away."
+	end
+	
+	table.insert( self.RadiatorLink, Target )
+	table.insert( Target.Master, self )
+	
+	return true, "Link successful!"
+end
+--UNLINK RADIATOR
+function ENT:UnlinkRadiator( Target )
+	for Key, Value in pairs( self.RadiatorLink ) do
+		if Value == Target then
+			self.PeakTorqueHealth = 0
 			self:UpdateEngineConsumption()
+			table.remove( self.RadiatorLink, Key )
+			return true, "Unlink successful!"
+		end
+	end
+	
+	return false, "That's not linked to this engine!"
+end
+--UNLINK Radiator out of range
+function ENT:CheckRadiator()
+	for _,radiator in pairs(self.RadiatorLink) do
+		if self:GetPos():Distance(radiator:GetPos()) > 512 then
+			self:Unlink( radiator )
+			soundstr =  "physics/metal/metal_box_impact_bullet" .. tostring(math.random(1, 3)) .. ".wav"
+			self:EmitSound(soundstr,500,100)
 		end
 	end
 end
---SET THE ENGINE BLOWED (RADIATOR)
-function ENT:SetBlow()
-	self.Active = false
-	self:TriggerInput( "Active" , 0 )
-end
---SET ENGINE TORQUE WITH HIS HEALTH (RADIATOR)
-function ENT:SetEngineHealth(RadiatorHealth)
-	local TorqueBand = (self.PeakTorqueAdd+self.PeakTorqueExtra)/2
-	if RadiatorHealth > 0 then
-		self.PeakTorqueHealth = math.abs(((TorqueBand*(RadiatorHealth-100))/-100))
+--SET Radiator Functions
+function ENT:SetRadsInfos()
+	local Blowed = false
+	
+	for Key, Radiator in pairs(self.RadiatorLink) do
+		if IsValid( Radiator ) then
+			local TorqueBand = (self.PeakTorqueAdd+self.PeakTorqueExtra)/2
+			self.PeakTorqueHealth = math.abs(((TorqueBand*(Radiator.HealthVal-100))/-100))
+			if Radiator.HealthVal <= 0 then Blowed = true end
+			self:UpdateEngineConsumption()
+		end
 	end
-	self:UpdateEngineConsumption()
+	
+	if Blowed then
+		self.Active = false
+		self:TriggerInput( "Active" , 0 )
+	end
 end
+--#####################################################
 	
 function ENT:PreEntityCopy()
 
@@ -1387,21 +1435,24 @@ function ENT:PreEntityCopy()
 	end
 	
 	--extra link saving
-	local extra_info = {}
-	local extra_entids = {}
-	for Key, Value in pairs(self.ExtraLink) do	--First clean the table of any invalid entities
-		if not Value:IsValid() then
-			table.remove(self.ExtraLink, Value)
-		end
+	local extra_info, extra_entids = {}
+	for Key, Value in pairs(self.ExtraLink) do
+		if not Value:IsValid() then table.remove(self.ExtraLink, Value) end
 	end
-	for Key, Value in pairs(self.ExtraLink) do	--Then save it
-		table.insert(extra_entids, Value:EntIndex())
-	end
+	for Key, Value in pairs(self.ExtraLink) do table.insert(extra_entids, Value:EntIndex()) end
 	
 	extra_info.entities = extra_entids
-	if extra_info.entities then
-		duplicator.StoreEntityModifier( self, "ExtraLink", extra_info )
+	if extra_info.entities then duplicator.StoreEntityModifier( self, "ExtraLink", extra_info ) end
+	
+	--radiator link saving
+	local rads_info, rads_entids = {}
+	for Key, Value in pairs(self.RadiatorLink) do
+		if not Value:IsValid() then table.remove(self.RadiatorLink, Value) end
 	end
+	for Key, Value in pairs(self.RadiatorLink) do table.insert(rads_entids, Value:EntIndex()) end
+	
+	rads_info.entities = rads_entids
+	if rads_info.entities then duplicator.StoreEntityModifier( self, "RadiatorLink", rads_info ) end
 
 	//Wire dupe info
 	self.BaseClass.PreEntityCopy( self )
@@ -1448,12 +1499,22 @@ function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
 		if ExtraLink.entities and table.Count(ExtraLink.entities) > 0 then
 			for _,ID in pairs(ExtraLink.entities) do
 				local Linked = CreatedEntities[ ID ]
-				if IsValid( Linked ) then
-					self:Link( Linked )
-				end
+				if IsValid( Linked ) then self:Link( Linked ) end
 			end
 		end
 		Ent.EntityMods.ExtraLink = nil
+	end
+	
+	--Radiator link Pasting
+	if (Ent.EntityMods) and (Ent.EntityMods.RadiatorLink) and (Ent.EntityMods.RadiatorLink.entities) then
+		local RadiatorLink = Ent.EntityMods.RadiatorLink
+		if RadiatorLink.entities and table.Count(RadiatorLink.entities) > 0 then
+			for _,ID in pairs(RadiatorLink.entities) do
+				local Linked = CreatedEntities[ ID ]
+				if IsValid( Linked ) then self:Link( Linked ) end
+			end
+		end
+		Ent.EntityMods.RadiatorLink = nil
 	end
 	
 	//Wire dupe info

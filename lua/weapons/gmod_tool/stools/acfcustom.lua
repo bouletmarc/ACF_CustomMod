@@ -17,7 +17,6 @@ TOOL.ClientConVar[ "data7" ] = 0
 TOOL.ClientConVar[ "data8" ] = 0
 TOOL.ClientConVar[ "data9" ] = 0
 TOOL.ClientConVar[ "data10" ] = 0
---#####################################
 TOOL.ClientConVar[ "data11" ] = 0
 TOOL.ClientConVar[ "data12" ] = 0
 TOOL.ClientConVar[ "data13" ] = 0
@@ -26,7 +25,6 @@ TOOL.ClientConVar[ "data15" ] = 0
 TOOL.ClientConVar[ "red" ] = 0
 TOOL.ClientConVar[ "green" ] = 0
 TOOL.ClientConVar[ "blue" ] = 0
---#####################################
 
 cleanup.Register( "acfcustom" )
 
@@ -84,10 +82,114 @@ function TOOL:LeftClick( trace )
 			ArgTable[ Number+2 ] = self:GetClientInfo( Key )
 		end
 		
+		--Set Allowed Custom Update
+		local Class = trace.Entity:GetClass()
+		local ClassMenu = ACFCUSTOM.Weapons[Type][Id]["ent"]
+		local Allowed = false
+		if Class == "acf_engine" and ClassMenu != "acf_chips" then Allowed = true end
+		if Class == "acf_gearbox" and ClassMenu != "acf_chips" then Allowed = true end
+		if Class == "acf_engine_custom" and ClassMenu == "acf_engine_maker" then Allowed = true end
+		if Class == "acf_engine_maker" and ClassMenu == "acf_engine_custom" then Allowed = true end
+		if Class == "acf_gearboxcvt" and ClassMenu == "acf_gearboxair" then Allowed = true end
+		if Class == "acf_gearboxcvt" and ClassMenu == "acf_gearboxauto" then Allowed = true end
+		if Class == "acf_gearboxair" and ClassMenu == "acf_gearboxcvt" then Allowed = true end
+		if Class == "acf_gearboxair" and ClassMenu == "acf_gearboxauto" then Allowed = true end
+		if Class == "acf_gearboxauto" and ClassMenu == "acf_gearboxcvt" then Allowed = true end
+		if Class == "acf_gearboxauto" and ClassMenu == "acf_gearboxair" then Allowed = true end
+		
+		--Set Welding Chips to Trace.Entity
+		local Welding = false
+		if Class == "prop_physics" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_engine" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_engine_custom" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_engine_maker" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearbox" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearboxcvt" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearboxair" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearboxauto" and ClassMenu == "acf_chips" then Welding = true end
+		
+		local bone = trace.PhysicsBone
+		
 		if trace.Entity:GetClass() == ACFCUSTOM.Weapons[Type][Id]["ent"] and trace.Entity.CanUpdate then
 			table.insert( ArgTable, 1, ply )
 			local success, msg = trace.Entity:Update( ArgTable )
 			ACFCUSTOM_SendNotify( ply, success, msg )
+		elseif Allowed then
+			--Not the same Model
+			if trace.Entity:GetModel() != ACFCUSTOM.Weapons[Type][Id]["model"] then
+				local success = false
+				local msg = "Not the same Model"
+				ACFCUSTOM_SendNotify( ply, success, msg )
+			return end
+			
+			--Not the same Owner
+			if trace.Entity.Owner != ply then
+				local success = false
+				local msg = "You don't own this Engine"
+				ACFCUSTOM_SendNotify( ply, success, msg )
+			return end
+			
+			--Make ArgTable
+			local ArgTable2 = {}
+			ArgTable2[1] = trace.Entity:GetPos()
+			ArgTable2[2] = trace.Entity:GetAngles()
+			for Number2, Key2 in pairs( ArgList[ACFCUSTOM.Weapons[Type][Id]["ent"]] ) do
+				ArgTable2[ Number2+2 ] = self:GetClientInfo( Key2 )
+			end
+			
+			--check if welded
+			local constr = {}
+			table.Add(constr,constraint.FindConstraints(trace.Entity, "Weld"))
+			
+			--Remove the entity and replace it
+			trace.Entity:Remove()
+			
+			--spawn it back
+			local Ent = DupeClass.Func( ply, unpack( ArgTable2 ) )
+			Ent:Activate()
+			Ent:GetPhysicsObject():Sleep()
+			Ent:GetPhysicsObject():EnableMotion(false)
+			
+			--Weld it, must be welded before
+			if constr then
+				for Key,Const in pairs(constr) do
+					constraint.Weld(Ent,Const.Ent2,bone,0,0,true,false)
+					if Const.Ent3 then constraint.Weld(Ent,Const.Ent3,bone,0,0,true,false) end
+				end
+			end
+			
+			
+			undo.Create( ACFCUSTOM.Weapons[Type][Id]["ent"] )
+				undo.AddEntity( Ent )
+				undo.SetPlayer( ply )
+			undo.Finish()
+			
+			local success = true
+			local msg = "Custom update done - Wire and link entities again"
+			ACFCUSTOM_SendNotify( ply, success, msg )
+		elseif Welding then
+			--Make ArgTable
+			local ArgTable2 = {}
+			ArgTable2[1] = trace.HitPos + trace.HitNormal
+			--ArgTable2[2] = trace.HitNormal:Angle():Up():Angle()
+			ArgTable2[2] = trace.HitNormal:Angle() + Angle(90,0,0)
+			for Number2, Key2 in pairs( ArgList[ACFCUSTOM.Weapons[Type][Id]["ent"]] ) do
+				ArgTable2[ Number2+2 ] = self:GetClientInfo( Key2 )
+			end
+			
+			--spawn it back
+			local Ent = DupeClass.Func( ply, unpack( ArgTable2 ) )
+			Ent:Activate()
+			Ent:GetPhysicsObject():Sleep()
+			Ent:GetPhysicsObject():EnableMotion(false)
+			
+			--Weld it
+			constraint.Weld(Ent,trace.Entity,bone,0,0,true,false)
+			
+			undo.Create( ACFCUSTOM.Weapons[Type][Id]["ent"] )
+				undo.AddEntity( Ent )
+				undo.SetPlayer( ply )
+			undo.Finish()
 		else
 			-- Using the Duplicator entity register to find the right factory function
 			local Ent = DupeClass.Func( ply, unpack( ArgTable ) )

@@ -347,7 +347,9 @@ local function CreateSoundBrowser()
 		DisplayModel:SetModel( MdlText )
 		RunConsoleCommand("acf_menudata3", MdlText)
 		for k, v in pairs(Name) do
-			ModelsList:AddChoice(v)
+			if not table.HasValue( { "linear_l.mdl", "linear_m.mdl", "linear_s.mdl", "t5large.mdl", "t5med.mdl", "t5small.mdl", "transaxial_l.mdl", "transaxial_m.mdl", "transaxial_s.mdl" }, v ) then
+				ModelsList:AddChoice(v)
+			end
 		end
 		
 		

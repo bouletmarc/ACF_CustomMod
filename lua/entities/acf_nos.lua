@@ -108,15 +108,13 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Nos.Model = Lookup.model
 	Nos.Weight = Lookup.weight
 	Nos.SoundPath = Lookup.sound
-	Nos.MaxRPMAdd = Lookup.rpmadd
-	Nos.LimitRPMAdd = Lookup.rpmadd
+	Nos.RPMAdd = Lookup.rpmadd
 	Nos.ModTable = Lookup.modtable
 		Nos.ModTable[1] = Data1
 		Nos.TorqueAdd2 = Data1
 		
 	Nos.TorqueAdd = 0
 	Nos.UsableNos = 1
-	Nos.RpmAddFinal = 0
 	--Getting Time
 	Nos.SwitchTime = Nos.TorqueAdd2 / 1.6
 	Nos.BoostTime = 10
@@ -155,9 +153,6 @@ list.Set( "ACFCvars", "acf_nos" , {"id", "data1"} )
 duplicator.RegisterEntityClass("acf_nos", MakeACF_Nos, "Pos", "Angle", "Id", "TorqueAdd2")
 
 function ENT:Update( ArgsTable )
-	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
-	-- and pos and angle of the tool trace inserted at the start
-	
 	if self.ActiveChips then
 		return false, "Please turn off the nos bottle before updating it"
 	end
@@ -178,11 +173,9 @@ function ENT:Update( ArgsTable )
 		self.Model = Lookup.model
 		self.Weight = Lookup.weight
 		self.SoundPath = Lookup.sound
-		self.MaxRPMAdd = Lookup.rpmadd
-		self.LimitRPMAdd = Lookup.rpmadd
+		self.RPMAdd = Lookup.rpmadd
 		self.TorqueAdd = 0
 		self.UsableNos = 1
-		self.RpmAddFinal = 0
 		self.KickRpmNumber = 0
 	end
 	
@@ -269,7 +262,6 @@ end
 
 --Timer
 function ENT:PowerUp(value)
-
 	self.ActiveChips2 = 1	--Nos are active
 	self.UsableNos = 0 		--Unusable
 	self.TorqueAdd = self.TorqueAdd2	--Get Torque

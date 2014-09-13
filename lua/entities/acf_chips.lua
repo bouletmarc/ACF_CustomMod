@@ -35,11 +35,9 @@ if CLIENT then
 			if ID == 1 then
 				ACF_ChipSlider1(1, Value, Table.id, "Torque Adding")
 			elseif ID == 2 then
-				ACF_ChipSlider2(2, Value, Table.id, "Rpm Max Adding")
+				ACF_ChipSlider2(2, Value, Table.id, "Max Adding")
 			elseif ID == 3 then
-				ACF_ChipSlider2(3, Value, Table.id, "Rpm Limit Adding")
-			elseif ID == 4 then
-				ACF_ChipVtecSlider(4, Value, Table.id)
+				ACF_ChipVtecSlider(3, Value, Table.id)
 			end
 		end
 		
@@ -99,6 +97,8 @@ if CLIENT then
 		local VtecKickRpm = 4500
 		
 		if VtecSlider then VtecSlider:Remove() end
+		RunConsoleCommand( "acfcustom_data"..Mod, Value )
+		acfmenupanelcustom.ModData[ID]["ModTable"][Mod] = Value
 		
 		VtecButton = vgui.Create("DButton")
 		VtecButton:SetWide(100)
@@ -161,7 +161,7 @@ function ENT:Initialize()
 
 end 
 
-function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
+function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 
 	if not Owner:CheckLimit("_acf_extra") then return false end
 	
@@ -186,41 +186,33 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 		Chips.ModTable[1] = Data1
 		Chips.ModTable[2] = Data2
 		Chips.ModTable[3] = Data3
-		Chips.ModTable[4] = Data4
 		--Set All Mods
 		Chips.Mods1 = Data1	--Torque
-		Chips.Mods2 = Data2	--MaxRpm
-		Chips.Mods3 = Data3	--LimitRpm
-		Chips.Mods4 = Data4	--VtecRpm
+		Chips.Mods2 = Data2	--Rpm
+		Chips.Mods3 = Data3	--VtecRpm
 		
-		Chips.KickRpm = Chips.Mods4	--Check if its Vtec first
+		Chips.KickRpm = Chips.Mods3	--Check if its Vtec first
 	
 	--Vtec Settings
 	Chips.KickActive = 0
 	Chips.KickRpmNumber = tonumber(Chips.KickRpm)
 	--Set Vtec Using
-	if Chips.KickRpmNumber <= 0 then Chips.VtecUsing = 0
-	elseif Chips.KickRpmNumber > 0 then Chips.VtecUsing = 1 end
-	--Set Values
-	if Chips.VtecUsing == 0 then
-		Chips.TorqueAdd = 0
-		Chips.MaxRPMAdd = 0
-		Chips.LimitRPMAdd = 0
-		Chips.TorqueAddVtec = Chips.Mods1
-		Chips.MaxRPMAddVtec = Chips.Mods2
-		Chips.LimitRPMAddVtec = Chips.Mods3
-	elseif Chips.VtecUsing == 1 then
-		Chips.TorqueAdd = 0
-		Chips.MaxRPMAdd = 0
-		Chips.LimitRPMAdd = 0
-		Chips.TorqueAddVtec = Chips.Mods1
-		Chips.MaxRPMAddVtec = Chips.Mods2
-		Chips.LimitRPMAddVtec = Chips.Mods3
+	if Chips.KickRpmNumber <= 0 then
+		Chips.VtecUsing = 0
+		Chips.GetRpm = false
+	elseif Chips.KickRpmNumber > 0 then
+		Chips.VtecUsing = 1
+		Chips.GetRpm = true
 	end
+	--Set Values
+	Chips.TorqueAdd = 0
+	Chips.RPMAdd = 0
+	Chips.TorqueAddVtec = Chips.Mods1
+	Chips.RPMAddVtec = Chips.Mods2
 	--Creating Wire Outputs
 	local Inputs = {}
-	local Outputs = {"TqAdd", "MaxRpmAdd", "LimitRpmAdd"}
-	local OutputsTypes = {"NORMAL", "NORMAL", "NORMAL"}
+	local Outputs = {"TqAdd", "RpmAdd"}
+	local OutputsTypes = {"NORMAL", "NORMAL"}
 	if Chips.VtecUsing == 1 then
 		table.insert(Outputs, "Vtec On")
 		table.insert(OutputsTypes, "NORMAL")
@@ -250,18 +242,16 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4)
 		
 	return Chips
 end
-list.Set( "ACFCvars", "acf_chips" , {"id", "data1", "data2", "data3", "data4"} )
-duplicator.RegisterEntityClass("acf_chips", MakeACF_Chips, "Pos", "Angle", "Id", "Mods1", "Mods2", "Mods3", "Mods4")
+list.Set( "ACFCvars", "acf_chips" , {"id", "data1", "data2", "data3"} )
+duplicator.RegisterEntityClass("acf_chips", MakeACF_Chips, "Pos", "Angle", "Id", "Mods1", "Mods2", "Mods3")
 
 function ENT:Update( ArgsTable )
-	-- That table is the player data, as sorted in the ACFCvars above, with player who shot, 
-	-- and pos and angle of the tool trace inserted at the start
 	
 	if ArgsTable[1] ~= self.Owner then -- Argtable[1] is the player that shot the tool
 		return false, "You don't own that engine chip!"
 	end
 	
-	local Id = ArgsTable[4]	-- Argtable[4] is the engine ID
+	local Id = ArgsTable[4]	-- Argtable[4] is the chips ID
 	local Lookup = list.Get("ACFCUSTOMEnts").MobilityCustom[Id]
 	
 	if Lookup.model ~= self.Model then
@@ -272,49 +262,38 @@ function ENT:Update( ArgsTable )
 		self.Id = Id
 		self.Model = Lookup.model
 		self.Weight = Lookup.weight
-		self.TorqueAdd3 = 0
-		self.MaxRPMAdd3 = 0
-		self.LimitRPMAdd3 = 0
 	end
 	
 	self.ModTable[1] = ArgsTable[5]
 	self.ModTable[2] = ArgsTable[6]
 	self.ModTable[3] = ArgsTable[7]
-	self.ModTable[4] = ArgsTable[8]
 	--Set Mods
 	self.Mods1 = ArgsTable[5]	--Torque
-	self.Mods2 = ArgsTable[6]	--MaxRpm
-	self.Mods3 = ArgsTable[7]	--LimitRpm
-	self.Mods4 = ArgsTable[8]	--VtecRpm
+	self.Mods2 = ArgsTable[6]	--Rpm
+	self.Mods3 = ArgsTable[7]	--VtecRpm
 	
-	self.KickRpm = self.Mods4	--Check if its Vtec first
+	self.KickRpm = self.Mods3	--Check if its Vtec first
 	
 	--Vtec Settings
 	self.KickActive = 0
 	self.KickRpmNumber = tonumber(self.KickRpm)
 	--Set Vtec Using
-	if self.KickRpmNumber <= 0 then self.VtecUsing = 0
-	elseif self.KickRpmNumber > 0 then self.VtecUsing = 1 end
-	--Set Values
-	if self.VtecUsing == 0 then
-		self.TorqueAdd = 0
-		self.MaxRPMAdd = 0
-		self.LimitRPMAdd = 0
-		self.TorqueAddVtec = self.Mods1
-		self.MaxRPMAddVtec = self.Mods2
-		self.LimitRPMAddVtec = self.Mods3
-	elseif self.VtecUsing == 1 then
-		self.TorqueAdd = 0
-		self.MaxRPMAdd = 0
-		self.LimitRPMAdd = 0
-		self.TorqueAddVtec = self.Mods1
-		self.MaxRPMAddVtec = self.Mods2
-		self.LimitRPMAddVtec = self.Mods3
+	if self.KickRpmNumber <= 0 then
+		self.VtecUsing = 0
+		self.GetRpm = false
+	elseif self.KickRpmNumber > 0 then
+		self.VtecUsing = 1
+		self.GetRpm = true
 	end
+	--Set Values
+	self.TorqueAdd = 0
+	self.RPMAdd = 0
+	self.TorqueAddVtec = self.Mods1
+	self.RPMAddVtec = self.Mods2
 	--Creating Wire Outputs
 	local Inputs = {}
-	local Outputs = {"TqAdd", "MaxRpmAdd", "LimitRpmAdd"}
-	local OutputsTypes = {"NORMAL", "NORMAL", "NORMAL"}
+	local Outputs = {"TqAdd", "RpmAdd"}
+	local OutputsTypes = {"NORMAL", "NORMAL"}
 	if self.VtecUsing == 1 then
 		table.insert(Outputs, "Vtec On")
 		table.insert(OutputsTypes, "NORMAL")
@@ -333,8 +312,7 @@ end
 
 function ENT:SetWireOutputs()
 	Wire_TriggerOutput(self, "TqAdd", self.TorqueAdd)
-	Wire_TriggerOutput(self, "MaxRpmAdd", self.MaxRPMAdd)
-	Wire_TriggerOutput(self, "LimitRpmAdd", self.LimitRPMAdd)
+	Wire_TriggerOutput(self, "RpmAdd", self.RPMAdd)
 	if self.VtecUsing == 1 then
 		Wire_TriggerOutput(self, "Vtec On", self.KickActive)
 	end
@@ -344,14 +322,12 @@ function ENT:UpdateOverlayText()
 	local text = ""
 	if self.VtecUsing == 0 then
 		text = text .. "Torque Add: " .. math.Round(self.TorqueAddVtec,0) .. "Tq\n"
-		text = text .. "Max Rpm Add: " .. math.Round(self.MaxRPMAddVtec,0) .. "Rpm\n"
-		text = text .. "Limit Rpm Add: " .. math.Round(self.LimitRPMAddVtec,0) .. "Rpm\n"
+		text = text .. "Rpm Add: " .. math.Round(self.RPMAddVtec,0) .. "Rpm\n"
 		text = text .. "Active: " .. self.KickActive .. "\n"
 		text = text .. "Weight: " .. self.Weight .. "Kg"
 	elseif self.VtecUsing == 1 then
 		text = text .. "Torque Add: " .. math.Round(self.TorqueAddVtec,0) .. "Tq\n"
-		text = text .. "Max Rpm Add: " .. math.Round(self.MaxRPMAddVtec,0) .. "Rpm\n"
-		text = text .. "Limit Rpm Add: " .. math.Round(self.LimitRPMAddVtec,0) .. "Rpm\n"
+		text = text .. "Rpm Add: " .. math.Round(self.RPMAddVtec,0) .. "Rpm\n"
 		text = text .. "Kick Rpm: " .. math.Round(self.KickRpm,0) .. "Rpm\n"
 		text = text .. "Vtec On: " .. self.KickActive .. "\n"
 		text = text .. "Weight: " .. self.Weight .. "Kg"
@@ -365,13 +341,11 @@ function ENT:TriggerInput( iname , value )
 		if self.VtecUsing == 0 then
 			if (value > 0) then
 				self.TorqueAdd = self.TorqueAddVtec
-				self.MaxRPMAdd = self.MaxRPMAddVtec
-				self.LimitRPMAdd = self.LimitRPMAddVtec
+				self.RPMAdd = self.MaxRPMAddVtec
 				self.KickActive = 1
 			elseif (value == 0) then
 				self.TorqueAdd = 0
-				self.MaxRPMAdd = 0
-				self.LimitRPMAdd = 0
+				self.RPMAdd = 0
 				self.KickActive = 0
 			end
 		end
@@ -400,13 +374,11 @@ end
 function ENT:GetRPM(IntputRPM)
 	if IntputRPM < self.KickRpmNumber then
 		self.TorqueAdd = 0
-		self.MaxRPMAdd = 0
-		self.LimitRPMAdd = 0
+		self.RPMAdd = 0
 		self.KickActive = 0
 	elseif IntputRPM >= self.KickRpmNumber then
 		self.TorqueAdd = self.TorqueAddVtec
-		self.MaxRPMAdd = self.MaxRPMAddVtec
-		self.LimitRPMAdd = self.LimitRPMAddVtec
+		self.RPMAdd = self.RPMAddVtec
 		self.KickActive = 1
 	end
 	self:UpdateOverlayText()

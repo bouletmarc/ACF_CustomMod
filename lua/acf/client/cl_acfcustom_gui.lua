@@ -1,5 +1,5 @@
 
---loading
+--loading colors
 if file.Exists("acf/menucolor.txt", "DATA") then
 	local MenuColor = file.Read("acf/menucolor.txt")
 	local MenuColorTable = {}
@@ -55,7 +55,7 @@ function PANEL:Init( )
 		end
 		
 	end
-	
+	--Home Node
 	local HomeNode = self.WeaponSelect:AddNode( "Home menu" )
 	HomeNode.mytable = {}
 		HomeNode.mytable.guicreate = (function( Panel, Table ) ACFHomeCustomGUICreate( Table ) end or nil)

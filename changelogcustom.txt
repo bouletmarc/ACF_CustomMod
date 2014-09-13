@@ -1,22 +1,4 @@
-r94
--8.21
---Fixed Airplane Gearbox Gui+Name
-
-*r95
--8.31
---Fixed Menu Bug
---Fixed Spawn Bug
---Fixed Nos Bottle
-
---Turbine not necessary require fuel
-
---Updated for original acf V.501
-
-*r98
--8.32
---Small Revision Fix
-
-*r99
+r99
 -8.41
 --Added i5 and v10 engine's
 --Added also in engine maker
@@ -64,3 +46,25 @@ r94
 --Custom Mod is now apart of original
 --Installation easier, no more merge
 --THIS CHANGE IS TO MAKE IT BETTER
+
+*r104
+-9.11 V3
+--Added Custom Updating System
+--Added Chips weld when spawn on entity
+--Added RpmAdd
+--Added Acf Custom Sound Tool
+--Added Acf Custom Copy Tool
+
+--Fixed Acf Custom Notify
+--Fixed Chips on first spawn sometimes
+
+--Removed Gearbox Model from EngineMaker
+--Removed MaxRpmAdd/LimitRpmAdd
+--Inversed Radiator Linking
+--Cleaned/updated somes lua files
+
+----SPECIALS NOTES----
+You can update Original engines
+to become Custom engines in 1clic.
+Work with gearboxes, engine maker, etc.
+You should wire and link it again.
