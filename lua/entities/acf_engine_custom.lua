@@ -831,7 +831,8 @@ function ENT:CalcRPM()
 		if IsValid( Extra ) then
 			if Extra.GetRpm == true then
 				if not Extra.Legal then continue end
-				Extra:GetRPM(self.FlyRPM)
+				local PeakTorqueSend = (self.PeakTorqueAdd-self.PeakTorqueHealth)*self.TorqueMult
+				Extra:GetRPM(self.FlyRPM, self.LimitRPM, self.Weight, self.Throttle, self.EngineType, PeakTorqueSend, self.IdleRPM)
 			end
 		end
 	end
@@ -905,7 +906,7 @@ end
 
 function ENT:Link( Target )
 	--Allowable Target
-	if not IsValid( Target ) or not table.HasValue( { "acf_gearbox", "acf_gearboxcvt", "acf_gearboxauto", "acf_fueltank", "acf_chips", "acf_nos", "acf_rads" }, Target:GetClass() ) then
+	if not IsValid( Target ) or not table.HasValue( { "acf_gearbox", "acf_gearboxcvt", "acf_gearboxauto", "acf_fueltank", "acf_chips", "acf_nos", "acf_rads", "acf_turbo", "acf_supercharger" }, Target:GetClass() ) then
 		return false, "Can only link to gearboxes, fuel tanks or engine extras!"
 	end
 	--Fuel Tank Linking
@@ -913,8 +914,8 @@ function ENT:Link( Target )
 		return self:LinkFuel( Target )
 	end
 	--Extra Linking
-	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" then
-		if self.ExtraUsing == 1 then	--Not link severals Extra Obje
+	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" or Target:GetClass() == "acf_turbo" or Target:GetClass() == "acf_supercharger" then
+		if self.ExtraUsing == 1 then	--Not link severals Extra Object
 			return false, "You CAN'T use more that one Extra!"
 		else
 			return self:LinkExtra( Target )
@@ -966,7 +967,7 @@ function ENT:Unlink( Target )
 		return self:UnlinkFuel( Target )
 	end
 	--unlink extra
-	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" then
+	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" or Target:GetClass() == "acf_turbo" or Target:GetClass() == "acf_supercharger" then
 		return self:UnlinkExtra( Target )
 	end
 	--unlink radiator

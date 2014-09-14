@@ -85,7 +85,7 @@ function PANEL:Init( )
 			NodeAdd = CustomGB
 		elseif( MobilityTable.ent == "acf_enginemaker") then
 			if Makerlimit > 0 then NodeAdd = MakerNode end
-		elseif ( MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads") then
+		elseif ( MobilityTable.ent == "acf_turbo" or MobilityTable.ent == "acf_supercharger" or MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads") then
 			if Extralimit > 0 then NodeAdd = ExtraNode end
 		end
 		if(MobilityTable.category) then
@@ -115,7 +115,7 @@ function PANEL:Init( )
 					NodeAdd = EngineSubcats[MobilityTable.category]
 				end
 			end
-		elseif MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads" then
+		elseif MobilityTable.ent == "acf_turbo" or MobilityTable.ent == "acf_supercharger" or MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads" then
 			if Extralimit > 0 then
 				NodeAdd = ExtraNode
 				if(MobilityTable.category) then
@@ -253,6 +253,17 @@ function ACFHomeCustomGUICreate( Table )
 		RunConsoleCommand("acf_help_browser_open")
 	end
 	acfmenupanelcustom.CustomDisplay:AddItem( HelpText1 )
+	
+	WhatCustom = vgui.Create( "DButton" )
+	WhatCustom:SetText("Custom Mod Tips")
+	WhatCustom:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	WhatCustom:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
+	WhatCustom:SetWide(80)
+	WhatCustom:SetTall(30)
+	WhatCustom.DoClick = function()
+		RunConsoleCommand("acf_customcando_open")
+	end
+	acfmenupanelcustom.CustomDisplay:AddItem( WhatCustom )
 	
 	TextLog= vgui.Create( "DLabel" )
 		TextLog:SetText( "Changelog")

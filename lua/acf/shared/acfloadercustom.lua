@@ -49,6 +49,16 @@ local rads_base = {
 	ent = "acf_rads",
 	type = "MobilityCustom"
 }
+--turbo
+local turbo_base = {
+	ent = "acf_turbo",
+	type = "MobilityCustom"
+}
+--supercharger
+local supercharger_base = {
+	ent = "acf_supercharger",
+	type = "MobilityCustom"
+}
 
 --##############################
 --##		set gui			####
@@ -77,6 +87,12 @@ if CLIENT then
 	--radiator
 	rads_base.guicreate = function( panel, tbl ) ACFRadsGUICreate( tbl ) end or nil
 	rads_base.guiupdate = function() return end
+	--turbo
+	turbo_base.guicreate = function( panel, tbl ) ACFTurboGUICreate( tbl ) end or nil
+	turbo_base.guiupdate = function() return end
+	--supercharger
+	supercharger_base.guicreate = function( panel, tbl ) ACFSuperchargerGUICreate( tbl ) end or nil
+	supercharger_base.guiupdate = function() return end
 end
 
 --##############################
@@ -127,6 +143,18 @@ end
 function ACF_DefineRads( id, data )
 	data.id = id
 	table.Inherit( data, rads_base )
+	MobilityTable[ id ] = data
+end
+--turbo
+function ACF_DefineTurbo( id, data )
+	data.id = id
+	table.Inherit( data, turbo_base )
+	MobilityTable[ id ] = data
+end
+--supercharger
+function ACF_DefineSupercharger( id, data )
+	data.id = id
+	table.Inherit( data, supercharger_base )
 	MobilityTable[ id ] = data
 end
 

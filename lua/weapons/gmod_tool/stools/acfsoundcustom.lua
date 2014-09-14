@@ -18,6 +18,8 @@ local function ReplaceSound( ply , Entity , data)
 		if Entity:GetClass() == "acf_engine_custom" or Entity:GetClass() == "acf_enginemaker" then
 			Entity.SoundPath = sound
 			Entity.SoundPitch = ply:GetInfo("acfcustomsound_pitch")
+		elseif Entity:GetClass() == "acf_turbo" or Entity:GetClass() == "acf_supercharger" then
+			Entity.SoundPath = sound
 		end
 	end)
 			
@@ -30,7 +32,7 @@ local function IsReallyValid(trace, ply)
 	local pl = ply;
 	if not trace.Entity:IsValid() then True = false end
 	if trace.Entity:IsPlayer() then True = false end
-	if trace.Entity:GetClass() ~= "acf_engine_custom" and trace.Entity:GetClass() ~= "acf_enginemaker" then True = false end
+	if trace.Entity:GetClass() ~= "acf_engine_custom" and trace.Entity:GetClass() ~= "acf_enginemaker" and trace.Entity:GetClass() ~= "acf_turbo" and trace.Entity:GetClass() ~= "acf_supercharger" then True = false end
 	if SERVER and not trace.Entity:GetPhysicsObject():IsValid() then True = false end
 	
 	if True then
@@ -57,6 +59,9 @@ function TOOL:RightClick(trace)
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
 		self:GetOwner():ConCommand("acfcustomsound_pitch "..trace.Entity.SoundPitch);
 		ACFCUSTOM_SendNotify( pl, true, "Engine Sound copied successfully!" );
+	elseif trace.Entity:GetClass() == "acf_turbo" or trace.Entity:GetClass() == "acf_supercharger" then
+		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
+		ACFCUSTOM_SendNotify( pl, true, "Turbo or Supercharger Sound copied successfully!" );
 	end
 	return true
 end
@@ -67,6 +72,10 @@ function TOOL:Reload( trace )
 		local Id = trace.Entity.Id
 		local List = list.Get("ACFCUSTOMEnts")
 		self:GetOwner():ConCommand("acfcustomsound_pitch " ..(List["MobilityCustom"][Id]["pitch"] or 1));
+		ReplaceSound( self:GetOwner(), trace.Entity, {List["MobilityCustom"][Id]["sound"]} )
+	elseif trace.Entity:GetClass() == "acf_turbo" or trace.Entity:GetClass() == "acf_supercharger" then
+		local Id = trace.Entity.Id
+		local List = list.Get("ACFCUSTOMEnts")
 		ReplaceSound( self:GetOwner(), trace.Entity, {List["MobilityCustom"][Id]["sound"]} )
 	end
 	return true

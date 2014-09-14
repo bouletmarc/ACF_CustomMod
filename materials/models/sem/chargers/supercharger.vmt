@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/sem/chargers/super_col"
+	"$bumpmap" "models/sem/chargers/super_nor"
+	"$surfaceprop" "metal"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmapcontrast" 0.6
+	"$envmapsaturation" 1.0
+}

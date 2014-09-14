@@ -102,8 +102,6 @@ local function CreateSoundBrowser()
 		WireLineEngine = WireLineEngine .. "- Idle to a Idle RPM Value\n"
 		WireLineEngine = WireLineEngine .. "- Disable Cutoff to 1 to Disable the Cutoff\n"
 		WireLineEngine = WireLineEngine .. "- Override to a Override RPM Value\n"
-		WireLineEngine = WireLineEngine .. "- Gearbox RPM to Gearbox ONLY if you don't want\n"
-		WireLineEngine = WireLineEngine .. "* your engine to use the autoclutch system\n"
 		
 		local WireLineGearbox = ""
 		WireLineGearbox = WireLineGearbox .. "- Clutch should be wired to (0-1)\n"

@@ -88,8 +88,8 @@ function TOOL:LeftClick( trace )
 		local Allowed = false
 		if Class == "acf_engine" and ClassMenu != "acf_chips" then Allowed = true end
 		if Class == "acf_gearbox" and ClassMenu != "acf_chips" then Allowed = true end
-		if Class == "acf_engine_custom" and ClassMenu == "acf_engine_maker" then Allowed = true end
-		if Class == "acf_engine_maker" and ClassMenu == "acf_engine_custom" then Allowed = true end
+		if Class == "acf_engine_custom" and ClassMenu == "acf_enginemaker" then Allowed = true end
+		if Class == "acf_enginemaker" and ClassMenu == "acf_engine_custom" then Allowed = true end
 		if Class == "acf_gearboxcvt" and ClassMenu == "acf_gearboxair" then Allowed = true end
 		if Class == "acf_gearboxcvt" and ClassMenu == "acf_gearboxauto" then Allowed = true end
 		if Class == "acf_gearboxair" and ClassMenu == "acf_gearboxcvt" then Allowed = true end
@@ -102,7 +102,7 @@ function TOOL:LeftClick( trace )
 		if Class == "prop_physics" and ClassMenu == "acf_chips" then Welding = true end
 		if Class == "acf_engine" and ClassMenu == "acf_chips" then Welding = true end
 		if Class == "acf_engine_custom" and ClassMenu == "acf_chips" then Welding = true end
-		if Class == "acf_engine_maker" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_enginemaker" and ClassMenu == "acf_chips" then Welding = true end
 		if Class == "acf_gearbox" and ClassMenu == "acf_chips" then Welding = true end
 		if Class == "acf_gearboxcvt" and ClassMenu == "acf_chips" then Welding = true end
 		if Class == "acf_gearboxair" and ClassMenu == "acf_chips" then Welding = true end

@@ -68,3 +68,21 @@ You can update Original engines
 to become Custom engines in 1clic.
 Work with gearboxes, engine maker, etc.
 You should wire and link it again.
+
+*r105
+-9.21 V3
+--Added Custom Mod Tips Menu
+--Added Turbocharger
+--Added Supercharger
+--Added Turbo/supercharger to sound tool
+
+--Fixed Custom to Engine Maker Updating
+
+--Help Menu Cleaned
+
+----SPECIALS NOTES----
+**Thanks to SEM for models**
+Turbo and Supercharger are in test
+They are working fine, but might be
+improved in furtur update. I'm gonna
+check the feedback of them

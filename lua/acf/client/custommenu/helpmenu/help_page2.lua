@@ -116,8 +116,7 @@ local function CreateSoundBrowser()
 		LinkingLine1 = LinkingLine1 .. "- Engine must be linked to Gearbox, FuelTank or a Engine Extra\n"
 		LinkingLine1 = LinkingLine1 .. "- Gearbox's must be linked to Wheels (regular prop's)\n"
 		LinkingLine1 = LinkingLine1 .. "- Gun must be linked to the Ammo Box\n\n"
-		LinkingLine1 = LinkingLine1 .. "-- Chips is a Engine Extra\n"
-		LinkingLine1 = LinkingLine1 .. "-- Nos is a Engine Extra\n"
+		LinkingLine1 = LinkingLine1 .. "-- Chips, Nos, Turbo, Supercharger and Radiator is a Engine Extra\n"
 		
 		--local EngineLineOption = ""
 		--#########################################################################################
