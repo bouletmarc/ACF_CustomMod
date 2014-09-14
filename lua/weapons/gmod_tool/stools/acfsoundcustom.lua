@@ -17,7 +17,7 @@ local function ReplaceSound( ply , Entity , data)
 	timer.Simple(1, function()
 		if Entity:GetClass() == "acf_engine_custom" or Entity:GetClass() == "acf_enginemaker" then
 			Entity.SoundPath = sound
-			Entity.SoundPitch = ply:GetInfo("acfcustomsound_pitch")
+			Entity.SoundPitch = ply:GetInfo("acfsoundcustom_pitch")
 		elseif Entity:GetClass() == "acf_turbo" or Entity:GetClass() == "acf_supercharger" then
 			Entity.SoundPath = sound
 		end
@@ -57,7 +57,7 @@ function TOOL:RightClick(trace)
 	local pl = self:GetOwner();
 	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_enginemaker" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
-		self:GetOwner():ConCommand("acfcustomsound_pitch "..trace.Entity.SoundPitch);
+		self:GetOwner():ConCommand("acfsoundcustom_pitch "..trace.Entity.SoundPitch);
 		ACFCUSTOM_SendNotify( pl, true, "Engine Sound copied successfully!" );
 	elseif trace.Entity:GetClass() == "acf_turbo" or trace.Entity:GetClass() == "acf_supercharger" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
@@ -71,7 +71,7 @@ function TOOL:Reload( trace )
 	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_enginemaker" then
 		local Id = trace.Entity.Id
 		local List = list.Get("ACFCUSTOMEnts")
-		self:GetOwner():ConCommand("acfcustomsound_pitch " ..(List["MobilityCustom"][Id]["pitch"] or 1));
+		self:GetOwner():ConCommand("acfsoundcustom_pitch " ..(List["MobilityCustom"][Id]["pitch"] or 1));
 		ReplaceSound( self:GetOwner(), trace.Entity, {List["MobilityCustom"][Id]["sound"]} )
 	elseif trace.Entity:GetClass() == "acf_turbo" or trace.Entity:GetClass() == "acf_supercharger" then
 		local Id = trace.Entity.Id
@@ -140,7 +140,7 @@ function TOOL.BuildCPanel(panel)
 	
 	panel:AddControl("Slider", {
         Label = "Pitch:",
-        Command = "acfcustomsound_pitch",
+        Command = "acfsoundcustom_pitch",
         Type = "Float",
         Min = "0.1",
         Max = "2",

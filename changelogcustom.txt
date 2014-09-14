@@ -48,8 +48,16 @@ You should wire and link it again.
 --Help Menu Cleaned
 
 ----SPECIALS NOTES----
-**Thanks to SEM for models**
+-Thanks to SEM for models-
 Turbo and Supercharger are in test
 They are working fine, but might be
 improved in furtur update. I'm gonna
 check the feedback of them
+
+*r107
+-9.31 V3
+--Improved Turbo Spool Start
+--Turbo Add Slightly more torque
+
+--Fixed Changelog Error
+--Fixed E2 Function 'acfCustomRpmAdd'
