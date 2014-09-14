@@ -99,18 +99,14 @@ function TOOL:LeftClick( trace )
 		
 		--Set Welding Chips to Trace.Entity
 		local Welding = false
-		if ClassMenu == "acf_chips" and Class == "prop_physics" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_engine" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_engine_custom" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_enginemaker" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearbox" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearboxcvt" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearboxair" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearboxauto" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_fueltank" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_rads" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_turbo" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_supercharger" then Welding = true end
+		if Class == "prop_physics" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_engine" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_engine_custom" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_enginemaker" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearbox" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearboxcvt" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearboxair" and ClassMenu == "acf_chips" then Welding = true end
+		if Class == "acf_gearboxauto" and ClassMenu == "acf_chips" then Welding = true end
 		
 		local bone = trace.PhysicsBone
 		
@@ -175,6 +171,7 @@ function TOOL:LeftClick( trace )
 			--Make ArgTable
 			local ArgTable2 = {}
 			ArgTable2[1] = trace.HitPos + trace.HitNormal
+			--ArgTable2[2] = trace.HitNormal:Angle():Up():Angle()
 			ArgTable2[2] = trace.HitNormal:Angle() + Angle(90,0,0)
 			for Number2, Key2 in pairs( ArgList[ACFCUSTOM.Weapons[Type][Id]["ent"]] ) do
 				ArgTable2[ Number2+2 ] = self:GetClientInfo( Key2 )

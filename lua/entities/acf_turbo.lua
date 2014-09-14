@@ -335,7 +335,7 @@ function ENT:Think()
 end
 
 --Get RPM for Turbo
-function ENT:GetRPM(IntputRPM, LimitRpm, EngWeight, EngThrottle, Class, Torque, IdleRpm)
+function ENT:GetRPM(IntputRPM, LimitRpm, EngWeight, EngThrottle, Class, Torque)
 	--Reset the turbo Weight
 	if EngWeight/20-(self.SliderVal*10) >= 10 then
 		if self.Weight != EngWeight/20-(self.SliderVal*10) then
@@ -356,16 +356,13 @@ function ENT:GetRPM(IntputRPM, LimitRpm, EngWeight, EngThrottle, Class, Torque, 
 	end
 	--Set Persist Values
 	if Class == "GenericPetrol" or Class == "Radial" then
-		--self.BoostRpmStart = (LimitRpm*((self.SliderVal*30)+40))/100	--will vary between 40-70% of the limit rpm range on gazoline
-		self.BoostRpmStart = IdleRpm+((IdleRpm*((self.SliderVal*130)+150))/100)	--will vary between 150-280% of the idle rpm range on gazoline
+		self.BoostRpmStart = (LimitRpm*((self.SliderVal*30)+40))/100	--will vary between 40-70% of the limit rpm range on gazoline
 	elseif Class == "GenericDiesel" or Class == "Wankel" then
-		--self.BoostRpmStart = (LimitRpm*((self.SliderVal*20)+40))/100	--will vary between 40-60% of the limit rpm range on diesel
-		self.BoostRpmStart = IdleRpm+((IdleRpm*((self.SliderVal*110)+90))/100)	--will vary between 90-200% of the idle rpm range on diesel
+		self.BoostRpmStart = (LimitRpm*((self.SliderVal*20)+40))/100	--will vary between 40-60% of the limit rpm range on diesel
 	else
-		--self.BoostRpmStart = (LimitRpm*((self.SliderVal*25)+40))/100	--will vary between 40-65% of the limit rpm range on others
-		self.BoostRpmStart = IdleRpm+((IdleRpm*((self.SliderVal*120)+120))/100)	--will vary between 120-240% of the idle rpm range on others
+		self.BoostRpmStart = (LimitRpm*((self.SliderVal*25)+40))/100	--will vary between 40-65% of the limit rpm range on others
 	end
-	self.TorqueAddMax = (Torque*((self.SliderVal*35)+50))/100		--will add between 50-85% of the max engine torque
+	self.TorqueAddMax = (Torque*((self.SliderVal*35)+40))/100		--will add between 40-75% of the max engine torque
 	--Set Boost Max (Minimum 7psi)
 	if self.TorqueAddMax/10 > 7 then self.BoostMax = self.TorqueAddMax/10
 	else self.BoostMax = 7 end

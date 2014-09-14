@@ -280,10 +280,17 @@ e2function void entity:acfCustomTqAdd( number torqueadd )
 end
 
 -- Sets the MaxRpmAdd value for an ACF engine
-e2function void entity:acfCustomRpmAdd( number maxrpm )
+e2function void entity:acfCustomMaxRpmAdd( number maxrpm )
 	if not isEngine(this) then return end
 	if not isOwner(self, this) then return end
-	this:TriggerInput("RpmAdd", maxrpm)
+	this:TriggerInput("MaxRpmAdd", maxrpm)
+end
+
+-- Sets the LimitRpmAdd value for an ACF engine
+e2function void entity:acfCustomLimitRpmAdd( number limitrpm )
+	if not isEngine(this) then return end
+	if not isOwner(self, this) then return end
+	this:TriggerInput("LimitRpmAdd", limitrpm)
 end
 
 -- Sets the FlywheelMass value for an ACF engine

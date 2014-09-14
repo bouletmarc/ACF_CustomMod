@@ -801,11 +801,11 @@ function ENT:CalcRPM()
 				self.Sound:Stop()
 			end
 			self.Sound = nil
-			local MakeSound = math.random(1,3)
+			local MakeSound = math.random(1,4)
 			if MakeSound <= 1 and self.Sound2 and self.Sound2:IsPlaying() then self.Sound2:Stop() end
 			if MakeSound <= 1 then
 				self.Sound2 = CreateSound(self, "ambient/explosions/explode_4.wav")
-				self.Sound2:PlayEx(0.7,100)
+				self.Sound2:PlayEx(0.5,100)
 			end
 		end
 		if( self.FlyRPM <= self.CutRpm - self.CutValue and self.CutMode == 1 ) then
