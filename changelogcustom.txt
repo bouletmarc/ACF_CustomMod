@@ -1,37 +1,4 @@
-r99
--8.41
---Added i5 and v10 engine's
---Added also in engine maker
-
---Updated for original acf V.502
-
-*r100
--8.42
---Fixed help menu page2
-
---Work with original acf v.502
-
-*r101
--8.51
---Fixed ACFMenu no internet
---Improved Engine Maker
---Added E2 Functions
---Added Old Single/Vtwin Models
-
---Updated for original acf V.506
-
-*r102
---Added i3 engines
---Added Active inputs for Chips
---Added New Rev Limiter Sound
-
---Fixed Acf_Chips Glitch
-
---Removed "Gearbox RPM" inputs
-
---Updated for original acf V.507
-
-*r103
+r103
 -9.01 V3
 --Added ACF Custom Menu
 --Added Lot's acfCustom E2 fucntions
@@ -69,8 +36,8 @@ to become Custom engines in 1clic.
 Work with gearboxes, engine maker, etc.
 You should wire and link it again.
 
-*r105
--9.21 V3
+*r106
+-9.22 V3
 --Added Custom Mod Tips Menu
 --Added Turbocharger
 --Added Supercharger
