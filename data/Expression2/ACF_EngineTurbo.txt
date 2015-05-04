@@ -1,0 +1,187 @@
+@name ACF_EngineTurbo
+@inputs [Rpm Throttle]:number
+@outputs TqAdd MaxRpmAdd LimitRpmAdd 
+@persist [I Max]:number
+@persist [TSize CSize HSize TDistance Angle Speed Alpha N Divide]:number
+
+interval( 240 )
+
+if ( first() | dupefinished() ) {
+    
+    HSize = TSize = CSize = 0.75
+    OutputAngle = 20
+    TDistance = ( TSize * 8 ) * 0.75
+    Divide = 0.3 # Divide of the torque add
+        
+    I = 0
+    Max = 15
+    Speed = 0
+    
+    setName("ACF_EngineTurbo\nMade by Dave")
+    
+    entity():soundPlay(1,0,"acf_engines/turbine_small.wav")
+    entity():soundPlay(2,0,"acf_extra/vehiclefx/boost/tcl_turbo.wav")
+        
+}
+        
+if ( I < Max & holoCanCreate() ) {
+    
+    I++
+    holoCreate( I )
+        
+    holoPos(1, entity():toWorld(vec(0,0,TDistance/2)))
+    holoPos(2, entity():toWorld(vec(0,0,TDistance*0.75)))
+    holoPos(3, entity():toWorld(vec(4.5*CSize,4*CSize,TDistance/2)))
+    holoPos(4, entity():toWorld(vec(0,0,0)))
+    holoPos(5, entity():toWorld(vec(0,0,TDistance*0.3125)))
+    holoPos(6, entity():toWorld(vec(0,0,TDistance/-4)))
+    holoPos(7, entity():toWorld(vec(0,0,TDistance/-2)))
+    holoPos(8, entity():toWorld(vec(0,0,TDistance*-0.75)))
+    holoPos(9, entity():toWorld(vec(-4*TSize,3.5*TSize,TDistance/-2)))
+    holoPos(10, entity():toWorld(vec(-4*TSize,7*TSize,TDistance/-2)))
+    holoPos(11, entity():toWorld(vec(0,0,((-5.5)*CSize)+TDistance*0.525)))
+    holoPos(12, entity():toWorld(vec(0,0,((5.5)*CSize)+TDistance*-0.6875)))
+    holoPos(13, entity():toWorld(vec(0,0,0)))
+    holoPos(14,holoEntity(11):toWorld(vec(0,0,6*CSize)))
+    holoPos(15,holoEntity(12):toWorld(vec(0,0,6*CSize)))
+        
+    holoScale(1,vec(1.1,1.1,1.3)*CSize)
+    holoScale(2,vec(0.6,0.6,1.5)*CSize)
+    holoScale(3,vec(0.28,0.28,0.8)*CSize)
+    holoScale(4,vec(0.4*HSize,0.4*HSize,TDistance*0.0625))
+    holoScale(5,vec(0.8,0.8,0.05)*CSize)        
+    holoScale(6,vec(0.8,0.8,0.05*0.75)*TSize)
+    holoScale(7,vec(1,1,1.4*0.75)*TSize)
+    holoScale(8,vec(0.8,0.8,1.3*0.75)*TSize)
+    holoScale(9,vec(0.35,0.35*0.75,0.6)*TSize)
+    holoScale(10,vec(0.4,0.05,0.5*0.75)*TSize)
+    holoScale(11,vec(0.75,0.75,0.35)*CSize)
+    holoScale(12,vec(0.7,0.7,0.35)*TSize)
+    holoScale(13,vec(0.05,0.05,0.05))
+    holoScale(14,vec(0.1*CSize))
+    holoScale(15,vec(0.1*TSize))
+        
+    holoColor(1,vec(170,170,170))
+    holoColor(2,vec(170,170,170))
+    holoColor(3,vec(255,255,255))
+    holoColor(4,vec(20,20,20))
+    holoColor(5,vec(200,200,200))
+    holoColor(6,vec(200,200,200))
+    holoColor(7,vec(100,100,100))
+    holoColor(8,vec(100,100,100))
+    holoColor(9,vec(150,150,150))
+    holoColor(10,vec(150,150,150))
+    
+    
+        
+    holoAng(1,entity():toWorld(ang(0,0,0)))
+    holoAng(2,entity():toWorld(ang(0,0,0)))
+    holoAng(3,entity():toWorld(ang(0,0,90)))
+    holoAng(4,entity():toWorld(ang(0,0,0)))
+    holoAng(5,entity():toWorld(ang(0,0,0)))
+    holoAng(6,entity():toWorld(ang(0,0,0)))
+    holoAng(7,entity():toWorld(ang(0,0,0)))
+    holoAng(8,entity():toWorld(ang(0,0,0)))
+    holoAng(9,entity():toWorld(ang(0,0,90)))
+    holoAng(10,entity():toWorld(ang(0,0,0)))
+    holoAng(11,entity():toWorld(ang(0,0,0)))
+    holoAng(12,entity():toWorld(ang(180,0,0)))
+    holoAng(13,entity():toWorld(ang(0,0,0)))
+    
+    holoModel(1,"hq_torus_thick")
+    holoModel(2,"hq_torus")
+    holoModel(3,"hq_cylinder")
+    holoModel(4,"hq_cylinder")
+    holoModel(5,"hq_cylinder")
+    holoModel(6,"hq_cylinder")
+    holoModel(7,"hq_torus_thick")
+    holoModel(8,"hq_torus_thick")
+    holoModel(9,"hq_cylinder")
+    holoModel(10,"hq_square")
+    holoModel(11,"models/maxofs2d/thruster_propeller.mdl")
+    holoModel(12,"models/maxofs2d/thruster_propeller.mdl")
+    holoModel(13,"hq_square")
+    holoModel(14,"models/hunter/tubes/circle2x2.mdl")
+    holoModel(15,"models/hunter/tubes/circle2x2.mdl")
+        
+    holoMaterial(1,"phoenix_storms/fender_chrome")
+    holoMaterial(2,"phoenix_storms/fender_chrome")
+    holoMaterial(3,"phoenix_storms/fender_chrome")
+    holoMaterial(4,"phoenix_storms/gear")
+    holoMaterial(5,"phoenix_storms/gear")
+    holoMaterial(6,"phoenix_storms/fender_chrome")
+    holoMaterial(7,"phoenix_storms/fender_chrome")
+    holoMaterial(8,"phoenix_storms/fender_chrome")
+    holoMaterial(9,"phoenix_storms/fender_chrome")
+    holoMaterial(10,"phoenix_storms/fender_chrome")
+    holoMaterial(14,"phoenix_storms/trains/track_beamtop")
+    holoMaterial(15,"phoenix_storms/trains/track_beamtop")
+    
+    holoParent(1, entity())
+    holoParent(2, entity())
+    holoParent(3, holoEntity(13))
+    holoParent(4, entity())
+    holoParent(5, entity())
+    holoParent(6, entity())
+    holoParent(7, entity())
+    holoParent(8, entity())
+    holoParent(9, entity())
+    holoParent(10, entity())
+    holoParent(11, entity())
+    holoParent(12, entity())
+    holoParent(13, entity())
+    holoParent(14, holoEntity(11))
+    holoParent(15, holoEntity(12))
+    
+    holoClipEnabled(11,1)
+    holoClip(11,vec(0,0,6*CSize),vec(0,0,1),0)
+    holoClipEnabled(12,1)
+    holoClip(12,vec(0,0,6*CSize),vec(0,0,1),0)
+    
+    holoAng(13,entity():toWorld(ang(0,OutputAngle,0)))
+    
+}
+
+holoAng(11,entity():toWorld(ang(0,-Angle,0)))
+holoAng(12,entity():toWorld(ang(180,Angle,0)))
+Angle += Speed
+
+Acc = (Rpm * 20) - Speed
+Dcc = 100 + (Rpm * 20)
+
+Alpha = Speed / 160
+AlphaD = Speed / 160
+if ( Alpha > 180 ) { Alpha = 180 }
+if ( AlphaD > 240 ) { AlphaD = 240 }
+
+if ( Speed < Rpm * 20 ) { Speed += Acc / 2 }
+if ( Speed > Rpm * 20 ) { Speed -= Dcc / 10 }
+
+
+holoAlpha(14,Alpha)
+holoAlpha(15,Alpha)
+holoAlpha(11,255-AlphaD)
+holoAlpha(12,255-AlphaD)
+
+soundPitch(1,50*N+Rpm/35)
+soundVolume(1,CSize/7+Rpm/30000)
+soundPitch(2,50*N+Rpm/35)
+soundVolume(2,CSize/7+Rpm/20000)
+
+if ( ( changed( Throttle ) )  & ( !Throttle ) & ( Rpm > 6500 ) ) {
+    
+    entity():soundPlay(3,0,"acf_extra/vehiclefx/boost/turbo_pop_1.wav")
+    
+}
+if ( ( changed( Throttle ) )  & ( Throttle ) ) {
+    
+    soundVolume(3,0)
+    soundStop(3,1)
+    
+}
+
+N = Rpm > 300 ? 1 : 0
+TqAdd = round(Speed / (Divide * 1000)) * CSize
+MaxRpmAdd = round(Speed / 50) * CSize
+LimitRpmAdd = MaxRpmAdd
+if ( MaxRpmAdd > 1500 ) { MaxRpmAdd = 1500 }
