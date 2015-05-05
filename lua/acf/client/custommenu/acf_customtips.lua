@@ -53,7 +53,7 @@ local function CreateMenu()
 		TopLeftText = TopLeftText .. "--linking a tank add 25% torque and weight\n\n"
 		TopLeftText = TopLeftText .. "-When you stop a engine, it'll stop progressively\n\n"
 		TopLeftText = TopLeftText .. "-Selecting again EngineMaker in the menu make it updating values\n\n"
-		TopLeftText = TopLeftText .. "-Have Custom E2 functions \n\n"
+		TopLeftText = TopLeftText .. "-Have Custom E2 functions\n\n"
 		TopLeftText = TopLeftText .. "-Custom Mod have more sounds, more engines, and old models\n\n"
 		TopLeftText = TopLeftText .. "-The CVT from the custom mod are the first ACF CVT ever made\n\n"
 		TopLeftText = TopLeftText .. "-The Airplane Beta Gearbox are used to rotate and also push/pull\n"
