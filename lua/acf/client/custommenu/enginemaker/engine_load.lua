@@ -1,81 +1,65 @@
-// Made by Bouletmarc
+--------------------------------------
+--	Set vars
+--------------------------------------
+local MainPanel = nil
+--------------------------------------
+--	Create Menu
+--------------------------------------
+local function CreateMenu()
 
-local SoundBrowserPanel = nil
+	MainPanel = vgui.Create("DFrame")
+	MainPanel:SetSize(550, 450)
+	
+	MainPanel:SetPos((ScrW()/2)-(MainPanel:GetWide()/2),(ScrH()/2)-(MainPanel:GetTall()/2))
 
-local function CreateSoundBrowser()
-	--###########################################
-	--loading
-	local Redcolor = 0
-	local Greencolor = 0
-	local Bluecolor = 0
-	if file.Exists("acf/menucolor.txt", "DATA") then
-		local MenuColor = file.Read("acf/menucolor.txt")
-		local MenuColorTable = {}
-		for w in string.gmatch(MenuColor, "([^,]+)") do
-			table.insert(MenuColorTable, w)
-		end
-		Redcolor = tonumber(MenuColorTable[1])
-		Greencolor = tonumber(MenuColorTable[2])
-		Bluecolor = tonumber(MenuColorTable[3])
-	else
-		Redcolor = 0
-		Greencolor = 0
-		Bluecolor = 200
-	end
-	--###########################################
+	MainPanel:SetMinWidth(550)
+	MainPanel:SetMinHeight(450)
 
-	SoundBrowserPanel = vgui.Create("DFrame") // The main frame.
-	SoundBrowserPanel:SetSize(550, 450)
-	--Set Center
-	SoundBrowserPanel:SetPos((ScrW()/2)-(SoundBrowserPanel:GetWide()/2),(ScrH()/2)-(SoundBrowserPanel:GetTall()/2))
-
-	SoundBrowserPanel:SetMinWidth(550)
-	SoundBrowserPanel:SetMinHeight(450)
-
-	SoundBrowserPanel:SetSizable(false)
-	SoundBrowserPanel:SetDeleteOnClose( true )
-	SoundBrowserPanel:SetTitle("Engine Menu V8.1 - LOAD MENU")
-	SoundBrowserPanel:SetVisible(false)
-	SoundBrowserPanel:SetCookieName( "wire_sound_browser" )
-	SoundBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
-
-	--Button Panel
-	local ButtonsSidePanel = SoundBrowserPanel:Add("DPanel")
-	ButtonsSidePanel:DockMargin(5, 5, 5, 5)
-	ButtonsSidePanel:Dock(TOP)
-	ButtonsSidePanel:SetTall(430)
-	ButtonsSidePanel:SetWide(SoundBrowserPanel:GetWide())
-	ButtonsSidePanel:SetDrawBackground(false)
-		--#########################################################################
+	MainPanel:SetSizable(false)
+	MainPanel:SetDeleteOnClose( true )
+	MainPanel:SetTitle("Engine Menu V"..ACFCUSTOM.EngineMakerVersion.." - LOAD MENU")
+	MainPanel:SetVisible(false)
+	MainPanel:SetCookieName( "wire_sound_browser" )
+	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
+	--Add 2nd panel	
+	local SecondPanel = MainPanel:Add("DPanel")
+	SecondPanel:DockMargin(5, 5, 5, 5)
+	SecondPanel:Dock(TOP)
+	SecondPanel:SetTall(430)
+	SecondPanel:SetWide(MainPanel:GetWide())
+	SecondPanel:SetDrawBackground(false)
+	--------------------------------------
+	--	2nd Panel Menu
+	--------------------------------------
 		--text 
-		SaveText1 = ButtonsSidePanel:Add("DLabel")
+		SaveText1 = SecondPanel:Add("DLabel")
 		SaveText1:SetText("Load Menu")
-		SaveText1:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		SaveText1:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		SaveText1:SetPos(245,20)
 		SaveText1:SetFont( "DefaultBold" )
 		SaveText1:SizeToContents()
 		
 		--button
-		BackButton	= ButtonsSidePanel:Add("DButton")
+		BackButton	= SecondPanel:Add("DButton")
 		BackButton:SetText("Back")
-		BackButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		BackButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		BackButton:SetPos(60,320)
 		BackButton:SetWide(80)
 		BackButton:SetTall(60)
 		BackButton.DoClick = function()
-			RunConsoleCommand("acf_enginestart_browser_open")
-			SoundBrowserPanel:Close()
+			RunConsoleCommand("acf_enginestart_open")
+			MainPanel:Close()
 		end
 		
 		ExitButtonMode = 0
-		ExitButton	= ButtonsSidePanel:Add("DButton")
+		ExitButton	= SecondPanel:Add("DButton")
 		ExitButton:SetText("Close")
-		ExitButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		ExitButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		ExitButton:SetPos(230,320)
 		ExitButton:SetWide(100)
 		ExitButton:SetTall(60)
 		ExitButton.DoClick = function()
-			SoundBrowserPanel:Close()
+			MainPanel:Close()
 			if ExitButtonMode == 1 then
 				notification.AddLegacy("Dont forget to Update Engine Maker", NOTIFY_HINT, 5)
 				local CustomEngineTable = {}
@@ -105,27 +89,12 @@ local function CreateSoundBrowser()
 				txt = txt ..EngineSizeLoadT..","..EngineTypeLoadText..","..iSelectLoad..","..IsTransLoad..","..FlywheelOverLoad
 				file.CreateDir("acf")
 				file.Write("acf/lastengine.txt", txt)
-				RunConsoleCommand( "acfcustom_data1", NameLoad )
-				RunConsoleCommand( "acf_menudata2", SoundLoad )
-				RunConsoleCommand( "acf_menudata3", ModelLoad )
-				RunConsoleCommand( "acf_menudata4", FuelTypeLoad )
-				RunConsoleCommand( "acf_menudata5", EngineTypeLoad )
-				RunConsoleCommand( "acfcustom_data6", TorqueLoad )
-				RunConsoleCommand( "acfcustom_data7", IdleLoad )
-				RunConsoleCommand( "acfcustom_data8", PeakMinLoad )
-				RunConsoleCommand( "acfcustom_data9", PeakMaxLoad )
-				RunConsoleCommand( "acfcustom_data10", LimitRpmLoad )
-				RunConsoleCommand( "acfcustom_data11", FlywheelLoad )
-				RunConsoleCommand( "acfcustom_data12", WeightLoad )
-				RunConsoleCommand( "acfcustom_data13", iSelectLoad )
-				RunConsoleCommand( "acfcustom_data14", IsTransLoad )
-				RunConsoleCommand( "acfcustom_data15", FlywheelOverLoad )
 			end
 		end
 		
-		NextButton	= ButtonsSidePanel:Add("DButton")
+		NextButton	= SecondPanel:Add("DButton")
 		NextButton:SetText("Edit Engine")
-		NextButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		NextButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		NextButton:SetPos(400,320)
 		NextButton:SetWide(80)
 		NextButton:SetTall(60)
@@ -159,30 +128,15 @@ local function CreateSoundBrowser()
 				txt = txt ..EngineSizeLoadT..","..EngineTypeLoadText..","..iSelectLoad..","..IsTransLoad..","..FlywheelOverLoad
 				file.CreateDir("acf")
 				file.Write("acf/lastengine.txt", txt)
-				RunConsoleCommand( "acfcustom_data1", NameLoad )
-				RunConsoleCommand( "acf_menudata2", SoundLoad )
-				RunConsoleCommand( "acf_menudata3", ModelLoad )
-				RunConsoleCommand( "acf_menudata4", FuelTypeLoad )
-				RunConsoleCommand( "acf_menudata5", EngineTypeLoad )
-				RunConsoleCommand( "acfcustom_data6", TorqueLoad )
-				RunConsoleCommand( "acfcustom_data7", IdleLoad )
-				RunConsoleCommand( "acfcustom_data8", PeakMinLoad )
-				RunConsoleCommand( "acfcustom_data9", PeakMaxLoad )
-				RunConsoleCommand( "acfcustom_data10", LimitRpmLoad )
-				RunConsoleCommand( "acfcustom_data11", FlywheelLoad )
-				RunConsoleCommand( "acfcustom_data12", WeightLoad )
-				RunConsoleCommand( "acfcustom_data13", iSelectLoad )
-				RunConsoleCommand( "acfcustom_data14", IsTransLoad )
-				RunConsoleCommand( "acfcustom_data15", FlywheelOverLoad )
 				
-				RunConsoleCommand("acf_enginecreateload_browser_open")
-				SoundBrowserPanel:Close()
+				RunConsoleCommand("acf_enginecreateload_open")
+				MainPanel:Close()
 			end
 		end
 		
 		
-		DermaListView = ButtonsSidePanel:Add("DListView")
-		DermaListView:SetParent(ButtonsSidePanel)
+		DermaListView = SecondPanel:Add("DListView")
+		DermaListView:SetParent(SecondPanel)
 		DermaListView:SetPos(20, 50)
 		DermaListView:SetSize(160, 250)
 		DermaListView:SetMultiSelect(false)
@@ -192,14 +146,14 @@ local function CreateSoundBrowser()
 			DermaListView:AddLine(tostring(file))
 		end
 		
-		DermaListViewSpec = ButtonsSidePanel:Add("DListView")
-		DermaListViewSpec:SetParent(ButtonsSidePanel)
+		DermaListViewSpec = SecondPanel:Add("DListView")
+		DermaListViewSpec:SetParent(SecondPanel)
 		DermaListViewSpec:SetPos(200, 50)
 		DermaListViewSpec:SetSize(160, 250)
 		DermaListViewSpec:SetMultiSelect(false)
 		DermaListViewSpec:AddColumn("Engines Infos")
 		
-		DisplayModel = ButtonsSidePanel:Add("DModelPanel")
+		DisplayModel = SecondPanel:Add("DModelPanel")
 		DisplayModel:SetModel( "" )
 		DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
 		DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
@@ -230,25 +184,26 @@ local function CreateSoundBrowser()
 			end
 		end
 
-	SoundBrowserPanel:InvalidateLayout(true)
+	MainPanel:InvalidateLayout(true)
 	
 end
-
-local function OpenSoundBrowser(pl, cmd, args)
-	if (!IsValid(SoundBrowserPanel)) then
-		CreateSoundBrowser()
+--------------------------------------
+--	Open Menu
+--------------------------------------
+local function OpenMenu(pl, cmd, args)
+	if (!IsValid(MainPanel)) then
+		CreateMenu()
 	end
 
-	SoundBrowserPanel:SetVisible(true)
-	SoundBrowserPanel:MakePopup()
-	SoundBrowserPanel:InvalidateLayout(true)
+	MainPanel:SetVisible(true)
+	MainPanel:MakePopup()
+	MainPanel:InvalidateLayout(true)
 
-	WireLib.Timedcall(function(SoundBrowserPanel)
-		if (!IsValid(SoundBrowserPanel)) then return end
+	WireLib.Timedcall(function(MainPanel)
+		if (!IsValid(MainPanel)) then return end
 
-		SoundBrowserPanel:InvalidateLayout(true)
+		MainPanel:InvalidateLayout(true)
 		
-	end, SoundBrowserPanel)
+	end, MainPanel)
 end
-
-concommand.Add("acf_engineload_browser_open", OpenSoundBrowser)
+concommand.Add("acf_engineload_open", OpenMenu)

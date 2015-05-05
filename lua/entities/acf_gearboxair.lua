@@ -6,6 +6,7 @@ ENT.PrintName = "ACF Gearbox AIR"
 ENT.WireDebugName = "ACF Gearbox AIR"
 
 if CLIENT then
+
 	function ACFGearboxAirGUICreate( Table )
 			
 		acfmenupanelcustom:CPanelText("Name", Table.name)
@@ -44,7 +45,7 @@ function ENT:Initialize()
 	self.LBrake = 0
 	self.RBrake = 0
 
-	self.GearRatio = 1 --set to 1 because its not cutting other gearbox ratio's
+	self.GearRatio = 1
 	self.PropellerRpm = 0
 	
 	self.LegalThink = 0
@@ -103,7 +104,7 @@ function MakeACF_GearboxAIR(Owner, Pos, Angle, Id)
 	
 	GearboxAIR:SetBodygroup(1, 0)
 	
-	GearboxAIR:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
+	GearboxAIR:SetNWString( "WireName", List.MobilityCustom[Id].name )
 	GearboxAIR:UpdateOverlayText()
 	--GearboxAIR:SetModelScaling()
 		
@@ -140,7 +141,7 @@ function ENT:Update( ArgsTable )
 	
 	self:SetBodygroup(1, 0)
 	
-	self:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
+	self:SetNWString( "WireName", List.MobilityCustom[Id].name )
 	self:UpdateOverlayText()
 	
 	return true, "AIR Gearbox updated successfully!"
@@ -285,7 +286,7 @@ function ENT:Calc( InputRPM, InputInertia, GetRatio )
 	return math.min( self.TotalReqTq, self.MaxTorque )
 end
 
-function ENT:Act( Torque, DeltaTime )
+function ENT:Act( Torque, DeltaTime, MassRatio )
 	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
@@ -307,7 +308,7 @@ function ENT:Act( Torque, DeltaTime )
 	
 	local BoxPhys = self:GetPhysicsObject()
 	if IsValid( BoxPhys ) and ReactTq ~= 0 then	
-		local Force = self:GetForward() * ReactTq - self:GetForward()
+		local Force = self:GetForward() * ReactTq * MassRatio - self:GetForward()
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp() * -39.37 )
 		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp() * 39.37 )
 	end

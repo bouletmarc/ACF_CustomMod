@@ -105,7 +105,7 @@ function MakeACF_Rads(Owner, Pos, Angle, Id)
 	Owner:AddCount("_acf_rads", Rads)
 	Owner:AddCleanup( "acfcustom", Rads )
 	
-	Rads:SetNetworkedString( "WireName", Lookup.name )
+	Rads:SetNWString( "WireName", Lookup.name )
 	Rads:UpdateOverlayText()
 		
 	return Rads
@@ -140,7 +140,7 @@ function ENT:Update( ArgsTable )
 		phys:SetMass( self.Weight ) 
 	end
 	
-	self:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNWString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	
 	return true, "Radiator updated successfully!"

@@ -1,5 +1,7 @@
 
-TOOL.Category		= "Construction"
+local cat = ((ACFCUSTOM.CustomToolCategory and ACFCUSTOM.CustomToolCategory:GetBool()) and "ACF" or "Construction");
+
+TOOL.Category		= cat
 TOOL.Name			= "#Tool.acfsoundcustom.name"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""

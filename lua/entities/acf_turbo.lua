@@ -171,7 +171,7 @@ function MakeACF_Turbo(Owner, Pos, Angle, Id, Data1, Data2)
 	Owner:AddCount("_acf_turbo", Turbo)
 	Owner:AddCleanup( "acfmenu", Turbo )
 	
-	Turbo:SetNetworkedString( "WireName", Lookup.name )
+	Turbo:SetNWString( "WireName", Lookup.name )
 	Turbo:UpdateOverlayText()
 	Turbo:SetWireOutputs()
 		
@@ -215,7 +215,7 @@ function ENT:Update( ArgsTable )
 	local OutputsTypes = {"NORMAL"}
 	self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputsTypes )
 	
-	self:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNWString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	self:SetWireOutputs()
 	

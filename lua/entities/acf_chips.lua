@@ -236,7 +236,7 @@ function MakeACF_Chips(Owner, Pos, Angle, Id, Data1, Data2, Data3)
 	Owner:AddCount("_acf_chips", Chips)
 	Owner:AddCleanup( "acfmenu", Chips )
 	
-	Chips:SetNetworkedString( "WireName", Lookup.name )
+	Chips:SetNWString( "WireName", Lookup.name )
 	Chips:UpdateOverlayText()
 	Chips:SetWireOutputs()
 		
@@ -303,7 +303,7 @@ function ENT:Update( ArgsTable )
 	self.Inputs = Wire_CreateInputs( self, Inputs )
 	self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputsTypes )
 	
-	self:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNWString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	self:SetWireOutputs()
 	

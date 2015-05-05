@@ -5,6 +5,8 @@ E2Helper.Descriptions["acfCustomActive"] = "Gets/sets Active (0-1) for an ACF Cu
 E2Helper.Descriptions["acfCustomNameShort"] = "Returns the short name of an ACF Custom entity."
 E2Helper.Descriptions["acfCustomName"] = "Returns the full name of an ACF Custom entity."
 E2Helper.Descriptions["acfCustomType"] = "Returns the type of ACF Custom entity."
+E2Helper.Descriptions["acfCustomLinkTo"] = "Link various ACF components together."
+E2Helper.Descriptions["acfCustomUnlinkFrom"] = "Unlink various ACF components."
 E2Helper.Descriptions["acfCustomInfoRestricted"] = "Returns 1 if functions returning sensitive info are restricted to owned props."
 E2Helper.Descriptions["acfCustomLinks"] = "Returns all the entities which are linked to this entity through ACF Custom."
 

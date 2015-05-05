@@ -144,7 +144,7 @@ function MakeACF_Nos(Owner, Pos, Angle, Id, Data1)
 	Wire_TriggerOutput(Nos.Entity, "Usable", Nos.UsableNos)
 	Wire_TriggerOutput(Nos.Entity, "Active", Nos.ActiveChips2)
 	
-	Nos:SetNetworkedString( "WireName", Lookup.name )
+	Nos:SetNWString( "WireName", Lookup.name )
 	Nos:UpdateOverlayText()
 		
 	return Nos
@@ -191,7 +191,7 @@ function ENT:Update( ArgsTable )
 	Wire_TriggerOutput(self, "Usable", self.UsableNos)
 	Wire_TriggerOutput(self, "Active", self.ActiveChips2)
 	
-	self:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNWString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	
 	return true, "Nos updated successfully!"

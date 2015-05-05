@@ -222,14 +222,6 @@ function ENT:Initialize()
 	self.RBrake = 0
 	self.SteerRate = 0
 	
-	--########################
-	self.OnReverse = 0
-	self.Usable = 1
-	self.AllowChange = 0
-	self.ClutchMode = 0
-	self.ClutchModeUse = 0
-	--########################
-	
 	self.GearRatio = 0
 	self.ChangeFinished = 0
 	
@@ -243,6 +235,12 @@ function ENT:Initialize()
 	self.CanUpdate = true
 	self.LastActive = 0
 	self.Legal = true
+	
+	self.OnReverse = 0
+	self.Usable = 1
+	self.AllowChange = 0
+	self.ClutchMode = 0
+	self.ClutchModeUse = 0
 	
 end  
 
@@ -293,13 +291,11 @@ function MakeACF_GearboxAuto(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 				
 	GearboxAuto:SetModel( GearboxAuto.Model )
 	
-	--############################
 	--Convert to number
 	GearboxAuto.DeclutchRpm = tonumber(GearboxAuto.Gear7)
 	GearboxAuto.RpmDown = tonumber(GearboxAuto.Gear8)
 	GearboxAuto.RpmUp = tonumber(GearboxAuto.Gear9)
 	GearboxAuto.ReverseGear = GearboxAuto.Gears
-	--############################ 
 	
 	local Inputs = {"Reverse"}
 	if GearboxAuto.Dual then
@@ -347,7 +343,7 @@ function MakeACF_GearboxAuto(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		GearboxAuto:SetBodygroup(1, 0)
 	end
 	
-	GearboxAuto:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
+	GearboxAuto:SetNWString( "WireName", List.MobilityCustom[Id].name )
 	GearboxAuto:UpdateOverlayText()
 		
 	return GearboxAuto
@@ -425,13 +421,11 @@ function ENT:Update( ArgsTable )
 	self.Gear8 = ArgsTable[12]
 	self.Gear9 = ArgsTable[13]
 	
-	--############################ 
 	--Convert to number
 	self.DeclutchRpm = tonumber(self.Gear7)
 	self.RpmDown = tonumber(self.Gear8)
 	self.RpmUp = tonumber(self.Gear9)
 	self.ReverseGear = self.Gears
-	--############################ 
 	
 	self.Gear = 1
 	self:ChangeGear(1)
@@ -442,7 +436,7 @@ function ENT:Update( ArgsTable )
 		self:SetBodygroup(1, 0)
 	end	
 	
-	self:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
+	self:SetNWString( "WireName", List.MobilityCustom[Id].name )
 	self:UpdateOverlayText()
 	
 	return true, "GearboxAuto updated successfully!"
@@ -595,7 +589,6 @@ function ENT:Calc( InputRPM, InputInertia )
 			self.RClutch = math.Clamp(1-0,0,1)*self.MaxTorque
 		end
 	end
-	--#################################################################################################
 	--increase
 	if self.OnReverse == 0 then
 		if InputRPM >= self.RpmUp then
@@ -604,20 +597,20 @@ function ENT:Calc( InputRPM, InputInertia )
 			elseif self.Gear > self.Gears-1 then
 				self:ChangeGear(math.floor(self.Gears-1)) --not Allow reverse
 			end
-		--decrease
-		elseif InputRPM <= self.RpmDown then
+	--decrease
+	elseif InputRPM <= self.RpmDown then
 			if self.Gear > 1 then
 				self:ChangeGear(math.floor(self.Gear - 1))
 			elseif self.Gear < 1 then
 				self:ChangeGear(math.floor(1))
 			end
 		end
-	else --Reverse
+	--Reverse
+	else
 		if self.Gear != self.ReverseGear then
 			self:ChangeGear(math.floor(self.ReverseGear))
 		end
 	end
-	--####################################################################################################
 	
 	for Key, Link in pairs( self.WheelLink ) do
 		if not IsValid( Link.Ent ) then
@@ -653,7 +646,6 @@ function ENT:Calc( InputRPM, InputInertia )
 	end
 			
 	return math.min( self.TotalReqTq, self.MaxTorque )
-	
 end
 
 function ENT:CalcWheel( Link, SelfWorld )
@@ -668,11 +660,9 @@ function ENT:CalcWheel( Link, SelfWorld )
 	
 	-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
 	return BaseRPM / self.GearRatio / -6
-	
 end
 
-function ENT:Act( Torque, DeltaTime )
-	
+function ENT:Act( Torque, DeltaTime, MassRatio )
 	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
@@ -681,7 +671,6 @@ function ENT:Act( Torque, DeltaTime )
 	end
 	
 	for Key, Link in pairs( self.WheelLink ) do
-		
 		local Brake = 0
 		if Link.Side == 0 then
 			Brake = self.LBrake
@@ -690,23 +679,21 @@ function ENT:Act( Torque, DeltaTime )
 		end
 		
 		if Link.Ent.IsGeartrain then
-			Link.Ent:Act( Link.ReqTq * AvailTq, DeltaTime )
+			Link.Ent:Act( Link.ReqTq * AvailTq, DeltaTime, MassRatio )
 		else
 			self:ActWheel( Link, Link.ReqTq * AvailTq, Brake, DeltaTime )
 			ReactTq = ReactTq + Link.ReqTq * AvailTq
 		end
-		
 	end
 	
 	local BoxPhys = self:GetPhysicsObject()
 	if IsValid( BoxPhys ) and ReactTq ~= 0 then	
-		local Force = self:GetForward() * ReactTq - self:GetForward()
+		local Force = self:GetForward() * ReactTq * MassRatio - self:GetForward()
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp() * -39.37 )
 		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp() * 39.37 )
 	end
 	
 	self.LastActive = CurTime()
-	
 end
 
 function ENT:ActWheel( Link, Torque, Brake, DeltaTime )

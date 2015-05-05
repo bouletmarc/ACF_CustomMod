@@ -1,5 +1,4 @@
 E2Lib.RegisterExtension("acfcustom", true)
-CreateConVar("sbox_acfcustom_e2restrictinfo", 1) -- 0=any, 1=owned
 
 -- [ Helper Functions ] --
 
@@ -33,14 +32,14 @@ __e2setcost( 1 )
 
 -- Returns 1 if functions returning sensitive info are restricted to owned props
 e2function number acfCustomInfoRestricted()
-	return GetConVar("sbox_acfcustom_e2restrictinfo"):GetInt() or 0
+	return GetConVar("sbox_acfcustom_restrictinfo"):GetInt() or 0
 end
 
 -- Returns the short name of an ACF entity
 e2function string entity:acfCustomNameShort()
 	if isEngine(this) then return this.Id or "" end
 	if isGearbox(this) then return this.Id or "" end
-	if isChips(this) then return this.this.Id or "" end
+	if isChips(this) then return this.Id or "" end
 	return ""
 end
 
@@ -59,7 +58,6 @@ e2function void entity:acfCustomActive( number on )
 	this:TriggerInput("Active", on)	
 end
 
-
 local linkTables =
 { -- link resources within each ent type.  should point to an ent: true if adding link.Ent, false to add link itself
 	acf_engine_custom 		= {GearLink = true, FuelLink = false},
@@ -71,9 +69,7 @@ local linkTables =
 	acf_nos			= {Master = false}
 }
 
-
 local function getLinks(ent, enttype)
-	
 	local ret = {}
 	-- find the link resources available for this ent type
 	for entry, mode in pairs(linkTables[enttype]) do
@@ -87,7 +83,6 @@ local function getLinks(ent, enttype)
 	
 	return ret
 end
-
 
 local function searchForGearboxLinks(ent)
 	local boxes = ents.FindByClass("acf_gearbox")
@@ -132,11 +127,9 @@ local function searchForGearboxLinks(ent)
 	return ret
 end
 
-
 __e2setcost( 20 )
 
 e2function array entity:acfCustomLinks()
-	
 	if not IsValid(this) then return {} end
 	
 	local enttype = this:GetClass()
@@ -146,10 +139,7 @@ e2function array entity:acfCustomLinks()
 	end
 	
 	return getLinks(this, enttype)
-	
 end
-
-
 
 __e2setcost( 2 )
 
@@ -173,9 +163,40 @@ e2function string entity:acfCustomType()
 	return ""
 end
 
+--allows e2 to perform ACF links
+e2function number entity:acfCustomLinkTo(entity target, number notify)
+	if not ((isEngine(this) or isGearbox(this)) or isChips(this) and (isOwner(self, this) and isOwner(self, target))) then
+		if notify > 0 then
+			ACFCUSTOM_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+		end
+		return 0
+	end
+    
+    local success, msg = this:Link(target)
+    if notify > 0 then
+        ACFCUSTOM_SendNotify(self.player, success, msg)
+    end
+    return success and 1 or 0
+end
+
+--allows e2 to perform ACF unlinks
+e2function number entity:acfCustomUnlinkFrom(entity target, number notify)
+	if not ((isEngine(this) or isGearbox(this)) or isChips(this) and (isOwner(self, this) and isOwner(self, target))) then
+		if notify > 0 then
+			ACFCUSTOM_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+		end
+		return 0
+	end
+    
+    local success, msg = this:Unlink(target)
+    if notify > 0 then
+        ACFCUSTOM_SendNotify(self.player, success, msg)
+    end
+    return success and 1 or 0
+end
+
 
 -- [ Engine Functions ] --
-
 
 __e2setcost( 1 )
 

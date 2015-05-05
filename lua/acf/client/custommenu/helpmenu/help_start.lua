@@ -1,119 +1,101 @@
-// Made by Bouletmarc.
-
-local StartBrowserPanel = nil
-
-local function CreateSoundBrowser()
-	--###########################################
-	--loading
-	local Redcolor = 0
-	local Greencolor = 0
-	local Bluecolor = 0
-	if file.Exists("acf/menucolor.txt", "DATA") then
-		local MenuColor = file.Read("acf/menucolor.txt")
-		local MenuColorTable = {}
-		for w in string.gmatch(MenuColor, "([^,]+)") do
-			table.insert(MenuColorTable, w)
-		end
-		Redcolor = tonumber(MenuColorTable[1])
-		Greencolor = tonumber(MenuColorTable[2])
-		Bluecolor = tonumber(MenuColorTable[3])
-	else
-		Redcolor = 0
-		Greencolor = 0
-		Bluecolor = 200
-	end
-	--###########################################
-
-	StartBrowserPanel = vgui.Create("DFrame") // The main frame.
-	StartBrowserPanel:SetSize(250, 400)
+--------------------------------------
+--	Set vars
+--------------------------------------
+local MainPanel = nil
+--------------------------------------
+--	Create Menu
+--------------------------------------
+local function CreateMenu()
+	--Set frame
+	MainPanel = vgui.Create("DFrame")
+	MainPanel:SetSize(250, 400)
 	--Set Center
-	StartBrowserPanel:SetPos((ScrW()/2)-(StartBrowserPanel:GetWide()/2),(ScrH()/2)-(StartBrowserPanel:GetTall()/2))
-
-	StartBrowserPanel:SetMinWidth(250)
-	StartBrowserPanel:SetMinHeight(400)
-	
-	StartBrowserPanel:SetSizable(false)
-	StartBrowserPanel:SetDeleteOnClose( false )
-	StartBrowserPanel:SetTitle("ACF Help Menu")
-	StartBrowserPanel:SetVisible(false)
-	StartBrowserPanel:SetCookieName( "wire_sound_browser" )
-	StartBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
-	
-	local ButtonsSidePanel = StartBrowserPanel:Add("DPanel")
-	ButtonsSidePanel:DockMargin(4, 4, 4, 4)
-	ButtonsSidePanel:Dock(TOP)
-	ButtonsSidePanel:SetSize(230, 360)
-	ButtonsSidePanel:SetDrawBackground(false)
-	--#############################################################
-		SVNText1 = ButtonsSidePanel:Add("DLabel")
-		SVNText1:SetText("First make sure you have \n   ACF Custom Installed. \n\n          Here the SVN :")
-		SVNText1:SetTextColor(Color(0,255,0,255))
-		SVNText1:SetPos(45,20)
-		SVNText1:SetFont( "DefaultBold" )
-		SVNText1:SizeToContents()
-		
-		SVNText2 = ButtonsSidePanel:Add( "DTextEntry" )
-		SVNText2:SetText( "https://github.com/bouletmarc/ACF_CustomMod/trunk" )
-		SVNText2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		SVNText2:SetPos( 10,80 )
-		SVNText2:SetWide( 220 )
-		SVNText2.OnTextChanged = function( )
-			if SVNText2:GetValue() != "https://github.com/bouletmarc/ACF_CustomMod/trunk" then
-				SVNText2:SetText( "https://github.com/bouletmarc/ACF_CustomMod/trunk" )
+	MainPanel:SetPos((ScrW()/2)-(MainPanel:GetWide()/2),(ScrH()/2)-(MainPanel:GetTall()/2))
+	--Set size
+	MainPanel:SetMinWidth(250)
+	MainPanel:SetMinHeight(400)
+	--Set options
+	MainPanel:SetSizable(false)
+	MainPanel:SetDeleteOnClose( false )
+	MainPanel:SetTitle("ACF Help Menu")
+	MainPanel:SetVisible(false)
+	MainPanel:SetCookieName( "wire_sound_browser" )
+	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
+	--Add 2nd panel
+	local SecondPanel = MainPanel:Add("DPanel")
+	SecondPanel:DockMargin(4, 4, 4, 4)
+	SecondPanel:Dock(TOP)
+	SecondPanel:SetSize(230, 360)
+	SecondPanel:SetDrawBackground(false)
+	--------------------------------------
+	--	2nd Panel Menu
+	--------------------------------------
+		--Set local vars
+		local Text1, Text3 = SecondPanel:Add("DLabel"), SecondPanel:Add("DLabel")
+		local Text2 = SecondPanel:Add( "DTextEntry" )
+		local Copy, Help = SecondPanel:Add("DButton"), SecondPanel:Add("DButton")
+		--Set Text1
+		Text1:SetText("First make sure you have \n   ACF Custom Installed. \n\n          Here the SVN :")
+		Text1:SetTextColor(Color(0,255,0,255))
+		Text1:SetPos(45,20)
+		Text1:SetFont( "DefaultBold" )
+		Text1:SizeToContents()
+		--Set Text2
+		Text2:SetText( "https://github.com/bouletmarc/ACF_CustomMod/trunk" )
+		Text2:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		Text2:SetPos( 10,80 )
+		Text2:SetWide( 220 )
+		Text2.OnTextChanged = function( )
+			if Text2:GetValue() != "https://github.com/bouletmarc/ACF_CustomMod/trunk" then
+				Text2:SetText( "https://github.com/bouletmarc/ACF_CustomMod/trunk" )
 			end
 		end
-		
-		SVNCopy = ButtonsSidePanel:Add("DButton")
-		SVNCopy:SetText("Copy SVN link")
-		SVNCopy:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		SVNCopy:SetPos( 65, 110 )
-		SVNCopy:SetWide(ButtonsSidePanel:GetWide() / 2.2 - 2.2)
-		SVNCopy:SetTall( 30 )
-		SVNCopy.DoClick = function()
+		--Set Copy Button
+		Copy:SetText("Copy SVN link")
+		Copy:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		Copy:SetPos( 65, 110 )
+		Copy:SetWide(SecondPanel:GetWide() / 2.2 - 2.2)
+		Copy:SetTall( 30 )
+		Copy.DoClick = function()
 			SetClipboardText("https://github.com/bouletmarc/ACF_CustomMod/trunk")
 		end
-		
-		HelpHormal = ButtonsSidePanel:Add("DButton")
-		HelpHormal:SetText("Help me with ACF")
-		HelpHormal:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
-		HelpHormal:SetPos( 20, 170 )
-		HelpHormal:SetWide(ButtonsSidePanel:GetWide() / 1.2 - 1.2)
-		HelpHormal:SetTall( 40 )
-		HelpHormal.DoClick = function()
-			RunConsoleCommand("acf_help1_browser_open")
-			StartBrowserPanel:Close()
+		--Set Help Button
+		Help:SetText("Help me with ACF")
+		Help:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		Help:SetPos( 20, 170 )
+		Help:SetWide(SecondPanel:GetWide() / 1.2 - 1.2)
+		Help:SetTall( 40 )
+		Help.DoClick = function()
+			RunConsoleCommand("acf_help1_open")
+			MainPanel:Close()
 		end
-		
-		BMText1 = ButtonsSidePanel:Add("DLabel")
-		BMText1:SetText("Made by Bouletmarc\n      (B0ul3Tm@rc)")
-		BMText1:SetTextColor(Color(0,255,0,255))
-		BMText1:SetPos(60,320)
-		BMText1:SetFont( "DefaultBold" )
-		BMText1:SizeToContents()
-		
-	StartBrowserPanel.OnClose = function()
+		--Set Owner
+		Text3:SetText("Made by Bouletmarc\n      (B0ul3Tm@rc)")
+		Text3:SetTextColor(Color(0,255,0,255))
+		Text3:SetPos(60,320)
+		Text3:SetFont( "DefaultBold" )
+		Text3:SizeToContents()
 
-	end
-
-	StartBrowserPanel:InvalidateLayout(true)
+	MainPanel:InvalidateLayout(true)
 	
 end
-
-local function OpenSartBrowser(pl, cmd, args)
-	if (!IsValid(StartBrowserPanel)) then
-		CreateSoundBrowser()
+--------------------------------------
+--	Open Menu
+--------------------------------------
+local function OpenMenu(pl, cmd, args)
+	if (!IsValid(MainPanel)) then
+		CreateMenu()
 	end
 
-	StartBrowserPanel:SetVisible(true)
-	StartBrowserPanel:MakePopup()
-	StartBrowserPanel:InvalidateLayout(true)
+	MainPanel:SetVisible(true)
+	MainPanel:MakePopup()
+	MainPanel:InvalidateLayout(true)
 
-	WireLib.Timedcall(function(StartBrowserPanel)
-		if (!IsValid(StartBrowserPanel)) then return end
+	WireLib.Timedcall(function(MainPanel)
+		if (!IsValid(MainPanel)) then return end
 
-		StartBrowserPanel:InvalidateLayout(true)
+		MainPanel:InvalidateLayout(true)
 
-	end, StartBrowserPanel)
+	end, MainPanel)
 end
-
-concommand.Add("acf_help_browser_open", OpenSartBrowser)
+concommand.Add("acf_help_open", OpenMenu)

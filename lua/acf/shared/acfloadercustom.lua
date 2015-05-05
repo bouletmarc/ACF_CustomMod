@@ -1,12 +1,13 @@
-
--- This loads the files in the engine, gearbox, fuel, and gun folders!
--- Go edit those files instead of this one.
-
+--------------------------------------
+--	Initialize
+--------------------------------------
 AddCSLuaFile()
 
 local MobilityTable = {}
-
--- setup base classes
+--------------------------------------
+--	Setup classes
+--------------------------------------
+--custom engines
 local enginecustom_base = {
 	ent = "acf_engine_custom",
 	type = "MobilityCustom"
@@ -59,10 +60,9 @@ local supercharger_base = {
 	ent = "acf_supercharger",
 	type = "MobilityCustom"
 }
-
---##############################
---##		set gui			####
---##############################
+--------------------------------------
+--	Setup GUI
+--------------------------------------
 if CLIENT then
 	enginecustom_base.guicreate = function( panel, tbl ) ACFEngineCustomGUICreate( tbl ) end or nil
 	enginecustom_base.guiupdate = function() return end
@@ -94,10 +94,9 @@ if CLIENT then
 	supercharger_base.guicreate = function( panel, tbl ) ACFSuperchargerGUICreate( tbl ) end or nil
 	supercharger_base.guiupdate = function() return end
 end
-
---##############################
---##	define functions	####
---##############################
+--------------------------------------
+--	Setup Functions
+--------------------------------------
 function ACF_DefineEngine( id, data )
 	data.id = id
 	table.Inherit( data, enginecustom_base )
@@ -157,12 +156,20 @@ function ACF_DefineSupercharger( id, data )
 	table.Inherit( data, supercharger_base )
 	MobilityTable[ id ] = data
 end
-
---##############################
---##	search and load		####
---##############################
-local engines = file.Find( "acf/shared/enginescustom/*.lua", "LUA" )
+-------------------------------------
+--	Search&Load
+--------------------------------------
+--Original Engines
+local engines = file.Find( "acf/shared/engines/*.lua", "LUA" )
 for k, v in pairs( engines ) do
+	if v != "electric.lua" or v != "special.lua" or v != "turbine.lua" then
+		AddCSLuaFile( "acf/shared/engines/" .. v )
+		include( "acf/shared/engines/" .. v )
+	end
+end
+--Custom Engines
+local customengines = file.Find( "acf/shared/enginescustom/*.lua", "LUA" )
+for k, v in pairs( customengines ) do
 	AddCSLuaFile( "acf/shared/enginescustom/" .. v )
 	include( "acf/shared/enginescustom/" .. v )
 end
@@ -172,6 +179,7 @@ for k, v in pairs( custom ) do
 	AddCSLuaFile( "acf/shared/customs/" .. v )
 	include( "acf/shared/customs/" .. v )
 end
-
--- now that the mobility table is populated, throw it in the acf ents list
+--------------------------------------
+--	Setup list
+--------------------------------------
 list.Set( "ACFCUSTOMEnts", "MobilityCustom", MobilityTable )

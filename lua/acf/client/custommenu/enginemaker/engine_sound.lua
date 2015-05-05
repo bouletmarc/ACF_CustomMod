@@ -1,7 +1,8 @@
-// Made by Bouletmarc
-
+--------------------------------------
+--	Set vars
+--------------------------------------
 local max_char_count = 200
-local SoundBrowserPanel = nil
+local MainPanel = nil
 local TabFileBrowser = nil
 local SoundObj = nil
 local SoundObjNoEffect = nil
@@ -117,7 +118,7 @@ end
 end
 
 local function SetupSoundemitter(strSound)
-	RunConsoleCommand("acf_menudata2", strSound)
+	--nothing to do
 end
 
 local function SetupClipboard(strSound)
@@ -216,28 +217,10 @@ local function SaveFilePath(panel, file)
 
 	panel:SetCookie("wire_soundfile", file)
 end
-
-local function CreateSoundBrowser(path)
-	--###########################################
-	--loading
-	local Redcolor = 0
-	local Greencolor = 0
-	local Bluecolor = 0
-	if file.Exists("acf/menucolor.txt", "DATA") then
-		local MenuColor = file.Read("acf/menucolor.txt")
-		local MenuColorTable = {}
-		for w in string.gmatch(MenuColor, "([^,]+)") do
-			table.insert(MenuColorTable, w)
-		end
-		Redcolor = tonumber(MenuColorTable[1])
-		Greencolor = tonumber(MenuColorTable[2])
-		Bluecolor = tonumber(MenuColorTable[3])
-	else
-		Redcolor = 0
-		Greencolor = 0
-		Bluecolor = 200
-	end
-	--###########################################
+--------------------------------------
+--	Create Menu
+--------------------------------------
+local function CreateMenu(path)
 	local soundemitter = false
 	if (isstring(path) and path ~= "") then
 		soundemitter = true
@@ -247,25 +230,24 @@ local function CreateSoundBrowser(path)
 	local nSoundVolume = 1
 	local nSoundPitch = 100
 
-	SoundBrowserPanel = vgui.Create("DFrame") // The main frame.
-	SoundBrowserPanel:SetSize(450, 500)
-	--Set Center
-	SoundBrowserPanel:SetPos((ScrW()/2)-(SoundBrowserPanel:GetWide()/2),(ScrH()/2)-(SoundBrowserPanel:GetTall()/2))
+	MainPanel = vgui.Create("DFrame")
+	MainPanel:SetSize(450, 500)
+	
+	MainPanel:SetPos((ScrW()/2)-(MainPanel:GetWide()/2),(ScrH()/2)-(MainPanel:GetTall()/2))
 
-	SoundBrowserPanel:SetMinWidth(400)
-	SoundBrowserPanel:SetMinHeight(450)
+	MainPanel:SetMinWidth(400)
+	MainPanel:SetMinHeight(450)
 
-	SoundBrowserPanel:SetSizable(false)
-	SoundBrowserPanel:SetDeleteOnClose( true )
-	SoundBrowserPanel:SetTitle("Engine Menu V8.1 - SOUND MENU")
-	SoundBrowserPanel:SetVisible(false)
-	SoundBrowserPanel:SetCookieName( "wire_sound_browser" )
-	SoundBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
+	MainPanel:SetSizable(false)
+	MainPanel:SetDeleteOnClose( true )
+	MainPanel:SetTitle("Engine Menu V"..ACFCUSTOM.EngineMakerVersion.." - SOUND MENU")
+	MainPanel:SetVisible(false)
+	MainPanel:SetCookieName( "wire_sound_browser" )
+	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
 
 	TabFileBrowser = vgui.Create("acf_enginesoundbrowser")
 	
-	--#############################################################
-	local BrowserTabs = SoundBrowserPanel:Add("DPropertySheet")
+	local BrowserTabs = MainPanel:Add("DPropertySheet")
 	BrowserTabs:DockMargin(5, 5, 5, 5)
 	BrowserTabs:Dock(FILL)
 	BrowserTabs:AddSheet("Sounds Browser", TabFileBrowser, "icon16/folder.png", false, false, "Browse your sound folder.")
@@ -300,35 +282,34 @@ local function CreateSoundBrowser(path)
 	TabFileBrowser.DoDoubleClick = function(parent, file)
 		PlaySound(file, nSoundVolume, nSoundPitch)
 		PlaySoundNoEffect()
-		SaveFilePath(SoundBrowserPanel, file)
+		SaveFilePath(MainPanel, file)
 
 		strSound = file
 		SetupSoundemitter(strSound)
 	end
 
 	TabFileBrowser.DoClick = function(parent, file)
-		SaveFilePath(SoundBrowserPanel, file)
+		SaveFilePath(MainPanel, file)
 
 		strSound = file
 		if (!IsValid(SoundInfoText)) then return end
 		SoundInfoText:SetText(GetInfoString(file, {"file"}))
 		if (!IsValid(SoundText)) then return end
 		SoundText:SetText( "Sound : "..strSound )
-		SoundText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		SoundText:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		SetupSoundemitter(strSound)
 	end
 
 	TabFileBrowser.DoRightClick = function(parent, file)
-		Sendmenu(file, SoundBrowserPanel.Soundemitter, nSoundVolume, nSoundPitch)
-		SaveFilePath(SoundBrowserPanel, file)
+		Sendmenu(file, MainPanel.Soundemitter, nSoundVolume, nSoundPitch)
+		SaveFilePath(MainPanel, file)
 
 		strSound = file
 		SetupSoundemitter(strSound)
 	end
 	--################################################################################
-	
 
-	local InfoPanel = SoundBrowserPanel:Add("DPanel")
+	local InfoPanel = MainPanel:Add("DPanel")
 	InfoPanel:DockMargin(5, 0, 5, 0)
 	InfoPanel:Dock(BOTTOM)
 	InfoPanel:SetTall(140)
@@ -349,9 +330,8 @@ local function CreateSoundBrowser(path)
 	SoundText:SetFont( "DefaultBold" )
 	SoundText:SetWide(280)
 	SoundText:SetTall(10)
-	SoundText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	SoundText:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 	
-
 	SoundInfoText = InfoPanel:Add("DTextEntry")
 	SoundInfoText:Dock(FILL)
 	SoundInfoText:DockMargin(4, 4, 4, 0)
@@ -360,7 +340,7 @@ local function CreateSoundBrowser(path)
 	SoundInfoText:SetVerticalScrollbarEnabled(true)
 	SoundInfoText:SetCursorColor(Color(0,0,255,255))
 	SoundInfoText:SetHighlightColor(Color(0,255,0,200))
-	SoundInfoText:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	SoundInfoText:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 
 	local ButtonsPanel = Buttons2Panel:Add("DPanel")
 	ButtonsPanel:DockMargin(0, 0, 0, 0)
@@ -383,7 +363,7 @@ local function CreateSoundBrowser(path)
 
 	local PlayButton = PlayStopPanel:Add("DButton")
 	PlayButton:SetText("Play")
-	PlayButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	PlayButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 	PlayButton:Dock(LEFT)
 	PlayButton:SetSize( 60, 20 )
 	PlayButton.DoClick = function()
@@ -393,7 +373,7 @@ local function CreateSoundBrowser(path)
 
 	local StopButton = PlayStopPanel:Add("DButton")
 	StopButton:SetText("Stop")
-	StopButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	StopButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 	StopButton:Dock(RIGHT)
 	StopButton:SetSize( 60, 20 )
 	StopButton.DoClick = function()
@@ -437,17 +417,17 @@ local function CreateSoundBrowser(path)
 	
 	BackButton	= ButtonsPanel2:Add("DButton")
 		BackButton:SetText("Back")
-		BackButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		BackButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		BackButton:Dock( BOTTOM )
 		BackButton:SetTall(35)
 		BackButton.DoClick = function()
-			RunConsoleCommand("acf_enginecreateload_browser_open")
-			SoundBrowserPanel:Close()
+			RunConsoleCommand("acf_enginecreateload_open")
+			MainPanel:Close()
 		end
 
 	local SoundemitterButton = ButtonsPanel2:Add("DButton")
 	SoundemitterButton:SetText("Next Step")
-	SoundemitterButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+	SoundemitterButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 	SoundemitterButton:DockMargin(0, 2, 0, 0)
 	SoundemitterButton:SetTall(35)
 	SoundemitterButton:Dock(BOTTOM)
@@ -476,7 +456,6 @@ local function CreateSoundBrowser(path)
 		local iSelectLoad = tostring(LastEngineTable[15])
 		local IsTransLoad = tostring(LastEngineTable[16])
 		local FlywheelOverLoad = tonumber(LastEngineTable[17])
-		local BadValues = 0
 		
 		local txt = NameLoadT..","..strSound..","..ModelLoadT..","..FuelTypeLoadT..","..EngineTypeLoadT..","..TorqueLoadT..","
 		txt = txt ..IdleLoadT..","..PeakMinLoadT..","..PeakMaxLoadT..","..LimitRpmLoadT..","..FlywheelLoadT..","..WeightLoadT..","
@@ -484,27 +463,18 @@ local function CreateSoundBrowser(path)
 		
 		file.Write("acf/lastengine.txt", txt)
 		
-		RunConsoleCommand("acf_enginesave_browser_open")
-		SoundBrowserPanel:Close()
+		RunConsoleCommand("acf_enginesave_open")
+		MainPanel:Close()
 	end
 
-	SoundBrowserPanel.PerformLayout = function(self, ...)
+	MainPanel.PerformLayout = function(self, ...)
 		TunePitchSlider:SetWide(TunePanel:GetWide() / 2 - 4)
 		TuneVolumeSlider:SetWide(TunePanel:GetWide() / 2 - 4)
-
-		/*ButtonsPanel:SetWide(InfoPanel:GetTall() * 1)
-		PlayStopPanel:SetTall(InfoPanel:GetTall() / 3 - 2)
-		PlayButton:SetWide(PlayStopPanel:GetWide() / 2 - 2.5)
-		StopButton:SetWide(PlayButton:GetWide())*/
-
-		/*if (self.Soundemitter) then
-			SoundemitterButton:SetTall(PlayStopPanel:GetTall() - 1.8)
-		end*/
 
 		DFrame.PerformLayout(self, ...)
 	end
 
-	SoundBrowserPanel.OnClose = function()
+	MainPanel.OnClose = function()
 		nSoundVolume = 1
 		nSoundPitch = 100
 		TuneVolumeSlider:SetValue(nSoundVolume * 100)
@@ -513,25 +483,27 @@ local function CreateSoundBrowser(path)
 		PlaySoundNoEffect()
 	end
 
-	SoundBrowserPanel:InvalidateLayout(true)
+	MainPanel:InvalidateLayout(true)
 	
 end
-
-local function OpenSoundBrowser(pl, cmd, args)
+--------------------------------------
+--	Open Menu
+--------------------------------------
+local function OpenMenu(pl, cmd, args)
 	local path = args[1]
 	
-	if (!IsValid(SoundBrowserPanel)) then
-		CreateSoundBrowser(path)
+	if (!IsValid(MainPanel)) then
+		CreateMenu(path)
 	end
 
-	SoundBrowserPanel:SetVisible(true)
-	SoundBrowserPanel:MakePopup()
-	SoundBrowserPanel:InvalidateLayout(true)
+	MainPanel:SetVisible(true)
+	MainPanel:MakePopup()
+	MainPanel:InvalidateLayout(true)
 
 	if (!IsValid(TabFileBrowser)) then return end
 
-	WireLib.Timedcall(function(SoundBrowserPanel, TabFileBrowser, path)
-		if (!IsValid(SoundBrowserPanel)) then return end
+	WireLib.Timedcall(function(MainPanel, TabFileBrowser, path)
+		if (!IsValid(MainPanel)) then return end
 		if (!IsValid(TabFileBrowser)) then return end
 
 		local soundemitter = false
@@ -539,15 +511,14 @@ local function OpenSoundBrowser(pl, cmd, args)
 			soundemitter = true
 		end
 
-		SoundBrowserPanel.Soundemitter = soundemitter
+		MainPanel.Soundemitter = soundemitter
 
-		SoundBrowserPanel:InvalidateLayout(true)
+		MainPanel:InvalidateLayout(true)
 
 		if (!soundemitter) then
-			path = SoundBrowserPanel:GetCookie("wire_soundfile", "")
+			path = MainPanel:GetCookie("wire_soundfile", "")
 		end
 		TabFileBrowser:SetOpenFile(path)
-	end, SoundBrowserPanel, TabFileBrowser, path)
+	end, MainPanel, TabFileBrowser, path)
 end
-
-concommand.Add("acf_enginesound_browser_open", OpenSoundBrowser)
+concommand.Add("acf_enginesound_open", OpenMenu)

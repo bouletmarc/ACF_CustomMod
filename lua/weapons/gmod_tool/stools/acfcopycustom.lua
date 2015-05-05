@@ -1,5 +1,7 @@
 
-TOOL.Category		= "Construction";
+local cat = ((ACFCUSTOM.CustomToolCategory and ACFCUSTOM.CustomToolCategory:GetBool()) and "ACF" or "Construction");
+
+TOOL.Category		= cat
 TOOL.Name			= "#Tool.acfcopycustom.listname";
 TOOL.Author 		= "looter and bouletmarc";
 TOOL.Command		= nil;
@@ -10,7 +12,6 @@ TOOL.EngineMakerCopyData = {};
 TOOL.ChipsData = {};
 
 if CLIENT then
-
 	language.Add( "Tool.acfcopycustom.listname", "ACF Custom Copy Tool" );
 	language.Add( "Tool.acfcopycustom.name", "ACF Custom Copy Tool Custom" );
 	language.Add( "Tool.acfcopycustom.desc", "Copy gearbox/custom data from one object to another" );
@@ -19,7 +20,6 @@ if CLIENT then
 	function TOOL.BuildCPanel( CPanel )
 	
 	end
-
 end
 
 -- Update

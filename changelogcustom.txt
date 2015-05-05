@@ -1,63 +1,28 @@
-r103
--9.01 V3
---Added ACF Custom Menu
---Added Lot's acfCustom E2 fucntions
---Added All Engines to the List
-
---Removed Changelog Menu
---Removed Help Install Menu
-
--------BIG UPDATE-------
---Converted Custom Mod
---Custom Mod going to V3
---Custom Mod is now apart of original
---Installation easier, no more merge
---THIS CHANGE IS TO MAKE IT BETTER
-
-*r104
--9.11 V3
---Added Custom Updating System
---Added Chips weld when spawn on entity
---Added RpmAdd
---Added Acf Custom Sound Tool
---Added Acf Custom Copy Tool
-
---Fixed Acf Custom Notify
---Fixed Chips on first spawn sometimes
-
---Removed Gearbox Model from EngineMaker
---Removed MaxRpmAdd/LimitRpmAdd
---Inversed Radiator Linking
---Cleaned/updated somes lua files
-
-----SPECIALS NOTES----
-You can update Original engines
-to become Custom engines in 1clic.
-Work with gearboxes, engine maker, etc.
-You should wire and link it again.
-
-*r106
--9.22 V3
---Added Custom Mod Tips Menu
---Added Turbocharger
---Added Supercharger
---Added Turbo/supercharger to sound tool
-
---Fixed Custom to Engine Maker Updating
-
---Help Menu Cleaned
-
-----SPECIALS NOTES----
--Thanks to SEM for models-
-Turbo and Supercharger are in test
-They are working fine, but might be
-improved in furtur update. I'm gonna
-check the feedback of them
-
-*r107
+r109
 -9.31 V3
 --Improved Turbo Spool Start
 --Turbo Add Slightly more torque
 
 --Fixed Changelog Error
 --Fixed E2 Function 'acfCustomRpmAdd'
+
+*r110
+-10.0 V4 '2015 First Update'
+--Updated to Original ACF Revision 545
+--Added Unofficial ACF Extras Models&Engines
+--Added Readme_installation into Readme_custom
+--Added EngineMaker Version in Acf_globals_custom
+--Added Dave E2 turbo
+--Added Admin menu
+--Added&Improved lot of lua's infos
+--Improved colors loading functions
+--Improved help menu luas
+--Improved engines loadings
+--Improved engines gui updating(lot less calling)
+--Renamed CanDo to Tips
+--Renamed CurrentVersion2 to CurrentVersion
+--Renamed Version2 to Version
+--Renamed RequiresFuel number to boolean
+--Removed 'browser' text from menu opening cmds
+--Removed useless OnClose menu functions
+--Removed useless Color console commands

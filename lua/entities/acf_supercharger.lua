@@ -143,7 +143,7 @@ function MakeACF_Supercharger(Owner, Pos, Angle, Id, Data1)
 	Owner:AddCount("_acf_supercharger", Supercharger)
 	Owner:AddCleanup( "acfmenu", Supercharger )
 	
-	Supercharger:SetNetworkedString( "WireName", Lookup.name )
+	Supercharger:SetNWString( "WireName", Lookup.name )
 	Supercharger:UpdateOverlayText()
 	Supercharger:SetWireOutputs()
 		
@@ -184,7 +184,7 @@ function ENT:Update( ArgsTable )
 	local OutputsTypes = {"NORMAL"}
 	self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputsTypes )
 	
-	self:SetNetworkedString( "WireName", Lookup.name )
+	self:SetNWString( "WireName", Lookup.name )
 	self:UpdateOverlayText()
 	self:SetWireOutputs()
 	

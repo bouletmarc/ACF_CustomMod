@@ -6,6 +6,7 @@ ENT.PrintName = "ACF Gearbox CVT"
 ENT.WireDebugName = "ACF Gearbox CVT"
 
 if CLIENT then
+
 	function ACFGearboxCVTGUICreate( Table )
 	
 		if not acfmenupanelcustom.GearboxData then
@@ -187,11 +188,6 @@ function ENT:Initialize()
 	
 	self.WheelLink = {} -- a "Link" has these components: Ent, Side, Axis, Rope, RopeLen, Output, ReqTq, Vel
 	
-	--################
-	self.CurrentRPM = 0
-	self.ClutchMode = 0
-	self.ClutchModeUse = 0
-	
 	self.TotalReqTq = 0
 	self.RClutch = 0
 	self.LClutch = 0
@@ -211,6 +207,10 @@ function ENT:Initialize()
 	self.CanUpdate = true
 	self.LastActive = 0
 	self.Legal = true
+	
+	self.CurrentRPM = 0
+	self.ClutchMode = 0
+	self.ClutchModeUse = 0
 	
 end  
 
@@ -311,7 +311,7 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 		GearboxCVT:SetBodygroup(1, 0)
 	end
 	
-	GearboxCVT:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
+	GearboxCVT:SetNWString( "WireName", List.MobilityCustom[Id].name )
 	GearboxCVT:UpdateOverlayText()
 		
 	return GearboxCVT
@@ -403,7 +403,7 @@ function ENT:Update( ArgsTable )
 		self:SetBodygroup(1, 0)
 	end	
 	
-	self:SetNetworkedString( "WireName", List.MobilityCustom[Id].name )
+	self:SetNWString( "WireName", List.MobilityCustom[Id].name )
 	self:UpdateOverlayText()
 	
 	return true, "CVT Gearbox updated successfully!"
@@ -557,7 +557,7 @@ function ENT:Calc( InputRPM, InputInertia )
 			self.RClutch = math.Clamp(1-0,0,1)*self.MaxTorque
 		end
 	end
-	--####################
+	
 	if self.ClutchMode == 1 then
 		if(self.GearFinal2 > self.RatioMin) then
 			--self.Reducer = ((self.RpmLimit2-InputRPM)+((self.RpmLimit2-InputRPM)/6000))-(self.RpmLimit2-InputRPM)
@@ -599,7 +599,6 @@ function ENT:Calc( InputRPM, InputInertia )
 			Wire_TriggerOutput(self, "Ratio", self.GearRatio)
 		end
 	end
-	--####################
 	
 	for Key, Link in pairs( self.WheelLink ) do
 		if not IsValid( Link.Ent ) then
@@ -650,7 +649,7 @@ function ENT:CalcWheel( Link, SelfWorld )
 	return BaseRPM / self.GearRatio / -6
 end
 
-function ENT:Act( Torque, DeltaTime, Throttle )
+function ENT:Act( Torque, DeltaTime, MassRatio )
 	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
@@ -667,7 +666,7 @@ function ENT:Act( Torque, DeltaTime, Throttle )
 		end
 		
 		if Link.Ent.IsGeartrain then
-			Link.Ent:Act( Link.ReqTq * AvailTq, DeltaTime )
+			Link.Ent:Act( Link.ReqTq * AvailTq, DeltaTime, MassRatio )
 		else
 			self:ActWheel( Link, Link.ReqTq * AvailTq, Brake, DeltaTime )
 			ReactTq = ReactTq + Link.ReqTq * AvailTq
@@ -676,7 +675,7 @@ function ENT:Act( Torque, DeltaTime, Throttle )
 	
 	local BoxPhys = self:GetPhysicsObject()
 	if IsValid( BoxPhys ) and ReactTq ~= 0 then	
-		local Force = self:GetForward() * ReactTq - self:GetForward()
+		local Force = self:GetForward() * ReactTq * MassRatio - self:GetForward()
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp() * -39.37 )
 		BoxPhys:ApplyForceOffset( Force * -39.37 * DeltaTime, self:GetPos() + self:GetUp() * 39.37 )
 	end

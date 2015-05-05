@@ -1,68 +1,51 @@
-// Made by Bouletmarc.
-
-local StartBrowserPanel = nil
-
-local function CreateSoundBrowser()
-	--###########################################
-	--loading
-	local Redcolor = 0
-	local Greencolor = 0
-	local Bluecolor = 0
-	if file.Exists("acf/menucolor.txt", "DATA") then
-		local MenuColor = file.Read("acf/menucolor.txt")
-		local MenuColorTable = {}
-		for w in string.gmatch(MenuColor, "([^,]+)") do
-			table.insert(MenuColorTable, w)
-		end
-		Redcolor = tonumber(MenuColorTable[1])
-		Greencolor = tonumber(MenuColorTable[2])
-		Bluecolor = tonumber(MenuColorTable[3])
-	else
-		Redcolor = 0
-		Greencolor = 0
-		Bluecolor = 200
-	end
-	--###########################################
-	StartBrowserPanel = vgui.Create("DFrame") // The main frame.
-	StartBrowserPanel:SetSize(450, 400)
-	--Set Center
-	StartBrowserPanel:SetPos((ScrW()/2)-(StartBrowserPanel:GetWide()/2),(ScrH()/2)-(StartBrowserPanel:GetTall()/2))
-
-	StartBrowserPanel:SetMinWidth(450)
-	StartBrowserPanel:SetMinHeight(400)
+--------------------------------------
+--	Set vars
+--------------------------------------
+local MainPanel = nil
+--------------------------------------
+--	Create Menu
+--------------------------------------
+local function CreateMenu()
 	
-	StartBrowserPanel:SetSizable(false)
-	StartBrowserPanel:SetDeleteOnClose( true )
-	StartBrowserPanel:SetTitle("Engine Menu V8.5 - SETUP MENU")
-	StartBrowserPanel:SetVisible(false)
-	StartBrowserPanel:SetCookieName( "wire_sound_browser" )
-	StartBrowserPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
+	MainPanel = vgui.Create("DFrame")
+	MainPanel:SetSize(450, 400)
 	
-	local ButtonsSidePanel = StartBrowserPanel:Add("DPanel")
-	ButtonsSidePanel:DockMargin(4, 4, 4, 4)
-	ButtonsSidePanel:Dock(TOP)
-	ButtonsSidePanel:SetSize(430, 360)
-	ButtonsSidePanel:SetDrawBackground(false)
-	--#############################################################
+	MainPanel:SetPos((ScrW()/2)-(MainPanel:GetWide()/2),(ScrH()/2)-(MainPanel:GetTall()/2))
+
+	MainPanel:SetMinWidth(450)
+	MainPanel:SetMinHeight(400)
+	
+	MainPanel:SetSizable(false)
+	MainPanel:SetDeleteOnClose( true )
+	MainPanel:SetTitle("Engine Menu V"..ACFCUSTOM.EngineMakerVersion.." - SETUP MENU")
+	MainPanel:SetVisible(false)
+	MainPanel:SetCookieName( "wire_sound_browser" )
+	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
+	--Add 2nd panel
+	local SecondPanel = MainPanel:Add("DPanel")
+	SecondPanel:DockMargin(4, 4, 4, 4)
+	SecondPanel:Dock(TOP)
+	SecondPanel:SetSize(430, 360)
+	SecondPanel:SetDrawBackground(false)
+	--------------------------------------
+	--	2nd Panel Menu
+	--------------------------------------
+		--Set local vars
 		local FuelTypeValue = 0		--Petrol, Diesel, etc...
 		local EngTypeValue = 0		--I4, I6, etc..
 		local EngSizeValue = 0		--Small, Medium, Fat
 		local MdlText = ""
 		local iSelectVal = "false"
 		local IsTransVal = "false"
-		RunConsoleCommand( "acfcustom_data4", "Petrol" )
-		RunConsoleCommand( "acfcustom_data5", "GenericPetrol" )
-		RunConsoleCommand( "acfcustom_data13", "false" )
-		RunConsoleCommand( "acfcustom_data14", "false" )
 		
-		EngineNameTitle = ButtonsSidePanel:Add( "DLabel" )
+		EngineNameTitle = SecondPanel:Add( "DLabel" )
 		EngineNameTitle:SetText( "Engine Name :" )
 		EngineNameTitle:SetFont( "DefaultBold" )
-		EngineNameTitle:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		EngineNameTitle:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		EngineNameTitle:SetPos( 20,10 )
 		EngineNameTitle:SizeToContents()
 		
-		EngineName = ButtonsSidePanel:Add( "DTextEntry" )
+		EngineName = SecondPanel:Add( "DTextEntry" )
 		EngineName:SetText( "PUT NAME HERE" )
 		EngineName:SetTextColor(Color(200,0,0,255))
 		EngineName:SetPos( 20,30 )
@@ -72,19 +55,18 @@ local function CreateSoundBrowser()
 				EngineName:SetText( "PUT NAME HERE" )
 				EngineName:SetTextColor(Color(200,0,0,255))
 			else
-				RunConsoleCommand( "acfcustom_data1", EngineName:GetValue() )
-				EngineName:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+				EngineName:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 			end
 		end
 		
-		FuelTypeButton = ButtonsSidePanel:Add("DButton")
+		FuelTypeButton = SecondPanel:Add("DButton")
 		FuelTypeButton:SetText("Petrol")
-		FuelTypeButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		FuelTypeButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		FuelTypeButton:SetPos( 0, 60 )
 		FuelTypeButton:SetWide( 60 )
 		FuelTypeButton:SetTall( 40 )
 		
-		ModelsList = ButtonsSidePanel:Add("DComboBox")
+		ModelsList = SecondPanel:Add("DComboBox")
 		ModelsList:SetPos(70,70)
 		ModelsList:SetSize( 120, 20 )
 		ModelsList.OnSelect = function( panel, index, value )
@@ -92,19 +74,18 @@ local function CreateSoundBrowser()
 			EngineModel2:SetText( "Models :\n"..MdlText )
 			EngineModel2:SizeToContents()
 			DisplayModel:SetModel( MdlText )
-			RunConsoleCommand("acf_menudata3", MdlText)
 		end
 		
 		--#######################
-		EngineModel2 = ButtonsSidePanel:Add( "DLabel" )
+		EngineModel2 = SecondPanel:Add( "DLabel" )
 		EngineModel2:SetText( "Models :\n"..MdlText )
 		EngineModel2:SetFont( "DefaultBold" )
-		EngineModel2:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		EngineModel2:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		EngineModel2:SetPos( 180, 10 )
 		EngineModel2:SizeToContents()
 		
 		--#### DISPLAY
-		DisplayModel = ButtonsSidePanel:Add("DModelPanel")
+		DisplayModel = SecondPanel:Add("DModelPanel")
 		DisplayModel:SetModel( MdlText )
 		DisplayModel:SetCamPos( Vector( 250, 500, 250 ) )
 		DisplayModel:SetLookAt( Vector( 0, 0, 0 ) )
@@ -114,158 +95,128 @@ local function CreateSoundBrowser()
 		DisplayModel.LayoutEntity = function( panel , entity ) end
 		--########################
 		--Side Text Entry Setup and Hint
-		TorqueHint = ButtonsSidePanel:Add("DButton")
+		TorqueHint = SecondPanel:Add("DButton")
 		TorqueHint:SetToolTip("This is your Torque amount value\nUse Small value for Small Engine(ex:75)\nUse Medium value for Medium Engine(ex:450)\nUse Big value for Big Engine(ex:2000)\nTake note Diesel and Turbine engines need\na bit bigger value than others engines")
-		TorqueHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		TorqueHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		TorqueHint:SetWide(100)
 		TorqueHint:SetTall(25)
 		TorqueHint:SetPos( 210, 50 )
 		TorqueHint:SetText("Torque Hint")
 		
-		TorqueEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		TorqueEntry = SecondPanel:Add( "DTextEntry" )
 		TorqueEntry:SetText( "Torque Number" )
-		TorqueEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		TorqueEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		TorqueEntry:SetPos( 320, 50 )
 		TorqueEntry:SetWide( 120 )
-		TorqueEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data6", TorqueEntry:GetValue() )
-		end
 		
-		IdleHint = ButtonsSidePanel:Add("DButton")
+		IdleHint = SecondPanel:Add("DButton")
 		IdleHint:SetToolTip("Use value between 500-2000 RPM\nFuel Engine Only")
-		IdleHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		IdleHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		IdleHint:SetWide(100)
 		IdleHint:SetTall(25)
 		IdleHint:SetPos( 210, 90 )
 		IdleHint:SetText("Idle RPM Hint")
 		
-		IdleEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		IdleEntry = SecondPanel:Add( "DTextEntry" )
 		IdleEntry:SetText( "Idle Number" )
-		IdleEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		IdleEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		IdleEntry:SetPos( 320, 90 )
 		IdleEntry:SetWide( 120 )
-		IdleEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data7", IdleEntry:GetValue() )
-		end
 		
-		PeakMinHint = ButtonsSidePanel:Add("DButton")
+		PeakMinHint = SecondPanel:Add("DButton")
 		PeakMinHint:SetToolTip("Use value between 2000-4000 RPM\nFuel Engine Only")
-		PeakMinHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		PeakMinHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		PeakMinHint:SetWide(100)
 		PeakMinHint:SetTall(25)
 		PeakMinHint:SetPos( 210, 130 )
 		PeakMinHint:SetText("Peak Min RPM Hint")
 		
-		PeakMinEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		PeakMinEntry = SecondPanel:Add( "DTextEntry" )
 		PeakMinEntry:SetText( "PeakMin RPM Number" )
-		PeakMinEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		PeakMinEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		PeakMinEntry:SetPos( 320, 130 )
 		PeakMinEntry:SetWide( 120 )
-		PeakMinEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data8", PeakMinEntry:GetValue() )
-		end
 		
-		PeakMaxHint = ButtonsSidePanel:Add("DButton")
+		PeakMaxHint = SecondPanel:Add("DButton")
 		PeakMaxHint:SetToolTip("Use value between 4000-10000 RPM\nDONT use higher value than Limit RPM\nYou can use the same value as Limit RPM\nFuel Engine Only")
-		PeakMaxHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		PeakMaxHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		PeakMaxHint:SetWide(100)
 		PeakMaxHint:SetTall(25)
 		PeakMaxHint:SetPos( 210, 170 )
 		PeakMaxHint:SetText("Peak Max RPM Hint")
 		
-		PeakMaxEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		PeakMaxEntry = SecondPanel:Add( "DTextEntry" )
 		PeakMaxEntry:SetText( "PeakMax RPM Number" )
-		PeakMaxEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		PeakMaxEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		PeakMaxEntry:SetPos( 320, 170 )
 		PeakMaxEntry:SetWide( 120 )
-		PeakMaxEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data9", PeakMaxEntry:GetValue() )
-		end
 		
-		LimitHint = ButtonsSidePanel:Add("DButton")
+		LimitHint = SecondPanel:Add("DButton")
 		LimitHint:SetToolTip("Use value between 4500-10000 RPM\nDONT use lower value than PeakMax RPM\nYou can use the same value as PeakMax RPM")
-		LimitHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		LimitHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		LimitHint:SetWide(100)
 		LimitHint:SetTall(25)
 		LimitHint:SetPos( 210, 210 )
 		LimitHint:SetText("Limit RPM Hint")
 		
-		LimitEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		LimitEntry = SecondPanel:Add( "DTextEntry" )
 		LimitEntry:SetText( "Limit RPM Number" )
-		LimitEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		LimitEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		LimitEntry:SetPos( 320, 210 )
 		LimitEntry:SetWide( 120 )
-		LimitEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data10", LimitEntry:GetValue() )
-		end
 		
-		FlywheelHint = ButtonsSidePanel:Add("DButton")
+		FlywheelHint = SecondPanel:Add("DButton")
 		FlywheelHint:SetToolTip("Use value between 0.01-1 with Petrol engines\nUse value between 0.5-10 with :\nDiesel engines\nElectric engines\nTurbine engines")
-		FlywheelHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		FlywheelHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		FlywheelHint:SetWide(100)
 		FlywheelHint:SetTall(25)
 		FlywheelHint:SetPos( 210, 250 )
 		FlywheelHint:SetText("Flywheel Hint")
 		
-		FlywheelEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		FlywheelEntry = SecondPanel:Add( "DTextEntry" )
 		FlywheelEntry:SetText( "Flywheel Number" )
-		FlywheelEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		FlywheelEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		FlywheelEntry:SetPos( 320, 250 )
 		FlywheelEntry:SetWide( 120 )
-		FlywheelEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data11", FlywheelEntry:GetValue() )
-		end
 		
-		FlywheelOverHint = ButtonsSidePanel:Add("DButton")
+		FlywheelOverHint = SecondPanel:Add("DButton")
 		FlywheelOverHint:SetToolTip("Use value between 5000-10000\nOnly on Electrics and Turbines engines")
-		FlywheelOverHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		FlywheelOverHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		FlywheelOverHint:SetWide(100)
 		FlywheelOverHint:SetTall(25)
 		FlywheelOverHint:SetPos( 210, 290 )
 		FlywheelOverHint:SetText("Override Hint")
 		
-		FlywheelOverEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		FlywheelOverEntry = SecondPanel:Add( "DTextEntry" )
 		FlywheelOverEntry:SetText( "Override Number" )
-		FlywheelOverEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		FlywheelOverEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		FlywheelOverEntry:SetPos( 320, 290 )
 		FlywheelOverEntry:SetWide( 120 )
-		FlywheelOverEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data15", FlywheelOverEntry:GetValue() )
-		end
 		FlywheelOverEntry:SetDrawBackground(false)
 		FlywheelOverEntry:SetEditable(false)
 		
-		WeightHint = ButtonsSidePanel:Add("DButton")
+		WeightHint = SecondPanel:Add("DButton")
 		WeightHint:SetToolTip("Use value between 50-1000 for good Weight\nBigger your model are, bigger the number should be")
-		WeightHint:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		WeightHint:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		WeightHint:SetWide(100)
 		WeightHint:SetTall(25)
 		WeightHint:SetPos( 210, 330 )
 		WeightHint:SetText("Weight Hint")
 		
-		WeightEntry = ButtonsSidePanel:Add( "DTextEntry" )
+		WeightEntry = SecondPanel:Add( "DTextEntry" )
 		WeightEntry:SetText( "Weight Number" )
-		WeightEntry:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		WeightEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		WeightEntry:SetPos( 320, 330 )
 		WeightEntry:SetWide( 120 )
-		WeightEntry.OnTextChanged = function( )
-			RunConsoleCommand( "acfcustom_data12", WeightEntry:GetValue() )
-		end
-		--#######################
+		
 		--Fuel Do clic
 		FuelTypeButton.DoClick = function()
 			if FuelTypeValue == 0 then
 				FuelTypeValue = 1
 				FuelTypeButton:SetText("Diesel")
-				RunConsoleCommand( "acfcustom_data4", "Diesel" )
-				RunConsoleCommand( "acfcustom_data5", "GenericDiesel" )
 			elseif FuelTypeValue == 1 then
 				FuelTypeValue = 2
 				FuelTypeButton:SetText("Electric")
-				RunConsoleCommand( "acfcustom_data4", "Electric" )
-				RunConsoleCommand( "acfcustom_data5", "Electric" )
-				RunConsoleCommand( "acfcustom_data13", "true" )
-				RunConsoleCommand( "acfcustom_data14", "false" )
 				iSelectVal = "true"
 				IsTransVal = "false"
 				--Set False Values
@@ -278,19 +229,12 @@ local function CreateSoundBrowser()
 				IdleEntry:SetDrawBackground(false)
 				PeakMinEntry:SetDrawBackground(false)
 				PeakMaxEntry:SetDrawBackground(false)
-				RunConsoleCommand( "acfcustom_data7", 10 )
-				RunConsoleCommand( "acfcustom_data8", 10 )
-				RunConsoleCommand( "acfcustom_data9", 10 )
 				--Set True Value
 				FlywheelOverEntry:SetDrawBackground(true)
 				FlywheelOverEntry:SetEditable(true)
 			elseif FuelTypeValue == 2 then
 				FuelTypeValue = 3
 				FuelTypeButton:SetText("Turbine")
-				RunConsoleCommand( "acfcustom_data4", "Any" )
-				RunConsoleCommand( "acfcustom_data5", "Turbine" )
-				RunConsoleCommand( "acfcustom_data13", "true" )
-				RunConsoleCommand( "acfcustom_data14", "true" )
 				iSelectVal = "true"
 				IsTransVal = "true"
 				--Set False Values
@@ -303,19 +247,12 @@ local function CreateSoundBrowser()
 				IdleEntry:SetDrawBackground(false)
 				PeakMinEntry:SetDrawBackground(false)
 				PeakMaxEntry:SetDrawBackground(false)
-				RunConsoleCommand( "acfcustom_data7", 1 )
-				RunConsoleCommand( "acfcustom_data8", 1 )
-				RunConsoleCommand( "acfcustom_data9", 1 )
 				--Set True Value
 				FlywheelOverEntry:SetDrawBackground(true)
 				FlywheelOverEntry:SetEditable(true)
 			elseif FuelTypeValue == 3 then
 				FuelTypeValue = 0
 				FuelTypeButton:SetText("Petrol")
-				RunConsoleCommand( "acfcustom_data4", "Petrol" )
-				RunConsoleCommand( "acfcustom_data5", "GenericPetrol" )
-				RunConsoleCommand( "acfcustom_data13", "false" )
-				RunConsoleCommand( "acfcustom_data14", "false" )
 				iSelectVal = "false"
 				IsTransVal = "false"
 				--Reset True Value
@@ -328,9 +265,6 @@ local function CreateSoundBrowser()
 				IdleEntry:SetDrawBackground(true)
 				PeakMinEntry:SetDrawBackground(true)
 				PeakMaxEntry:SetDrawBackground(true)
-				RunConsoleCommand( "acfcustom_data7", 500 )
-				RunConsoleCommand( "acfcustom_data8", 1200 )
-				RunConsoleCommand( "acfcustom_data9", 3500 )
 				--Reset False Value
 				FlywheelOverEntry:SetDrawBackground(false)
 				FlywheelOverEntry:SetEditable(false)
@@ -338,23 +272,21 @@ local function CreateSoundBrowser()
 			end
 		end
 		
-		
-		--########################
 		--Back and Next Button
-		BackButton	= ButtonsSidePanel:Add("DButton")
+		BackButton	= SecondPanel:Add("DButton")
 		BackButton:SetText("Back")
-		BackButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		BackButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		BackButton:SetPos( 20, 320 )
 		BackButton:SetWide(80)
 		BackButton:SetTall( 40 )
 		BackButton.DoClick = function()
-			RunConsoleCommand("acf_enginestart_browser_open")
-			StartBrowserPanel:Close()
+			RunConsoleCommand("acf_enginestart_open")
+			MainPanel:Close()
 		end
 			
-		NextButton	= ButtonsSidePanel:Add("DButton")
+		NextButton	= SecondPanel:Add("DButton")
 		NextButton:SetText("Next Step")
-		NextButton:SetTextColor(Color(Redcolor,Greencolor,Bluecolor,255))
+		NextButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		NextButton:SetPos( 120, 320 )
 		NextButton:SetWide(80)
 		NextButton:SetTall( 40 )
@@ -400,8 +332,8 @@ local function CreateSoundBrowser()
 			txt = txt ..IdleLoadT..","..PeakMinLoadT..","..PeakMaxLoadT..","..LimitRpmLoadT..","..FlywheelLoadT..","..WeightLoadT..","
 			txt = txt ..EngSizeValue..","..EngTypeValue..","..iSelectVal..","..IsTransVal..","..FlywheelOverLoadT
 			file.Write("acf/lastengine.txt", txt)
-			RunConsoleCommand("acf_enginesound_browser_open")
-			StartBrowserPanel:Close()
+			RunConsoleCommand("acf_enginesound_open")
+			MainPanel:Close()
 		end
 		
 	--Reload Values, used for engine Loading or Menu Back Button
@@ -489,29 +421,27 @@ local function CreateSoundBrowser()
 	iSelectVal = iSelectLoad
 	IsTransVal = IsTransLoad
 	MdlText = ModelLoad
-	--######
 
-	StartBrowserPanel.OnClose = function() end
-
-	StartBrowserPanel:InvalidateLayout(true)
+	MainPanel:InvalidateLayout(true)
 	
 end
-
-local function OpenSartBrowser(pl, cmd, args)
-	if (!IsValid(StartBrowserPanel)) then
-		CreateSoundBrowser()
+--------------------------------------
+--	Open Menu
+--------------------------------------
+local function OpenMenu(pl, cmd, args)
+	if (!IsValid(MainPanel)) then
+		CreateMenu()
 	end
 
-	StartBrowserPanel:SetVisible(true)
-	StartBrowserPanel:MakePopup()
-	StartBrowserPanel:InvalidateLayout(true)
+	MainPanel:SetVisible(true)
+	MainPanel:MakePopup()
+	MainPanel:InvalidateLayout(true)
 
-	WireLib.Timedcall(function(StartBrowserPanel)
-		if (!IsValid(StartBrowserPanel)) then return end
+	WireLib.Timedcall(function(MainPanel)
+		if (!IsValid(MainPanel)) then return end
 
-		StartBrowserPanel:InvalidateLayout(true)
+		MainPanel:InvalidateLayout(true)
 
-	end, StartBrowserPanel)
+	end, MainPanel)
 end
-
-concommand.Add("acf_enginecreateload_browser_open", OpenSartBrowser)
+concommand.Add("acf_enginecreateload_open", OpenMenu)

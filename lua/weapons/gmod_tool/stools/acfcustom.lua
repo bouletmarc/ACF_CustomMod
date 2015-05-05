@@ -1,5 +1,7 @@
 
-TOOL.Category		= "Construction"
+local cat = ((ACFCUSTOM.CustomToolCategory and ACFCUSTOM.CustomToolCategory:GetBool()) and "ACF" or "Construction");
+
+TOOL.Category		= cat
 TOOL.Name			= "#Tool.acfcustom.listname"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
@@ -30,7 +32,7 @@ cleanup.Register( "acfcustom" )
 
 if CLIENT then	
 	language.Add( "Tool.acfcustom.listname", "ACF Custom" )
-	language.Add( "Tool.acfcustom.name", "ACF Custom V3" )
+	language.Add( "Tool.acfcustom.name", "ACF Custom V4" )
 	language.Add( "Tool.acfcustom.desc", "Spawn the ACF Custom Entity" )
 	language.Add( "Tool.acfcustom.0", "Left click to spawn the entity, Right click to link an entity to another (+Use to unlink)" )
 	language.Add( "Tool.acfcustom.1", "Right click to link the selected sensor to a pod" )
