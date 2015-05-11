@@ -35,12 +35,12 @@ function TOOL:LeftClick( trace )
 
 	local pl = self:GetOwner();
 
-	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" or ent:GetClass() == "acf_gearboxauto" and #self.GearboxCopyData > 1 and ent.CanUpdate ) then
+	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" and #self.GearboxCopyData > 1 and ent.CanUpdate ) then
 		local success, msg = ent:Update( self.GearboxCopyData );
 		ACFCUSTOM_SendNotify( pl, success, msg );
 	end
 	
-	if( ent:GetClass() == "acf_enginemaker" and #self.EngineMakerCopyData > 1 and ent.CanUpdate ) then
+	if( ent:GetClass() == "acf_engine_maker" and #self.EngineMakerCopyData > 1 and ent.CanUpdate ) then
 		local success, msg = ent:Update( self.EngineMakerCopyData );
 		ACFCUSTOM_SendNotify( pl, success, msg );
 	end
@@ -66,7 +66,7 @@ function TOOL:RightClick( trace )
 
 	local pl = self:GetOwner();
 
-	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearboxcvt" or ent:GetClass() == "acf_gearboxauto" ) then
+	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" ) then
 		local ArgsTable = {};
 		-- zero out the un-needed tool trace information
 		ArgsTable[1] = pl;
@@ -107,7 +107,7 @@ function TOOL:RightClick( trace )
 		ACFCUSTOM_SendNotify( pl, true, "Chips copied successfully!" );
 	end
 	
-	if( ent:GetClass() == "acf_enginemaker" ) then
+	if( ent:GetClass() == "acf_engine_maker" ) then
 		local ArgsTable = {};
 		-- zero out the un-needed tool trace information
 		ArgsTable[1] = pl;

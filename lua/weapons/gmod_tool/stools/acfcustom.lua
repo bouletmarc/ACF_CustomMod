@@ -32,7 +32,7 @@ cleanup.Register( "acfcustom" )
 
 if CLIENT then	
 	language.Add( "Tool.acfcustom.listname", "ACF Custom" )
-	language.Add( "Tool.acfcustom.name", "ACF Custom V4" )
+	language.Add( "Tool.acfcustom.name", "ACF Custom V"..ACFCUSTOM.VersionCustom )
 	language.Add( "Tool.acfcustom.desc", "Spawn the ACF Custom Entity" )
 	language.Add( "Tool.acfcustom.0", "Left click to spawn the entity, Right click to link an entity to another (+Use to unlink)" )
 	language.Add( "Tool.acfcustom.1", "Right click to link the selected sensor to a pod" )
@@ -88,27 +88,38 @@ function TOOL:LeftClick( trace )
 		local Class = trace.Entity:GetClass()
 		local ClassMenu = ACFCUSTOM.Weapons[Type][Id]["ent"]
 		local Allowed = false
-		if Class == "acf_engine" and ClassMenu != "acf_chips" then Allowed = true end
-		if Class == "acf_gearbox" and ClassMenu != "acf_chips" then Allowed = true end
+		--original engine
+		if Class == "acf_engine" and ClassMenu == "acf_engine_custom" then Allowed = true end
+		if Class == "acf_engine" and ClassMenu == "acf_enginemaker" then Allowed = true end
+		--custom engine
+		if Class == "acf_engine_custom" and ClassMenu == "acf_engine" then Allowed = true end
 		if Class == "acf_engine_custom" and ClassMenu == "acf_enginemaker" then Allowed = true end
+		--engine maker
+		if Class == "acf_enginemaker" and ClassMenu == "acf_engine" then Allowed = true end
 		if Class == "acf_enginemaker" and ClassMenu == "acf_engine_custom" then Allowed = true end
-		if Class == "acf_gearboxcvt" and ClassMenu == "acf_gearboxair" then Allowed = true end
-		if Class == "acf_gearboxcvt" and ClassMenu == "acf_gearboxauto" then Allowed = true end
-		if Class == "acf_gearboxair" and ClassMenu == "acf_gearboxcvt" then Allowed = true end
-		if Class == "acf_gearboxair" and ClassMenu == "acf_gearboxauto" then Allowed = true end
-		if Class == "acf_gearboxauto" and ClassMenu == "acf_gearboxcvt" then Allowed = true end
-		if Class == "acf_gearboxauto" and ClassMenu == "acf_gearboxair" then Allowed = true end
+		--original gearbox
+		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_cvt" then Allowed = true end
+		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
+		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_air" then Allowed = true end
+		--cvt gearbox
+		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox" then Allowed = true end
+		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
+		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox_air" then Allowed = true end
+		--airplane gearbox
+		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox" then Allowed = true end
+		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox_cvt" then Allowed = true end
+		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
 		
 		--Set Welding Chips to Trace.Entity
 		local Welding = false
 		if ClassMenu == "acf_chips" and Class == "prop_physics" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_engine" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_engine_custom" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_enginemaker" then Welding = true end
+		if ClassMenu == "acf_chips" and Class == "acf_engine_maker" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_gearbox" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearboxcvt" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearboxair" then Welding = true end
-		if ClassMenu == "acf_chips" and Class == "acf_gearboxauto" then Welding = true end
+		if ClassMenu == "acf_chips" and Class == "acf_gearbox_cvt" then Welding = true end
+		if ClassMenu == "acf_chips" and Class == "acf_gearbox_air" then Welding = true end
+		if ClassMenu == "acf_chips" and Class == "acf_gearbox_auto" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_fueltank" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_rads" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_turbo" then Welding = true end

@@ -17,7 +17,7 @@ local function ReplaceSound( ply , Entity , data)
 	if !IsValid( Entity ) then return end
 	local sound = data[1]
 	timer.Simple(1, function()
-		if Entity:GetClass() == "acf_engine_custom" or Entity:GetClass() == "acf_enginemaker" then
+		if Entity:GetClass() == "acf_engine_custom" or Entity:GetClass() == "acf_engine_maker" then
 			Entity.SoundPath = sound
 			Entity.SoundPitch = ply:GetInfo("acfsoundcustom_pitch")
 		elseif Entity:GetClass() == "acf_turbo" or Entity:GetClass() == "acf_supercharger" then
@@ -34,7 +34,7 @@ local function IsReallyValid(trace, ply)
 	local pl = ply;
 	if not trace.Entity:IsValid() then True = false end
 	if trace.Entity:IsPlayer() then True = false end
-	if trace.Entity:GetClass() ~= "acf_engine_custom" and trace.Entity:GetClass() ~= "acf_enginemaker" and trace.Entity:GetClass() ~= "acf_turbo" and trace.Entity:GetClass() ~= "acf_supercharger" then True = false end
+	if trace.Entity:GetClass() ~= "acf_engine_custom" and trace.Entity:GetClass() ~= "acf_engine_maker" and trace.Entity:GetClass() ~= "acf_turbo" and trace.Entity:GetClass() ~= "acf_supercharger" then True = false end
 	if SERVER and not trace.Entity:GetPhysicsObject():IsValid() then True = false end
 	
 	if True then
@@ -57,7 +57,7 @@ end
 function TOOL:RightClick(trace)
 	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
 	local pl = self:GetOwner();
-	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_enginemaker" then
+	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_engine_maker" then
 		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
 		self:GetOwner():ConCommand("acfsoundcustom_pitch "..trace.Entity.SoundPitch);
 		ACFCUSTOM_SendNotify( pl, true, "Engine Sound copied successfully!" );
@@ -70,7 +70,7 @@ end
 
 function TOOL:Reload( trace )
 	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
-	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_enginemaker" then
+	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_engine_maker" then
 		local Id = trace.Entity.Id
 		local List = list.Get("ACFCUSTOMEnts")
 		self:GetOwner():ConCommand("acfsoundcustom_pitch " ..(List["MobilityCustom"][Id]["pitch"] or 1));
