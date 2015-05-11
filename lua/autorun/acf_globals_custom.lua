@@ -2,14 +2,15 @@
 --	Set vars
 --------------------------------------
 ACFCUSTOM = {}
-ACFCUSTOM.VersionCustom = 10.1
-ACFCUSTOM.Version = 111
+ACFCUSTOM.Version = 112
 ACFCUSTOM.CurrentVersion = 0
-ACFCUSTOM.EngineMakerVersion = 5.0
+ACFCUSTOM.EngineMakerVersion = 6.1
 ACFC = {}
 ACFC.R = 0
 ACFC.G = 0
 ACFC.B = 200
+local VersionTable = string.ToTable(ACFCUSTOM.Version)
+ACFCUSTOM.VersionCustom = VersionTable[1].."."..VersionTable[2].."."..VersionTable[3]
 print("[[ ACF Custom Loaded ]]")
 --------------------------------------
 --	Cvars
@@ -21,18 +22,26 @@ CreateConVar('sbox_max_acf_maker', 12)
 --	Loading Files
 --------------------------------------
 AddCSLuaFile()
-AddCSLuaFile( "acf/client/cl_acfcustom_gui.lua" )
-local customfiles = file.Find( "acf/client/custommenu/*.lua", "LUA" )
-local customfileshelpmenu = file.Find( "acf/client/custommenu/helpmenu/*.lua", "LUA" )
-local customfilesenginemaker = file.Find( "acf/client/custommenu/enginemaker/*.lua", "LUA" )
-for k, v in pairs( customfiles ) do
-	AddCSLuaFile( "acf/client/custommenu/" .. v )
+AddCSLuaFile("acf/client/cl_acfcustom_gui.lua")
+local customfiles = file.Find("acf/client/custommenu/*.lua", "LUA")
+local customfileshelpmenu = file.Find("acf/client/custommenu/helpmenu/*.lua", "LUA")
+local customfilesenginemaker = file.Find("acf/client/custommenu/enginemaker/*.lua", "LUA")
+local customfilesdupefixer = file.Find("acf/client/custommenu/dupefixer/*.lua", "LUA")
+local customfilesdupefixerengineslist = file.Find("acf/client/custommenu/dupefixer/engineslist/*.lua", "LUA")
+for k, v in pairs(customfiles) do
+	AddCSLuaFile("acf/client/custommenu/"..v)
 end
-for k, v in pairs( customfileshelpmenu ) do
-	AddCSLuaFile( "acf/client/custommenu/helpmenu/" .. v )
+for k, v in pairs(customfileshelpmenu) do
+	AddCSLuaFile("acf/client/custommenu/helpmenu/"..v)
 end
-for k, v in pairs( customfilesenginemaker ) do
-	AddCSLuaFile( "acf/client/custommenu/enginemaker/" .. v )
+for k, v in pairs(customfilesenginemaker ) do
+	AddCSLuaFile("acf/client/custommenu/enginemaker/"..v)
+end
+for k, v in pairs(customfilesdupefixer ) do
+	AddCSLuaFile("acf/client/custommenu/dupefixer/"..v)
+end
+for k, v in pairs(customfilesdupefixerengineslist ) do
+	AddCSLuaFile("acf/client/custommenu/dupefixer/engineslist/"..v)
 end
 --------------------------------------
 --	Loading Files Client/Server side
@@ -40,19 +49,27 @@ end
 if SERVER then
 	util.AddNetworkString( "ACFCUSTOM_Notify" )
 elseif CLIENT then
-	local customfiles2 = file.Find( "acf/client/custommenu/*.lua", "LUA" )
-	local customfileshelpmenu2 = file.Find( "acf/client/custommenu/helpmenu/*.lua", "LUA" )
-	local customfilesenginemaker2 = file.Find( "acf/client/custommenu/enginemaker/*.lua", "LUA" )
-	for k, v in pairs( customfiles2 ) do
-		if v != "acf_dupefixer.lua" then
-			include( "acf/client/custommenu/" .. v )
-		end
+	local customfiles2 = file.Find("acf/client/custommenu/*.lua", "LUA")
+	local customfileshelpmenu2 = file.Find("acf/client/custommenu/helpmenu/*.lua", "LUA")
+	local customfilesenginemaker2 = file.Find("acf/client/custommenu/enginemaker/*.lua", "LUA")
+	local customfilesdupefixer2 = file.Find("acf/client/custommenu/dupefixer/*.lua", "LUA")
+	local customfilesdupefixerengineslist2 = file.Find("acf/client/custommenu/dupefixer/engineslist/*.lua", "LUA")
+	for k, v in pairs(customfiles2) do
+		include("acf/client/custommenu/"..v)
 	end
 	for k, v in pairs( customfileshelpmenu2 ) do
-		include( "acf/client/custommenu/helpmenu/" .. v )
+		include("acf/client/custommenu/helpmenu/"..v)
 	end
 	for k, v in pairs( customfilesenginemaker2 ) do
-		include( "acf/client/custommenu/enginemaker/" .. v )
+		include("acf/client/custommenu/enginemaker/"..v)
+	end
+	for k, v in pairs( customfilesdupefixer2 ) do
+		if v != "acf_dupefixer_menu.lua" then
+			include("acf/client/custommenu/dupefixer/"..v)
+		end
+	end
+	for k, v in pairs( customfilesdupefixerengineslist2 ) do
+		include("acf/client/custommenu/dupefixer/engineslist/"..v)
 	end
 end
 include("acf/shared/acfloadercustom.lua")
@@ -96,7 +113,7 @@ end
 function ACFCUSTOM_UpdateChecking( )
 	print("[ACF] Checking for updates....")
 	http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/",function(contents,size)
-		local rev = tonumber(string.match( contents, "history\"></span>\n%s*(%d+)\n%s*</span>" ))
+		local rev = tonumber(string.match( contents, "%s*(%d+)\n%s*</span>\n%s*commits" ))
 		if rev and ACFCUSTOM.Version >= rev then
 			print("[ACF] ACF Custom Is Up To Date, Latest Version: "..rev)
 		elseif !rev then
