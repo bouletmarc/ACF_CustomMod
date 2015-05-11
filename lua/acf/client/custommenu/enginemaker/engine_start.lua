@@ -21,7 +21,6 @@ local function CreateMenu()
 	MainPanel:SetDeleteOnClose( false )
 	MainPanel:SetTitle("Engine Maker Start Menu V"..ACFCUSTOM.EngineMakerVersion)
 	MainPanel:SetVisible(false)
-	MainPanel:SetCookieName( "wire_sound_browser" )
 	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
 	--Add 2nd panel	
 	local SecondPanel = MainPanel:Add("DPanel")
