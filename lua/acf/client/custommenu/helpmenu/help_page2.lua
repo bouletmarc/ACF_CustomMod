@@ -19,7 +19,6 @@ local function CreateMenu()
 	MainPanel:SetDeleteOnClose( true )
 	MainPanel:SetTitle("ACF Help Menu by Bouletmarc")
 	MainPanel:SetVisible(false)
-	MainPanel:SetCookieName( "wire_sound_browser" )
 	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
 	--Menu text
 	MainText = MainPanel:Add("DLabel")
@@ -76,28 +75,29 @@ local function CreateMenu()
 	--------------------------------------
 	--	Left Panel Menu
 	--------------------------------------
-		--Set local vars
-		local TopLeftTitle, TopLeft = LeftPanel:Add("DLabel"), LeftPanel:Add("DLabel")
-		local BottomLeftTitle, BottomLeft = LeftPanel:Add("DLabel"), LeftPanel:Add("DLabel")
 		--Set top left title
+		local TopLeftTitle = LeftPanel:Add("DLabel")
 		TopLeftTitle:SetText(TopLeftName)
 		TopLeftTitle:SetTextColor(Color(210,210,210,255))
 		TopLeftTitle:SetPos(40,40)
 		TopLeftTitle:SetFont( "DefaultBold" )
 		TopLeftTitle:SizeToContents()
 		--Set top left text
+		local TopLeft = LeftPanel:Add("DLabel")
 		TopLeft:SetText(TopLeftText)
 		TopLeft:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		TopLeft:SetPos(20,60)
 		TopLeft:SetFont( "DefaultBold" )
 		TopLeft:SizeToContents()
 		--Set bottom left title
+		local BottomLeftTitle = LeftPanel:Add("DLabel")
 		BottomLeftTitle:SetText(BottomLeftName)
 		BottomLeftTitle:SetTextColor(Color(210,210,210,255))
 		BottomLeftTitle:SetPos(40,220)
 		BottomLeftTitle:SetFont( "DefaultBold" )
 		BottomLeftTitle:SizeToContents()
 		--Set bottom left text
+		local BottomLeft = LeftPanel:Add("DLabel")
 		BottomLeft:SetText(BottomLeftText)
 		BottomLeft:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		BottomLeft:SetPos(20,240)
@@ -106,28 +106,29 @@ local function CreateMenu()
 	--------------------------------------
 	--	Right Panel Menu
 	--------------------------------------
-		--Set local vars
-		local TopRightTitle, TopRight = RightPanel:Add("DLabel"), RightPanel:Add("DLabel")
-		local BottomRightTitle, BottomRight = RightPanel:Add("DLabel"), RightPanel:Add("DLabel")
 		--Set top right title
+		local TopRightTitle = RightPanel:Add("DLabel")
 		TopRightTitle:SetText(TopRightName)
 		TopRightTitle:SetTextColor(Color(210,210,210,255))
 		TopRightTitle:SetPos(20,40)
 		TopRightTitle:SetFont( "DefaultBold" )
 		TopRightTitle:SizeToContents()
 		--Set top right text
+		local TopRight = RightPanel:Add("DLabel")
 		TopRight:SetText(TopRightText)
 		TopRight:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		TopRight:SetPos(0,60)
 		TopRight:SetFont( "DefaultBold" )
 		TopRight:SizeToContents()
 		--Set bottom right title
+		local BottomRightTitle = RightPanel:Add("DLabel")
 		BottomRightTitle:SetText(BottomRightName)
 		BottomRightTitle:SetTextColor(Color(210,210,210,255))
 		BottomRightTitle:SetPos(20,200)
 		BottomRightTitle:SetFont( "DefaultBold" )
 		BottomRightTitle:SizeToContents()
 		--Set bottom right text
+		local BottomRight = RightPanel:Add("DLabel")
 		BottomRight:SetText(BottomRightText)
 		BottomRight:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		BottomRight:SetPos(0,220)
@@ -158,16 +159,16 @@ local function CreateMenu()
 			MainPanel:Close()
 		end
 		--Set next page button
-		/*local HelpNext = LeftPanel:Add("DButton")
+		local HelpNext = LeftPanel:Add("DButton")
 		HelpNext:SetText("Help Next Page")
 		HelpNext:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
 		HelpNext:SetPos(280,360)
 		HelpNext:SetWide(100)
 		HelpNext:SetTall(40)
 		HelpNext.DoClick = function()
-			RunConsoleCommand("acf_help2_open")
+			RunConsoleCommand("acf_help3_open")
 			MainPanel:Close()
-		end*/
+		end
 
 	MainPanel:InvalidateLayout(true)
 	

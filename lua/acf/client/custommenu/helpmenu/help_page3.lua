@@ -17,10 +17,16 @@ local function CreateMenu()
 	--Set options
 	MainPanel:SetSizable(false)
 	MainPanel:SetDeleteOnClose( true )
-	MainPanel:SetTitle("Custom Mod Tips Menu V3")
+	MainPanel:SetTitle("ACF Help Menu by Bouletmarc")
 	MainPanel:SetVisible(false)
-	MainPanel:SetCookieName( "wire_sound_browser" )
 	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
+	--Menu text
+	MainText = MainPanel:Add("DLabel")
+	MainText:SetText("ACF Help Menu Page3")
+	MainText:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+	MainText:SetPos(360,15)
+	MainText:SetFont( "DefaultBold" )
+	MainText:SizeToContents()
 	--Add left panel
 	local LeftPanel = MainPanel:Add("DPanel")
 	LeftPanel:DockMargin(4, 4, 4, 4)
@@ -142,6 +148,28 @@ local function CreateMenu()
 		Close.DoClick = function()
 			MainPanel:Close()
 		end
+		--Set back page button
+		local HelpBack = LeftPanel:Add("DButton")
+		HelpBack:SetText("Help Back Page")
+		HelpBack:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		HelpBack:SetPos(170,360)
+		HelpBack:SetWide(100)
+		HelpBack:SetTall(40)
+		HelpBack.DoClick = function()
+			RunConsoleCommand("acf_help2_open")
+			MainPanel:Close()
+		end
+		--Set next page button
+		/*local HelpNext = LeftPanel:Add("DButton")
+		HelpNext:SetText("Help Next Page")
+		HelpNext:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		HelpNext:SetPos(280,360)
+		HelpNext:SetWide(100)
+		HelpNext:SetTall(40)
+		HelpNext.DoClick = function()
+			RunConsoleCommand("acf_help3_open")
+			MainPanel:Close()
+		end*/
 
 	MainPanel:InvalidateLayout(true)
 	
@@ -162,4 +190,4 @@ local function OpenMenu(pl, cmd, args)
 		MainPanel:InvalidateLayout(true)
 	end, MainPanel)
 end
-concommand.Add("acf_tips_open", OpenMenu)
+concommand.Add("acf_help3_open", OpenMenu)
