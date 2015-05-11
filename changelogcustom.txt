@@ -371,14 +371,14 @@ check the feedback of them
 --Removed useless OnClose menu functions
 --Removed useless Color console commands
 
-*r127
+*r130
 ##------------BIG UPDATE----------------#
 #       ADDED ACF DUPE FIXER TOOL        #
 # No more sub version (V4 removed)  #
 #     Version are related to 'revision'     #
-#                revision 112-129                  #
+#                revision 112-130                  #
 #------------------------------------------#
---V1.2.9
+--V1.3.0
 --Fixed engine maker menu not opening
 --Fixed custom udpate checking
 --Fixed changelog DPanelList not updating
