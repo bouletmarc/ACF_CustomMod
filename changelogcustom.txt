@@ -1,28 +1,403 @@
-r109
+r73
+--Updated to Rev.396
+
+*r74
+--Updated to Rev.401
+--Added Custom Changlog
+
+*r75
+--Updated ChangeLog Custom
+--Quick cl_menu fix
+--
+-->BUG : SetText got a nil value
+
+*r76
+--Fixed Chips Wires Duping
+
+*r77
+--7.50
+--Updated with Fuel tank Base
+--Big change in code's
+--
+--7.51
+--Updated with new Wankel Model's
+--Removed Custom Menu Tab
+--
+--Added Custom stuff to mobility Tab
+--
+--Fixed Original Engine Running Error
+--Fixed Auto, Cvt, chips, nos Code's
+--Fixed Fat and Custom engine was inverted
+--Fixed Engine2 Client Menu on Click
+--
+---->BUG<-----
+--Engine Maker are not Usable, still updating code's
+--Engine's Client Menu bug
+--Main Menu SetText() error
+
+*r78
+--7.53
+--quick Client Side menu Update
+
+*r79
+--7.54
+--Another quick Client side Update
+--Changelog Update
+
+*r80
+--7.55
+--Fixed Client Menu
+--Fixed Changlog
+--Fixed SetText
+
+*r81
+--7.56
+--Fixed engine Working without tank BUG
+--Fixed engine Stop while running out of gaz
+--
+--Added Consumption in Gui
+
+*r82
+--7.57
+--Added Fuel menu for Engine Maker
+--Added Value's in Engine Maker Save Menu
+--
+--Fixed Customizable Engine's Menu
+--Fixed Engine Maker Client Menu
+--Fixed Engine Maker Update Engine Model
+--Fixed Consumption on engine's created
+--
+--Wankel Fix for Engine Maker
+--Consumption update while changing values
+
+*r83
+--7.58
+--Updated to Revision 416
+--
+--Quick Engine Fix
+--Engine Maker Fuel Menu Renamed
+--Help menu for Original ACF Created
+--All Engine's or Almost might Require Fuel
+--Turbine Engine's Require PlanePetrol
+--Customizable Engine Menu Fix
+
+*r84
+--7.61
+--Added Temperature Mod
+--
+--7.62
+--Temp Mod Power Affect
+--Temp Mod Blow Fix
+--Temp can decrease while engine Off
+--Better Consumption Gui decimals
+--Fuel Mod, More Tanks
+--Petrol94, 96, VP Racing
+--Changed Fuel type's on some's engine's
+--Fixed Engine Updating
+--
+--Engine Temp are 88degree if not changed
+--Engine Heat Above 109degree
+--Engine Blow Above 125degree
+--Engine Lost Health while heating
+--Engine Lost Power with Health
+--Engine can use Higher Fuel with RISK
+--Higher fuel make heat faster
+--Higher fuel make more power
+--lower fuel make less power
+
+*r85
+--7.63
+--Updated to Rev.420
+--
+--Fixed Gearbox's Gui
+--Fixed modded engine blow fast
+--
+--Added Flywheel in Fuel Mod
+--
+--Better Temperature Mod
+--Better throttle responce Fuel Mod
+--
+--Temp increase bit less fast
+--Temp Rpm Update while Updating
+--Warm Temp changed to 112degree
+
+*r86
+--7.64
+--Updated to Rev.425
+--
+--Added GearboxRPM inputs/outputs
+--Added Autoclutch Disable feature
+--
+--Wiring GearboxRPM from the
+--Engine to Gearbox disable
+--Autoclutch on engine
+--
+--Fixed Customizable engines
+--Fixed Engine Maker
+
+*r89
+--8.01 Update 2014-Recode
+--ACF Custom V2
+--
+--Updated to Rev.483
+--Updated All files
+--
+--COMPLET RECODE
+--
+--Less lua files
+--Less lines in lua's
+--
+--Better folders and files locations
+--Menus Spawn at Center
+--
+--Added Darker Sliders
+--Added Change color Menu
+--Added and Better Help menus
+--Added Original Changelog Menu
+--Added Installation menu
+--Added Whats New Menu(Show up 1 time each update)
+--Added Override Inputs Electric/Turbine
+--Added Print Msg to SoundChanger
+--
+--All Engine Not require Fuel
+--To Require Fuel, Only Link FuelTank
+--Customs Engines are now with regulars
+--
+--Fixed Menu Fonts
+--Fixed Menu Killicons
+--Fixed Engines GUI
+--Fixed Diesel Engines
+--Fixed Electric&Turbine Modding
+--Fixed Chips, Vtec, Nos
+--Fixed Custom CVT
+--Fixed think Rate
+
+*r91
+---CHANGELOG PART2---
+--TO SEE PART1 REFER TO REV 89--
+--
+--Fixed Engine Maker
+--
+--Now Save And Load
+--Better Updating system
+--
+--Added All Models
+--Added Electric&Turbine Type
+--
+--Auto Load Last Engine
+--Can Edit Last Engine
+--Just Write NUMBER where needed
+--And it Might never spawn Error
+--Menus V8.1
+--
+--Removed Cutoff on Electric -Useless-
+--Removed Cutoff on Turbine -Useless-
+--Removed Automatic GB 'BETA'
+--Removed EngineCustomSmall -Useless-
+--Removed EngineCustomFat -Useless-
+--Removed Temp Mod -useless-
+--Removed Fuel Mod -Useless-
+
+*r93
+-8.11
+--Fixed CVT Linking to Gearboxes
+--Fixed CVT Clutching issue
+--Added Airplane Gearboxes
+--Added Automatic Gearboxes
+--Added Engine Radiators Extra
+--Added Chips Linking
+--Added Nos Linking
+--Added Blue Color to Nos in Menu
+--Added CustomModding rcon switch
+--Added EngineMaker rcon
+--Added Engine Extras rcon
+--
+--Integrated Vtec with Chips
+--Engine Link to Extra(chips,nos)
+--Allow only 1 Extra linked
+--Chips are now V3
+--Extra Linking not allowed on Electric and Turbine
+--Consumption show only while require fuel
+--Re-made Readme file. Thanks to joker
+--
+--Removed Vtec Chips "Integrated"
+--Removed Inputs on Chips -Useless-
+
+*r94
+-8.21
+--Fixed Airplane Gearbox Gui+Name
+
+*r95
+-8.31
+--Fixed Menu Bug
+--Fixed Spawn Bug
+--Fixed Nos Bottle
+--
+--Turbine not necessary require fuel
+--Updated for original acf V.501
+
+*r98
+-8.32
+--Small Revision Fix
+
+*r99
+-8.41
+--Added i5 and v10 engine's
+--Added also in engine maker
+--
+--Updated for original acf V.502
+
+*r100
+-8.42
+--Fixed help menu page2
+--Work with original acf v.502
+
+*r101
+-8.51
+--Fixed ACFMenu no internet
+--
+--Improved Engine Maker
+--
+--Added E2 Functions
+--Added Old Single/Vtwin Models
+--
+--Updated for original acf V.506
+
+*r102
+--Added i3 engines
+--Added Active inputs for Chips
+--Added New Rev Limiter Sound
+--
+--Fixed Acf_Chips Glitch
+--Removed "Gearbox RPM" inputs
+--Updated for original acf V.507
+
+*r103
+-------BIG UPDATE-------
+-9.01 V3
+--Added ACF Custom Menu
+--Added Lot's acfCustom E2 fucntions
+--Added All Engines to the List
+--
+--Removed Changelog Menu
+--Removed Help Install Menu
+--
+--Converted Custom Mod
+--Custom Mod going to V3
+--Custom Mod is now apart of original
+--Installation easier, no more merge
+--THIS CHANGE IS TO MAKE IT BETTER
+
+*r104
+-9.11 V3
+--Added Custom Updating System
+--Added Chips weld when spawn on entity
+--Added RpmAdd
+--Added Acf Custom Sound Tool
+--Added Acf Custom Copy Tool
+--
+--Fixed Acf Custom Notify
+--Fixed Chips on first spawn sometimes
+--
+--Removed Gearbox Model from EngineMaker
+--Removed MaxRpmAdd/LimitRpmAdd
+--
+--Inversed Radiator Linking
+--Cleaned/updated somes lua files
+--
+----SPECIALS NOTES----
+You can update Original engines
+to become Custom engines in 1clic.
+Work with gearboxes, engine maker, etc.
+You should wire and link it again.
+
+*r106
+-9.22 V3
+--Added Custom Mod Tips Menu
+--Added Turbocharger
+--Added Supercharger
+--Added Turbo/supercharger to sound tool
+--
+--Fixed Custom to Engine Maker Updating
+--Help Menu Cleaned
+--
+----SPECIALS NOTES----
+-Thanks to SEM for models-
+Turbo and Supercharger are in test
+They are working fine, but might be
+improved in furtur update. I'm gonna
+check the feedback of them
+
+*r107
 -9.31 V3
 --Improved Turbo Spool Start
 --Turbo Add Slightly more torque
-
+--
 --Fixed Changelog Error
 --Fixed E2 Function 'acfCustomRpmAdd'
 
-*r110
--10.0 V4 '2015 First Update'
+*r109
+-9.31 V3
+--Improved Turbo Spool Start
+--Turbo Add Slightly more torque
+--
+--Fixed Changelog Error
+--Fixed E2 Function 'acfCustomRpmAdd'
+
+*r111
+-------BIG UPDATE-------
+-10.1 V4 '2015 First Update'
 --Updated to Original ACF Revision 545
+--
 --Added Unofficial ACF Extras Models&Engines
 --Added Readme_installation into Readme_custom
 --Added EngineMaker Version in Acf_globals_custom
 --Added Dave E2 turbo
 --Added Admin menu
---Added&Improved lot of lua's infos
+--Added & Improved lot of lua's infos
+--
 --Improved colors loading functions
 --Improved help menu luas
 --Improved engines loadings
 --Improved engines gui updating(lot less calling)
+--Improved Readme.md
+--
 --Renamed CanDo to Tips
 --Renamed CurrentVersion2 to CurrentVersion
 --Renamed Version2 to Version
 --Renamed RequiresFuel number to boolean
+--		
 --Removed 'browser' text from menu opening cmds
 --Removed useless OnClose menu functions
 --Removed useless Color console commands
+
+*r112
+#------------BIG UPDATE-------------#
+#    ADDED ACF DUPE FIXER TOOL      #
+# No more sub version (V4 removed)  #
+# Version are related to 'revision' #
+#-----------------------------------#
+--V1.1.2
+--Fixed engine maker menu not opening
+--Fixed custom udpate checking
+--Fixed changelog DPanelList not updating
+--Fixed huge lags with engines gui
+--
+--Added clutch models to airplane gearbox
+--Added engine maker 'errorless' function
+--Added all old changelogs
+--
+--Merged custom tips into Help menu Page3
+--Merged engine maker Load&New menu
+--
+--Renamed some Ids since dupe fixer exist
+--Renamed 'SVN' to 'Git'
+--
+--Removed SetCookieName
+--Removed clutch models from engine maker
+--Removed rpm from gui due to lags
+--Removed consumption from gui due to lags
+--
+--Made engines gui refresh very slower
+--Widened help start menu
+
