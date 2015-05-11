@@ -19,7 +19,7 @@ function PANEL:Init( )
 		file.Write("acf/revision.txt", tostring(ACFCUSTOM.Version)..","..tostring(ACFCUSTOM.VersionCustom))
 		RunConsoleCommand("acf_whatsnew_open")
 	end
-	--Start Menu coding
+	
 	acfmenupanelcustom = self.Panel
 	
 	self:SetTall( surface.ScreenHeight() - 120 )
@@ -38,8 +38,8 @@ function PANEL:Init( )
 		if ID != "Guns" then
 			table.sort(self.WeaponDisplay[ID], function(a,b) return a.id < b.id end )
 		end
-		
 	end
+	
 	--Home Node
 	local HomeNode = self.WeaponSelect:AddNode( "Home menu" )
 	HomeNode.mytable = {}
@@ -49,25 +49,29 @@ function PANEL:Init( )
 		acfmenupanelcustom:UpdateDisplay(self.mytable)
 	end
 	HomeNode.Icon:SetImage( "icon16/newspaper.png" )
+	
 	--Get Convars limits
 	local Makerlimit = GetConVarNumber("sbox_max_acf_maker")
 	local Extralimit = GetConVarNumber("sbox_max_acf_extra")
+	
 	--Set Nodes
 	local Mobility = self.WeaponSelect:AddNode( "Mobility List" )
 	local Engines = Mobility:AddNode( "Engines" )
 	local CustomGB = Mobility:AddNode( "Custom Gearboxes" )
+	
 	--Set Nodes with limits
 	if Makerlimit > 0 then MakerNode = Mobility:AddNode( "Engines Maker" ) end
 	if Extralimit > 0 then ExtraNode = Mobility:AddNode( "Engines Extras" ) end
+	
 	--Set Nodes Final
 	local EngineSubcats = {}
 	for _, MobilityTable in pairs(self.WeaponDisplay["MobilityCustom"]) do
 		local NodeAdd = Mobility
 		if( MobilityTable.ent == "acf_engine_custom" ) then
 			NodeAdd = Engines
-		elseif ( MobilityTable.ent == "acf_gearboxauto" or MobilityTable.ent == "acf_gearboxcvt" or MobilityTable.ent == "acf_gearboxair" ) then
+		elseif ( MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" ) then
 			NodeAdd = CustomGB
-		elseif( MobilityTable.ent == "acf_enginemaker") then
+		elseif( MobilityTable.ent == "acf_engine_maker") then
 			if Makerlimit > 0 then NodeAdd = MakerNode end
 		elseif ( MobilityTable.ent == "acf_turbo" or MobilityTable.ent == "acf_supercharger" or MobilityTable.ent == "acf_chips" or MobilityTable.ent == "acf_nos" or MobilityTable.ent == "acf_rads") then
 			if Extralimit > 0 then NodeAdd = ExtraNode end
@@ -86,12 +90,12 @@ function PANEL:Init( )
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
-		elseif MobilityTable.ent == "acf_gearboxauto" or MobilityTable.ent == "acf_gearboxcvt" or MobilityTable.ent == "acf_gearboxair" then
+		elseif MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" then
 			NodeAdd = CustomGB
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
-		elseif MobilityTable.ent == "acf_enginemaker" then
+		elseif MobilityTable.ent == "acf_engine_maker" then
 			if Makerlimit > 0 then
 				NodeAdd = MakerNode
 				if(MobilityTable.category) then
@@ -115,6 +119,12 @@ function PANEL:Init( )
 		EndNode.Icon:SetImage( "icon16/newspaper.png" )
 
 	end
+end
+/*------------------------------------
+	Think
+------------------------------------*/
+function PANEL:Think( )
+
 end
 
 function PANEL:UpdateDisplay( Table )
@@ -170,30 +180,28 @@ end
 --	Create Custom Menu
 --------------------------------------
 function ACFHomeCustomGUICreate( Table )
+
 	if not acfmenupanelcustom.CustomDisplay then return end
 	
-	--Set local vars
-	local VT, VT2, VT4 = vgui.Create( "DLabel" ), vgui.Create( "DLabel" ), vgui.Create( "DLabel" )
-	local ColorMenu, HelpMenu, CustomTips = vgui.Create( "DButton" ), vgui.Create( "DButton" ), vgui.Create( "DButton" )
-	local Log = vgui.Create( "DLabel" )
-	--Set vars
-	VT3 = vgui.Create( "DLabel" )
+	--Version text init
+	acfmenupanelcustom["CData"]["VersionInit"] = vgui.Create( "DLabel" )
+	versiontext = "ACF CUSTOM MOD\n\n".."Git Revision: "..ACFCUSTOM.CurrentVersion.."\nCurrent Revision: "..ACFCUSTOM.Version
+	acfmenupanelcustom["CData"]["VersionInit"]:SetText(versiontext)
+	acfmenupanelcustom["CData"]["VersionInit"]:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+	acfmenupanelcustom["CData"]["VersionInit"]:SetFont( "DefaultBold" )
+	acfmenupanelcustom["CData"]["VersionInit"]:SizeToContents()
+	acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"]["VersionInit"] )
 	
-	--Version text1
-	VT:SetText("Custom Version")
-	VT:SetTextColor(Color(0,0,50,255))
-	VT:SetFont( "DefaultBold" )
-	VT:SizeToContents()
-	acfmenupanelcustom.CustomDisplay:AddItem( VT )
+	--Version Number Text
+	acfmenupanelcustom["CData"]["VersionNumbert"] = vgui.Create( "DLabel" )
+	acfmenupanelcustom["CData"]["VersionNumbert"]:SetText("Mod Version: "..ACFCUSTOM.VersionCustom)
+	acfmenupanelcustom["CData"]["VersionNumbert"]:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+	acfmenupanelcustom["CData"]["VersionNumbert"]:SetFont( "DefaultBold" )
+	acfmenupanelcustom["CData"]["VersionNumbert"]:SizeToContents()
+	acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"]["VersionNumbert"] )
 	
-	--Version text2
-	VT2:SetText("SVN Version: "..ACFCUSTOM.CurrentVersion.."\nCurrent Version: "..ACFCUSTOM.Version)
-	VT2:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-	VT2:SetFont( "DefaultBold" )
-	VT2:SizeToContents()
-	acfmenupanelcustom.CustomDisplay:AddItem( VT2 )
-	
-	--Version text3
+	--Version text
+	acfmenupanelcustom["CData"]["VersionText"] = vgui.Create( "DLabel" )
 	local color
 	local versionstring
 	if ACFCUSTOM.Version >= ACFCUSTOM.CurrentVersion then
@@ -203,73 +211,52 @@ function ACFHomeCustomGUICreate( Table )
 		versionstring = "Out Of Date"
 		color = Color(225,0,0,255)
 	end
-	
-	VT3:SetText("ACF Custom Is "..versionstring.."!\n")
-	VT3:SetColor(color) 
-	VT3:SetFont( "DefaultBold" )
-	VT3:SizeToContents() 
-	acfmenupanelcustom.CustomDisplay:AddItem( VT3 )
-	
-	--Version text4
-	VT4 = vgui.Create( "DLabel" )
-	VT4:SetText("Custom Version: "..ACFCUSTOM.VersionCustom.."\n")
-	VT4:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-	VT4:SetFont( "DefaultBold" )
-	VT4:SizeToContents()
-	acfmenupanelcustom.CustomDisplay:AddItem( VT4 )
+	acfmenupanelcustom["CData"]["VersionText"]:SetText("ACF Custom Is "..versionstring.."!\n\n")
+	acfmenupanelcustom["CData"]["VersionText"]:SetColor(color) 
+	acfmenupanelcustom["CData"]["VersionText"]:SetFont( "DefaultBold" )
+	acfmenupanelcustom["CData"]["VersionText"]:SizeToContents() 
+	acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"]["VersionText"] )
 	
 	--Color Menu Button
-	ColorMenu:SetText("Change ACF Menu Font's color")
-	ColorMenu:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-	ColorMenu:SetToolTip("Bored of that font color ?\nClic that button to change it !")
-	ColorMenu:SetWide(100)
-	ColorMenu:SetTall(30)
-	ColorMenu.DoClick = function()
+	acfmenupanelcustom["CData"]["ColorMenu"] = vgui.Create( "DButton" )
+	acfmenupanelcustom["CData"]["ColorMenu"]:SetText("Change ACF Menu Font's color")
+	acfmenupanelcustom["CData"]["ColorMenu"]:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+	acfmenupanelcustom["CData"]["ColorMenu"]:SetToolTip("Bored of that font color ?\nClic that button to change it !")
+	acfmenupanelcustom["CData"]["ColorMenu"]:SetWide(100)
+	acfmenupanelcustom["CData"]["ColorMenu"]:SetTall(30)
+	acfmenupanelcustom["CData"]["ColorMenu"].DoClick = function()
 		RunConsoleCommand("acf_colormenu_open")
 	end
-	acfmenupanelcustom.CustomDisplay:AddItem( ColorMenu )
+	acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"]["ColorMenu"] )
 	
 	--Admin Menu
 	if LocalPlayer():IsAdmin() or LocalPlayer():IsSuperAdmin() then
-		local AdminMenu = vgui.Create( "DButton" )
-		AdminMenu:SetText("Admin Menu")
-		AdminMenu:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-		AdminMenu:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
-		AdminMenu:SetWide(75)
-		AdminMenu:SetTall(30)
-		AdminMenu.DoClick = function()
+		acfmenupanelcustom["CData"]["AdminMenu"] = vgui.Create( "DButton" )
+		acfmenupanelcustom["CData"]["AdminMenu"]:SetText("Admin Menu")
+		acfmenupanelcustom["CData"]["AdminMenu"]:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		acfmenupanelcustom["CData"]["AdminMenu"]:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
+		acfmenupanelcustom["CData"]["AdminMenu"]:SetWide(75)
+		acfmenupanelcustom["CData"]["AdminMenu"]:SetTall(30)
+		acfmenupanelcustom["CData"]["AdminMenu"].DoClick = function()
 			RunConsoleCommand("acf_admin_open")
 		end
-		acfmenupanelcustom.CustomDisplay:AddItem( AdminMenu )
+		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"]["AdminMenu"] )
 	end
 	
 	--Help Menu Button
-	HelpMenu:SetText("Help")
-	HelpMenu:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-	HelpMenu:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
-	HelpMenu:SetWide(70)
-	HelpMenu:SetTall(30)
-	HelpMenu.DoClick = function()
+	acfmenupanelcustom["CData"]["HelpMenu"] = vgui.Create( "DButton" )
+	acfmenupanelcustom["CData"]["HelpMenu"]:SetText("Help")
+	acfmenupanelcustom["CData"]["HelpMenu"]:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+	acfmenupanelcustom["CData"]["HelpMenu"]:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
+	acfmenupanelcustom["CData"]["HelpMenu"]:SetWide(70)
+	acfmenupanelcustom["CData"]["HelpMenu"]:SetTall(30)
+	acfmenupanelcustom["CData"]["HelpMenu"].DoClick = function()
 		RunConsoleCommand("acf_help_open")
 	end
-	acfmenupanelcustom.CustomDisplay:AddItem( HelpMenu )
-	
-	--Custom Mod Tips Button
-	CustomTips:SetText("Custom Mod Tips")
-	CustomTips:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-	CustomTips:SetToolTip("Clic here to get Help about ACF\nAbout Wiring, Linking, Options, Installation")
-	CustomTips:SetWide(80)
-	CustomTips:SetTall(30)
-	CustomTips.DoClick = function()
-		RunConsoleCommand("acf_tips_open")
-	end
-	acfmenupanelcustom.CustomDisplay:AddItem( CustomTips )
+	acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"]["HelpMenu"] )
 	
 	--Changelog Text
-	Log:SetText( "Changelog")
-	Log:SetTextColor(Color(0,0,50,255))
-	Log:SetFont( "DefaultBold" )
-	acfmenupanelcustom.CustomDisplay:AddItem( Log )
+	acfmenupanelcustom:CPanelText("Header", "Custom Changelog :")
 	
 	--Changelog Tree
 	if acfmenupanelcustom.Changelog then
@@ -291,22 +278,9 @@ function ACFHomeCustomGUICreate( Table )
 end
 
 function ACFHomeCustomGUIUpdate( Table )
-	--Settings vars
-	local Log, Log2 = vgui.Create( "DLabel" ), vgui.Create( "DLabel" )
-	
 	--Custom Changelog Text
-	Log:SetText( "Custom Changlog :")
-	Log:SetTextColor(Color(0,0,50,255))
-	Log:SetFont( "DefaultBold" )
-	Log:SizeToContents()
-	acfmenupanelcustom.CustomDisplay:AddItem( Log )
-	
-	--Custom changelog revision
-	Log2:SetText( acfmenupanelcustom.Changelog[Table["rev"]])
-	Log2:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-	Log2:SetFont( "DefaultBold" )
-	Log2:SizeToContents()
-	acfmenupanelcustom.CustomDisplay:AddItem( Log2 )
+	acfmenupanelcustom:CPanelText("Changelog", acfmenupanelcustom.Changelog[Table["rev"]])
+	acfmenupanelcustom.CustomDisplay:PerformLayout()
 	
 	local color
 	local versionstring
@@ -318,16 +292,14 @@ function ACFHomeCustomGUIUpdate( Table )
 		color = Color(225,0,0,255)
 	end
 	
-	VT3:SetText("ACF Custom Is "..versionstring.."!\n")
-	VT3:SetColor(color)
-	VT3:SizeToContents()
-	
-	acfmenupanelcustom.CustomDisplay:PerformLayout()
+	acfmenupanelcustom["CData"]["VersionText"]:SetText("ACF Is "..versionstring.."!")
+	acfmenupanelcustom["CData"]["VersionText"]:SetColor(color)
+	acfmenupanelcustom["CData"]["VersionText"]:SizeToContents()
 end
 --------------------------------------
 --	Changelog calling
 --------------------------------------
-function ACFChangelogHTTPCallBack(contents , size)
+function ACFCUSTOMChangelogHTTPCallBack(contents , size)
 	local Temp = string.Explode( "*", contents )
 	
 	acfmenupanelcustom.Changelog = {}
@@ -341,7 +313,7 @@ function ACFChangelogHTTPCallBack(contents , size)
 		Table.guiupdate = (function( Panel, Table ) ACFHomeCustomGUIUpdate( Table ) end or nil)
 	acfmenupanelcustom:UpdateDisplay( Table )
 end
-http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFChangelogHTTPCallBack, function() end)
+http.Fetch("https://raw.github.com/bouletmarc/ACF_CustomMod/master/changelogcustom.txt", ACFCUSTOMChangelogHTTPCallBack, function() end)
 --------------------------------------
 --	Set Menu Text
 --------------------------------------
@@ -350,6 +322,7 @@ function PANEL:CPanelText(Name, Desc)
 		acfmenupanelcustom["CData"][Name.."_text"] = vgui.Create( "DLabel" )
 			acfmenupanelcustom["CData"][Name.."_text"]:SetText( Desc or "" )
 			acfmenupanelcustom["CData"][Name.."_text"]:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+			acfmenupanelcustom["CData"][Name.."_text"]:SetFont( "DefaultBold" )
 			acfmenupanelcustom["CData"][Name.."_text"]:SetWrap(true)
 			acfmenupanelcustom["CData"][Name.."_text"]:SetAutoStretchVertical( true )
 		acfmenupanelcustom.CustomDisplay:AddItem( acfmenupanelcustom["CData"][Name.."_text"] )
