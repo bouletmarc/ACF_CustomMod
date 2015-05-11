@@ -372,13 +372,13 @@ check the feedback of them
 --Removed useless Color console commands
 
 *r127
-#------------BIG UPDATE-------------#
-#    ADDED ACF DUPE FIXER TOOL      #
+##------------BIG UPDATE----------------#
+#      ADDED ACF DUPE FIXER TOOL        #
 # No more sub version (V4 removed)  #
-# Version are related to 'revision' #
-#        revision 112-127           #
-#-----------------------------------#
---V1.2.7
+#   Version are related to 'revision'   #
+#            revision 112-127              #
+#---------------------------------------#
+--V1.2.8
 --Fixed engine maker menu not opening
 --Fixed custom udpate checking
 --Fixed changelog DPanelList not updating
