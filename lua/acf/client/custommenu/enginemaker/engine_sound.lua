@@ -421,7 +421,8 @@ local function CreateMenu(path)
 		BackButton:Dock( BOTTOM )
 		BackButton:SetTall(35)
 		BackButton.DoClick = function()
-			RunConsoleCommand("acf_enginecreateload_open")
+			EngineMakerUseLoad = true
+			RunConsoleCommand("acf_enginecreate_open")
 			MainPanel:Close()
 		end
 
@@ -434,33 +435,14 @@ local function CreateMenu(path)
 	SoundemitterButton.DoClick = function(btn)
 		--Save and Next
 		local LastEngineText = file.Read("acf/lastengine.txt")
-		local LastEngineTable = {}
+		local EngT = {}
 		for w in string.gmatch(LastEngineText, "([^,]+)") do
-			table.insert(LastEngineTable, w)
+			table.insert(EngT, w)
 		end
-			
-		local NameLoadT = tostring(LastEngineTable[1])
-		local SoundLoadT = ""
-		local ModelLoadT = tostring(LastEngineTable[3])
-		local FuelTypeLoadT = tostring(LastEngineTable[4])
-		local EngineTypeLoadT = tostring(LastEngineTable[5])
-		local TorqueLoadT = tonumber(LastEngineTable[6])
-		local IdleLoadT = tonumber(LastEngineTable[7])
-		local PeakMinLoadT = tonumber(LastEngineTable[8])
-		local PeakMaxLoadT = tonumber(LastEngineTable[9])
-		local LimitRpmLoadT = tonumber(LastEngineTable[10])
-		local FlywheelLoadT = tonumber(LastEngineTable[11])
-		local WeightLoadT = tonumber(LastEngineTable[12])
-		local EngineSizeLoadT = tonumber(LastEngineTable[13])
-		local EngineTypeLoadText = tonumber(LastEngineTable[14])
-		local iSelectLoad = tostring(LastEngineTable[15])
-		local IsTransLoad = tostring(LastEngineTable[16])
-		local FlywheelOverLoad = tonumber(LastEngineTable[17])
 		
-		local txt = NameLoadT..","..strSound..","..ModelLoadT..","..FuelTypeLoadT..","..EngineTypeLoadT..","..TorqueLoadT..","
-		txt = txt ..IdleLoadT..","..PeakMinLoadT..","..PeakMaxLoadT..","..LimitRpmLoadT..","..FlywheelLoadT..","..WeightLoadT..","
-		txt = txt ..EngineSizeLoadT..","..EngineTypeLoadText..","..iSelectLoad..","..IsTransLoad..","..FlywheelOverLoad
-		
+		local txt = EngT[1]..","..strSound..","..EngT[3]..","..EngT[4]..","..EngT[5]..","..EngT[6]..","
+		txt = txt ..EngT[7]..","..EngT[8]..","..EngT[9]..","..EngT[10]..","..EngT[11]..","..EngT[12]..","
+		txt = txt ..EngT[13]..","..EngT[14]..","..EngT[15]..","..EngT[16]..","..EngT[17]
 		file.Write("acf/lastengine.txt", txt)
 		
 		RunConsoleCommand("acf_enginesave_open")

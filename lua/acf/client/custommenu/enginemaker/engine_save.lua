@@ -6,32 +6,11 @@ local MainPanel = nil
 --Saving New Engine
 function NewEngineSaveFunc()
 	local LastEngineText = file.Read("acf/lastengine.txt")
-	local LastEngineTable = {}
+	local EngT = {}
 	for w in string.gmatch(LastEngineText, "([^,]+)") do
-		table.insert(LastEngineTable, w)
+		table.insert(EngT, w)
 	end
-	local NameLoadT = tostring(LastEngineTable[1])
-	local SoundLoadT = tostring(LastEngineTable[2])
-	local ModelLoadT = tostring(LastEngineTable[3])
-	local FuelTypeLoadT = tostring(LastEngineTable[4])
-	local EngineTypeLoadT = tostring(LastEngineTable[5])
-	local TorqueLoadT = tonumber(LastEngineTable[6])
-	local IdleLoadT = tonumber(LastEngineTable[7])
-	local PeakMinLoadT = tonumber(LastEngineTable[8])
-	local PeakMaxLoadT = tonumber(LastEngineTable[9])
-	local LimitRpmLoadT = tonumber(LastEngineTable[10])
-	local FlywheelLoadT = tonumber(LastEngineTable[11])
-	local WeightLoadT = tonumber(LastEngineTable[12])
-	local EngineSizeLoadT = tonumber(LastEngineTable[13])
-	local EngineTypeLoadText = tonumber(LastEngineTable[14])
-	local iSelectLoad = tostring(LastEngineTable[15])
-	local IsTransLoad = tostring(LastEngineTable[16])
-	local FlywheelOverLoad = tonumber(LastEngineTable[17])
-	
-	local txt = NameLoadT..","..SoundLoadT..","..ModelLoadT..","..FuelTypeLoadT..","..EngineTypeLoadT..","..TorqueLoadT..","
-	txt = txt ..IdleLoadT..","..PeakMinLoadT..","..PeakMaxLoadT..","..LimitRpmLoadT..","..FlywheelLoadT..","..WeightLoadT..","
-	txt = txt ..EngineSizeLoadT..","..EngineTypeLoadText..","..iSelectLoad..","..IsTransLoad..","..FlywheelOverLoad
-	
+
 	local invalid_filename_chars = {
 		["*"] = "",
 		["?"] = "",
@@ -42,10 +21,10 @@ function NewEngineSaveFunc()
 		['"'] = "",
 		[" "] = "_",
 	}
-	local Nametxtfile = string.lower(string.gsub(NameLoadT, ".", invalid_filename_chars))
+	local Nametxtfile = string.lower(string.gsub(EngT[1], ".", invalid_filename_chars))
 	
-	file.Write("acf/custom.engines/"..Nametxtfile..".txt", txt)	--Save the engine
-	file.Write("acf/lastengine.txt", txt)	--Save the engine also as
+	file.Write("acf/custom.engines/"..Nametxtfile..".txt", tostring(LastEngineText)	--Save the engine
+	file.Write("acf/lastengine.txt", tostring(LastEngineText))	--Save the engine also as
 end
 --------------------------------------
 --	Create Menu
@@ -93,40 +72,26 @@ local function CreateMenu()
 		DermaListView:Clear()
 		--load text for menu
 		local LastEngineText2 = file.Read("acf/lastengine.txt")
-		local LastEngineTable2 = {}
+		local EngT = {}
 		for w in string.gmatch(LastEngineText2, "([^,]+)") do
-			table.insert(LastEngineTable2, w)
+			table.insert(EngT, w)
 		end
-		local NameLoadT2 = tostring(LastEngineTable2[1])
-		local SoundLoadT2 = tostring(LastEngineTable2[2])
-		local ModelLoadT2 = tostring(LastEngineTable2[3])
-		local FuelTypeLoadT2 = tostring(LastEngineTable2[4])
-		local EngineTypeLoadT2 = tostring(LastEngineTable2[5])
-		local TorqueLoadT2 = tonumber(LastEngineTable2[6])
-		local IdleLoadT2 = tonumber(LastEngineTable2[7])
-		local PeakMinLoadT2 = tonumber(LastEngineTable2[8])
-		local PeakMaxLoadT2 = tonumber(LastEngineTable2[9])
-		local LimitRpmLoadT2 = tonumber(LastEngineTable2[10])
-		local FlywheelLoadT2 = tonumber(LastEngineTable2[11])
-		local WeightLoadT2 = tonumber(LastEngineTable2[12])
-		local iselectT2 = tostring(LastEngineTable2[15])
-		local IsTransT2 = tostring(LastEngineTable2[16])
-		local FlywheelOverT2 = tonumber(LastEngineTable2[17])
-		DermaListView:AddLine("1. Name : "..NameLoadT2)
-		DermaListView:AddLine("2. Sound : "..SoundLoadT2)
-		DermaListView:AddLine("3. Model : "..ModelLoadT2)
-		DermaListView:AddLine("4. Fuel : "..FuelTypeLoadT2)
-		DermaListView:AddLine("5. EngineType : "..EngineTypeLoadT2)
-		DermaListView:AddLine("6. Torque : "..TorqueLoadT2)
-		DermaListView:AddLine("7. Idle : "..IdleLoadT2)
-		DermaListView:AddLine("8. Peak Min : "..PeakMinLoadT2)
-		DermaListView:AddLine("9. Peak Max : "..PeakMaxLoadT2)
-		DermaListView:AddLine("10. Limit : "..LimitRpmLoadT2)
-		DermaListView:AddLine("11. Flywheel : "..FlywheelLoadT2)
-		DermaListView:AddLine("12. Weight : "..WeightLoadT2)
-		DermaListView:AddLine("13. iSelect : "..iselectT2)
-		DermaListView:AddLine("14. IsTrans : "..IsTransT2)
-		DermaListView:AddLine("15. Flywheel Override : "..FlywheelOverT2)
+		
+		DermaListView:AddLine("1. Name : "..EngT[1])
+		DermaListView:AddLine("2. Sound : "..EngT[2])
+		DermaListView:AddLine("3. Model : "..EngT[3])
+		DermaListView:AddLine("4. Fuel : "..EngT[4])
+		DermaListView:AddLine("5. EngineType : "..EngT[5])
+		DermaListView:AddLine("6. Torque : "..EngT[6])
+		DermaListView:AddLine("7. Idle : "..EngT[7])
+		DermaListView:AddLine("8. Peak Min : "..EngT[8])
+		DermaListView:AddLine("9. Peak Max : "..EngT[9])
+		DermaListView:AddLine("10. Limit : "..EngT[10])
+		DermaListView:AddLine("11. Flywheel : "..EngT[11])
+		DermaListView:AddLine("12. Weight : "..EngT[12])
+		DermaListView:AddLine("13. iSelect : "..EngT[15])
+		DermaListView:AddLine("14. IsTrans : "..EngT[16])
+		DermaListView:AddLine("15. Flywheel Override : "..EngT[17])
 		DermaListView:PerformLayout( )
 		DermaListView:SetSortable(false)
 		
@@ -150,27 +115,6 @@ local function CreateMenu()
 		NextButton:SetWide(100)
 		NextButton:SetTall(60)
 		NextButton.DoClick = function()
-			--Reload and Quit
-			local LastEngineText = file.Read("acf/lastengine.txt")
-			local LastEngineTable = {}
-			for w in string.gmatch(LastEngineText, "([^,]+)") do
-				table.insert(LastEngineTable, w)
-			end
-			local NameLoadT = tostring(LastEngineTable[1])
-			local SoundLoadT = tostring(LastEngineTable[2])
-			local ModelLoadT = tostring(LastEngineTable[3])
-			local FuelTypeLoadT = tostring(LastEngineTable[4])
-			local EngineTypeLoadT = tostring(LastEngineTable[5])
-			local TorqueLoadT = tonumber(LastEngineTable[6])
-			local IdleLoadT = tonumber(LastEngineTable[7])
-			local PeakMinLoadT = tonumber(LastEngineTable[8])
-			local PeakMaxLoadT = tonumber(LastEngineTable[9])
-			local LimitRpmLoadT = tonumber(LastEngineTable[10])
-			local FlywheelLoadT = tonumber(LastEngineTable[11])
-			local WeightLoadT = tonumber(LastEngineTable[12])
-			local iSelectLoad = tostring(LastEngineTable[15])
-			local IsTransLoad = tostring(LastEngineTable[16])
-			local FlywheelOverLoad = tonumber(LastEngineTable[17])
 			MainPanel:Close()
 			notification.AddLegacy("Dont forget to Update Engine Maker", NOTIFY_HINT, 5)
 		end

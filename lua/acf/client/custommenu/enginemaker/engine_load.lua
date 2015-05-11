@@ -62,33 +62,9 @@ local function CreateMenu()
 			MainPanel:Close()
 			if ExitButtonMode == 1 then
 				notification.AddLegacy("Dont forget to Update Engine Maker", NOTIFY_HINT, 5)
-				local CustomEngineTable = {}
 				local GetFile = file.Read("acf/custom.engines/"..GetLineName, "DATA")
-				for w in string.gmatch(GetFile, "([^,]+)") do
-					table.insert(CustomEngineTable, w)
-				end
-				local NameLoad = tostring(CustomEngineTable[1])
-				local SoundLoad = tostring(CustomEngineTable[2])
-				local ModelLoad = tostring(CustomEngineTable[3])
-				local FuelTypeLoad = tostring(CustomEngineTable[4])
-				local EngineTypeLoad = tostring(CustomEngineTable[5])
-				local TorqueLoad = tonumber(CustomEngineTable[6])
-				local IdleLoad = tonumber(CustomEngineTable[7])
-				local PeakMinLoad = tonumber(CustomEngineTable[8])
-				local PeakMaxLoad = tonumber(CustomEngineTable[9])
-				local LimitRpmLoad = tonumber(CustomEngineTable[10])
-				local FlywheelLoad = tonumber(CustomEngineTable[11])
-				local WeightLoad = tonumber(CustomEngineTable[12])
-				local EngineSizeLoadT = tonumber(CustomEngineTable[13])
-				local EngineTypeLoadText = tonumber(CustomEngineTable[14])
-				local iSelectLoad = tostring(CustomEngineTable[15])
-				local IsTransLoad = tostring(CustomEngineTable[16])
-				local FlywheelOverLoad = tonumber(CustomEngineTable[17])
-				local txt = NameLoad..","..SoundLoad..","..ModelLoad..","..FuelTypeLoad..","..EngineTypeLoad..","..TorqueLoad..","
-				txt = txt ..IdleLoad..","..PeakMinLoad..","..PeakMaxLoad..","..LimitRpmLoad..","..FlywheelLoad..","..WeightLoad..","
-				txt = txt ..EngineSizeLoadT..","..EngineTypeLoadText..","..iSelectLoad..","..IsTransLoad..","..FlywheelOverLoad
 				file.CreateDir("acf")
-				file.Write("acf/lastengine.txt", txt)
+				file.Write("acf/lastengine.txt", tostring(GetFile))
 			end
 		end
 		
@@ -101,35 +77,11 @@ local function CreateMenu()
 		NextButton:SetDisabled(true)
 		NextButton.DoClick = function()
 			if ExitButtonMode == 1 then
-				local CustomEngineTable = {}
 				local GetFile = file.Read("acf/custom.engines/"..GetLineName, "DATA")
-				for w in string.gmatch(GetFile, "([^,]+)") do
-					table.insert(CustomEngineTable, w)
-				end
-				local NameLoad = tostring(CustomEngineTable[1])
-				local SoundLoad = tostring(CustomEngineTable[2])
-				local ModelLoad = tostring(CustomEngineTable[3])
-				local FuelTypeLoad = tostring(CustomEngineTable[4])
-				local EngineTypeLoad = tostring(CustomEngineTable[5])
-				local TorqueLoad = tonumber(CustomEngineTable[6])
-				local IdleLoad = tonumber(CustomEngineTable[7])
-				local PeakMinLoad = tonumber(CustomEngineTable[8])
-				local PeakMaxLoad = tonumber(CustomEngineTable[9])
-				local LimitRpmLoad = tonumber(CustomEngineTable[10])
-				local FlywheelLoad = tonumber(CustomEngineTable[11])
-				local WeightLoad = tonumber(CustomEngineTable[12])
-				local EngineSizeLoadT = tonumber(CustomEngineTable[13])
-				local EngineTypeLoadText = tonumber(CustomEngineTable[14])
-				local iSelectLoad = tostring(CustomEngineTable[15])
-				local IsTransLoad = tostring(CustomEngineTable[16])
-				local FlywheelOverLoad = tonumber(CustomEngineTable[17])
-				local txt = NameLoad..","..SoundLoad..","..ModelLoad..","..FuelTypeLoad..","..EngineTypeLoad..","..TorqueLoad..","
-				txt = txt ..IdleLoad..","..PeakMinLoad..","..PeakMaxLoad..","..LimitRpmLoad..","..FlywheelLoad..","..WeightLoad..","
-				txt = txt ..EngineSizeLoadT..","..EngineTypeLoadText..","..iSelectLoad..","..IsTransLoad..","..FlywheelOverLoad
 				file.CreateDir("acf")
-				file.Write("acf/lastengine.txt", txt)
-				
-				RunConsoleCommand("acf_enginecreateload_open")
+				file.Write("acf/lastengine.txt", tostring(GetFile))
+				EngineMakerUseLoad = true
+				RunConsoleCommand("acf_enginecreate_open")
 				MainPanel:Close()
 			end
 		end

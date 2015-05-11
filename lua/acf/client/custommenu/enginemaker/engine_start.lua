@@ -2,6 +2,7 @@
 --	Set vars
 --------------------------------------
 local MainPanel = nil
+EngineMakerUseLoad = false
 --------------------------------------
 --	Create Menu
 --------------------------------------
@@ -47,6 +48,7 @@ local function CreateMenu()
 		CreateEng:SetWide(110)
 		CreateEng:SetTall( 40 )
 		CreateEng.DoClick = function()
+			EngineMakerUseLoad = false
 			RunConsoleCommand("acf_enginecreate_open")
 			MainPanel:Close()
 		end
@@ -71,7 +73,8 @@ local function CreateMenu()
 		EditLastEng:SetWide(110)
 		EditLastEng:SetTall( 40 )
 		EditLastEng.DoClick = function()
-			RunConsoleCommand("acf_enginecreateload_open")
+			EngineMakerUseLoad = true
+			RunConsoleCommand("acf_enginecreate_open")
 			MainPanel:Close()
 		end
 		
