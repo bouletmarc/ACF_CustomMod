@@ -18,7 +18,6 @@ local function CreateMenu( )
 	MainPanel:SetDeleteOnClose( true )
 	MainPanel:SetTitle("ACF Admin's Menu by Bouletmarc")
 	MainPanel:SetVisible(false)
-	MainPanel:SetCookieName( "wire_sound_browser" )
 	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
 	--Menu Text
 	MainText = MainPanel:Add("DLabel")
@@ -44,14 +43,14 @@ local function CreateMenu( )
 	--------------------------------------
 		if LocalPlayer():IsAdmin() or LocalPlayer():IsSuperAdmin() then
 			--Top Text's
-			DescText = LeftPanel:Add("DLabel")
+			local DescText = LeftPanel:Add("DLabel")
 			DescText:SetPos(90,10)
 			DescText:SetFont( "DefaultBold" )
 			DescText:SetText("Descriptions")
 			DescText:SetTextColor(Color(0,150,0,255))
 			DescText:SizeToContents()
 			
-			SettingText = RightPanel:Add("DLabel")
+			local SettingText = RightPanel:Add("DLabel")
 			SettingText:SetPos(30,10)
 			SettingText:SetFont( "DefaultBold" )
 			SettingText:SetText("Settings")
@@ -66,7 +65,7 @@ local function CreateMenu( )
 			txt = txt .."Set the ACF Engine Extras Limits\n\n\n"
 			txt = txt .."Set the ACF Engine Maker Limits\n\n\n"
 			
-			AllTexts = LeftPanel:Add("DLabel")
+			local AllTexts = LeftPanel:Add("DLabel")
 			AllTexts:SetPos(10,40)
 			AllTexts:SetText(txt)
 			AllTexts:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
@@ -148,7 +147,7 @@ local function CreateMenu( )
 				RunConsoleCommand( "sbox_max_acf_maker", MakerEntry:GetValue() )
 			end
 		else
-			DescText = LeftPanel:Add("DLabel")
+			local DescText = LeftPanel:Add("DLabel")
 			DescText:SetPos(50,70)
 			DescText:SetFont( "DefaultBold" )
 			DescText:SetText("YOU ARE NOT\n   ALLOWED\n TO BE HERE!\n\n\n\n\n\nPLEASE LEAVE!")
@@ -156,7 +155,7 @@ local function CreateMenu( )
 			DescText:SizeToContents()
 		end
 		
-		Close = LeftPanel:Add("DButton")
+		local Close = LeftPanel:Add("DButton")
 		Close:SetText("Close")
 		Close:SetTextColor(Color(255,0,0,255))
 		Close:SetPos(20,300)

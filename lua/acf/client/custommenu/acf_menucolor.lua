@@ -18,7 +18,6 @@ local function CreateMenu( )
 	MainPanel:SetDeleteOnClose( true )
 	MainPanel:SetTitle("ACF Font's Color Menu by Bouletmarc")
 	MainPanel:SetVisible(false)
-	MainPanel:SetCookieName( "wire_sound_browser" )
 	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
 	--Menu text
 	local MainText = MainPanel:Add("DLabel")

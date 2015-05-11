@@ -20,7 +20,6 @@ local function CreateMenu()
 	MainPanel:SetDeleteOnClose( true )
 	MainPanel:SetTitle("Whats New Menu V8.1")
 	MainPanel:SetVisible(false)
-	MainPanel:SetCookieName( "wire_sound_browser" )
 	MainPanel:GetParent():SetWorldClicker(true) // Allow the use of the toolgun while in menu.
 	--Add 2nd panel
 	local SecondPanel = MainPanel:Add("DPanel")
