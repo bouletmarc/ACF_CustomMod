@@ -14,7 +14,7 @@ local enginecustom_base = {
 }
 --engine maker
 local enginemaker_base = {
-	ent = "acf_enginemaker",
+	ent = "acf_engine_maker",
 	type = "MobilityCustom"
 }
 --chips
@@ -29,19 +29,19 @@ local nos_base = {
 }
 --cvt
 local cvt_base = {
-	ent = "acf_gearboxcvt",
+	ent = "acf_gearbox_cvt",
 	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
 --airplane
 local air_base = {
-	ent = "acf_gearboxair",
+	ent = "acf_gearbox_air",
 	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
 --automatic
 local auto_base = {
-	ent = "acf_gearboxauto",
+	ent = "acf_gearbox_auto",
 	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
@@ -97,6 +97,7 @@ end
 --------------------------------------
 --	Setup Functions
 --------------------------------------
+--custom engines
 function ACF_DefineEngine( id, data )
 	data.id = id
 	table.Inherit( data, enginecustom_base )
@@ -167,7 +168,7 @@ for k, v in pairs( engines ) do
 		include( "acf/shared/engines/" .. v )
 	end
 end
---Custom Engines
+--Original Modified Engines
 local customengines = file.Find( "acf/shared/enginescustom/*.lua", "LUA" )
 for k, v in pairs( customengines ) do
 	AddCSLuaFile( "acf/shared/enginescustom/" .. v )
