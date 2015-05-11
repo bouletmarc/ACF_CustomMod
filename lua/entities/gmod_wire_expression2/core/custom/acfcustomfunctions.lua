@@ -9,7 +9,7 @@ end
 
 local function isGearbox(ent)
 	if not validPhysics(ent) then return false end
-	if (ent:GetClass() == "acf_gearboxcvt" or ent:GetClass() == "acf_gearboxauto") then return true else return false end
+	if (ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto") then return true else return false end
 end
 
 local function isChips(ent)
@@ -61,10 +61,10 @@ end
 local linkTables =
 { -- link resources within each ent type.  should point to an ent: true if adding link.Ent, false to add link itself
 	acf_engine_custom 		= {GearLink = true, FuelLink = false},
-	acf_enginemaker 		= {GearLink = true, FuelLink = false},
-	acf_gearboxair		= {WheelLink = true, Master = false},
-	acf_gearboxcvt		= {WheelLink = true, Master = false},
-	acf_gearboxauto		= {WheelLink = true, Master = false},
+	acf_engine_maker 		= {GearLink = true, FuelLink = false},
+	acf_gearbox_air		= {WheelLink = true, Master = false},
+	acf_gearbox_cvt		= {WheelLink = true, Master = false},
+	acf_gearbox_auto		= {WheelLink = true, Master = false},
 	acf_chips	= {Master = false},
 	acf_nos			= {Master = false}
 }
@@ -86,8 +86,8 @@ end
 
 local function searchForGearboxLinks(ent)
 	local boxes = ents.FindByClass("acf_gearbox")
-	local boxes3 = ents.FindByClass("acf_gearboxcvt")
-	local boxes4 = ents.FindByClass("acf_gearboxauto")
+	local boxes3 = ents.FindByClass("acf_gearbox_cvt")
+	local boxes4 = ents.FindByClass("acf_gearbox_auto")
 	
 	local ret = {}
 	
