@@ -373,12 +373,12 @@ check the feedback of them
 
 *r127
 ##------------BIG UPDATE----------------#
-#      ADDED ACF DUPE FIXER TOOL        #
+#       ADDED ACF DUPE FIXER TOOL        #
 # No more sub version (V4 removed)  #
-#   Version are related to 'revision'   #
-#            revision 112-127              #
-#---------------------------------------#
---V1.2.8
+#     Version are related to 'revision'     #
+#                revision 112-129                  #
+#------------------------------------------#
+--V1.2.9
 --Fixed engine maker menu not opening
 --Fixed custom udpate checking
 --Fixed changelog DPanelList not updating
