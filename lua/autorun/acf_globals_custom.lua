@@ -2,7 +2,7 @@
 --	Set vars
 --------------------------------------
 ACFCUSTOM = {}
-ACFCUSTOM.Version = 131
+ACFCUSTOM.Version = 132
 ACFCUSTOM.CurrentVersion = 0
 ACFCUSTOM.EngineMakerVersion = 6.1
 ACFC = {}
@@ -113,7 +113,7 @@ end
 function ACFCUSTOM_UpdateChecking( )
 	print("[ACF] Checking for updates....")
 	http.Fetch("https://github.com/bouletmarc/ACF_CustomMod/",function(contents,size)
-		local rev = tonumber(string.match( contents, "%s*(%d+)\n%s*</span>\n%s*commits" ))
+		local rev = tonumber(string.match( contents, "%s*(%d+)\n%s*</span>\n%s*commits" )) or 0 --"history\"></span>\n%s*(%d+)\n%s*</span>"
 		if rev and ACFCUSTOM.Version >= rev then
 			print("[ACF] ACF Custom Is Up To Date, Latest Version: "..rev)
 		elseif !rev then

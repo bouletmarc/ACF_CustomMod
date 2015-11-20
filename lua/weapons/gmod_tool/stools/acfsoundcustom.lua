@@ -13,73 +13,181 @@ if CLIENT then
 	language.Add( "Tool.acfsoundcustom.0", "Left click to apply sound. Right click to copy sound. Reload to set default sound." )
 end
 
+
+
+
+ACF.SoundToolSupport = 
+{
+
+	acf_supercharger = 
+	{
+		GetSound = function(ent) return {Sound = ent.Sound} end,
+		
+		SetSound = function(ent, soundData) 
+			ent.Sound = soundData.Sound
+			ent:SetNWString( "Sound", soundData.Sound )
+		end,
+		
+		ResetSound = function(ent)
+			local Id = ent.Id
+			local List = list.Get("ACFCUSTOMEnts")
+			
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"]}
+			
+			local setSound = ACF.SoundToolSupport["acf_supercharger"].SetSound
+			setSound( ent, soundData )
+		end
+	},
+	
+	acf_turbo = 
+	{
+		GetSound = function(ent) return {Sound = ent.Sound} end,
+		
+		SetSound = function(ent, soundData) 
+			ent.Sound = soundData.Sound
+			ent:SetNWString( "Sound", soundData.Sound )
+		end,
+		
+		ResetSound = function(ent)
+			local Id = ent.Id
+			local List = list.Get("ACFCUSTOMEnts")
+			
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"]}
+			
+			local setSound = ACF.SoundToolSupport["acf_turbo"].SetSound
+			setSound( ent, soundData )
+		end
+	},
+	
+	acf_engine_custom = 
+	{
+		GetSound = function(ent) return {Sound = ent.SoundPath, Pitch = ent.SoundPitch} end,
+		
+		SetSound = function(ent, soundData) 
+			ent.SoundPath = soundData.Sound
+			ent.SoundPitch = soundData.Pitch
+		end,
+		
+		ResetSound = function(ent)
+			local Id = ent.Id
+			local List = list.Get("ACFCUSTOMEnts")
+			local pitch = List["MobilityCustom"][Id]["pitch"] or 1
+			
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"], Pitch = pitch}
+			
+			local setSound = ACF.SoundToolSupport["acf_engine_custom"].SetSound
+			setSound( ent, soundData )
+		end
+	},
+	
+	acf_engine_maker = 
+	{
+		GetSound = function(ent) return {Sound = ent.SoundPath, Pitch = ent.SoundPitch} end,
+		
+		SetSound = function(ent, soundData) 
+			ent.SoundPath = soundData.Sound
+			ent.SoundPitch = soundData.Pitch
+		end,
+		
+		ResetSound = function(ent)
+			local Id = ent.Id
+			local List = list.Get("ACFCUSTOMEnts")
+			local pitch = List["MobilityCustom"][Id]["pitch"] or 1
+			
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"], Pitch = pitch}
+			
+			local setSound = ACF.SoundToolSupport["acf_engine_maker"].SetSound
+			setSound( ent, soundData )
+		end
+	},
+}
+
+
+
+
 local function ReplaceSound( ply , Entity , data)
 	if !IsValid( Entity ) then return end
 	local sound = data[1]
+	local pitch = data[2] or 1
+	
 	timer.Simple(1, function()
-		if Entity:GetClass() == "acf_engine_custom" or Entity:GetClass() == "acf_engine_maker" then
-			Entity.SoundPath = sound
-			Entity.SoundPitch = ply:GetInfo("acfsoundcustom_pitch")
-		elseif Entity:GetClass() == "acf_turbo" or Entity:GetClass() == "acf_supercharger" then
-			Entity.SoundPath = sound
-		end
+		local class = Entity:GetClass()
+		
+		local support = ACF.SoundToolSupport[class]
+		if not support then return end
+	
+		support.SetSound(Entity, {Sound = sound, Pitch = pitch})
 	end)
 			
 	duplicator.StoreEntityModifier( Entity, "acf_replacesound", {sound} )
 end
+
 duplicator.RegisterEntityModifier( "acf_replacesound", ReplaceSound )
 
 local function IsReallyValid(trace, ply)
-	local True = true
-	local pl = ply;
-	if not trace.Entity:IsValid() then True = false end
-	if trace.Entity:IsPlayer() then True = false end
-	if trace.Entity:GetClass() ~= "acf_engine_custom" and trace.Entity:GetClass() ~= "acf_engine_maker" and trace.Entity:GetClass() ~= "acf_turbo" and trace.Entity:GetClass() ~= "acf_supercharger" then True = false end
-	if SERVER and not trace.Entity:GetPhysicsObject():IsValid() then True = false end
+
+	local isValid = true
 	
-	if True then
+	if not trace.Entity:IsValid() then return false end
+	if trace.Entity:IsPlayer() then return false end
+	if SERVER and not trace.Entity:GetPhysicsObject():IsValid() then return false end
+	
+	
+	local class = trace.Entity:GetClass()
+	if not ACF.SoundToolSupport[class] then 
+	
+		if string.StartWith(class, "acf_") then
+			ACFCUSTOM_SendNotify( ply, false, class .. " is not supported by the sound tool!" )
+		else
+			ACFCUSTOM_SendNotify( ply, false, "Only ACF entities are supported by the ACF sound tool!" )
+		end
+		
 		return false
-	else
-		ACFCUSTOM_SendNotify( pl, true, "You need to aim at engine or gun to change it's sound" );
-		return true
 	end
+	
+	return true
+	
 end
 
-function TOOL:LeftClick(trace)
-	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
+function TOOL:LeftClick( trace )
+	if CLIENT then return true end
+	if not IsReallyValid( trace, self:GetOwner() ) then return false end
+	
 	local sound = self:GetOwner():GetInfo("wire_soundemitter_sound")
-	ReplaceSound( self:GetOwner(), trace.Entity, {sound} )
-	local pl = self:GetOwner();
-	ACFCUSTOM_SendNotify( pl, true, "Sound Pasted successfully!" );
+	local pitch = self:GetOwner():GetInfo("acfsoundcustom_pitch")
+	ReplaceSound( self:GetOwner(), trace.Entity, {sound, pitch} )
 	return true
 end
 
-function TOOL:RightClick(trace)
-	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
-	local pl = self:GetOwner();
-	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_engine_maker" then
-		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
-		self:GetOwner():ConCommand("acfsoundcustom_pitch "..trace.Entity.SoundPitch);
-		ACFCUSTOM_SendNotify( pl, true, "Engine Sound copied successfully!" );
-	elseif trace.Entity:GetClass() == "acf_turbo" or trace.Entity:GetClass() == "acf_supercharger" then
-		self:GetOwner():ConCommand("wire_soundemitter_sound "..trace.Entity.SoundPath);
-		ACFCUSTOM_SendNotify( pl, true, "Turbo or Supercharger Sound copied successfully!" );
+function TOOL:RightClick( trace )
+	if CLIENT then return true end
+	if not IsReallyValid( trace, self:GetOwner() ) then return false end
+	
+	local class = trace.Entity:GetClass()
+	local support = ACF.SoundToolSupport[class]
+	if not support then return false end
+	
+	local soundData = support.GetSound(trace.Entity)
+	
+	self:GetOwner():ConCommand("wire_soundemitter_sound "..soundData.Sound);
+	
+	if soundData.Pitch then
+		self:GetOwner():ConCommand("acfsoundcustom_pitch "..soundData.Pitch);
 	end
+	
 	return true
 end
 
 function TOOL:Reload( trace )
-	if CLIENT or IsReallyValid( trace, self:GetOwner() ) then return false end
-	if trace.Entity:GetClass() == "acf_engine_custom" or trace.Entity:GetClass() == "acf_engine_maker" then
-		local Id = trace.Entity.Id
-		local List = list.Get("ACFCUSTOMEnts")
-		self:GetOwner():ConCommand("acfsoundcustom_pitch " ..(List["MobilityCustom"][Id]["pitch"] or 1));
-		ReplaceSound( self:GetOwner(), trace.Entity, {List["MobilityCustom"][Id]["sound"]} )
-	elseif trace.Entity:GetClass() == "acf_turbo" or trace.Entity:GetClass() == "acf_supercharger" then
-		local Id = trace.Entity.Id
-		local List = list.Get("ACFCUSTOMEnts")
-		ReplaceSound( self:GetOwner(), trace.Entity, {List["MobilityCustom"][Id]["sound"]} )
-	end
+	if CLIENT then return true end
+	if not IsReallyValid( trace, self:GetOwner() ) then return false end
+	
+	local class = trace.Entity:GetClass()
+	local support = ACF.SoundToolSupport[class]
+	if not support then return false end
+	
+	support.ResetSound(trace.Entity)
+	
 	return true
 end
 

@@ -7,6 +7,24 @@ ENT.WireDebugName = "ACF GearboxAuto"
 
 if CLIENT then
 	
+	local ACF_GearboxAutoInfoWhileSeated = CreateClientConVar("ACF_GearboxAutoInfoWhileSeated", 0, true, false)
+	
+	-- copied from base_wire_entity: DoNormalDraw's notip arg isn't accessible from ENT:Draw defined there.
+	function ENT:Draw()
+	
+		local lply = LocalPlayer()
+		local hideBubble = not GetConVar("ACF_GearboxAutoInfoWhileSeated"):GetBool() and IsValid(lply) and lply:InVehicle()
+		
+		self.BaseClass.DoNormalDraw(self, false, hideBubble)
+		Wire_Render(self)
+		
+		if self.GetBeamLength and (not self.GetShowBeam or self:GetShowBeam()) then 
+			-- Every SENT that has GetBeamLength should draw a tracer. Some of them have the GetShowBeam boolean
+			Wire_DrawTracerBeam( self, 1, self.GetBeamHighlight and self:GetBeamHighlight() or false ) 
+		end
+		
+	end
+	
 	function ACFGearboxAutoGUICreate( Table )
 		
 		if not acfmenupanelcustom.GearboxData then
@@ -222,6 +240,7 @@ function ENT:Initialize()
 	self.RBrake = 0
 	self.SteerRate = 0
 	
+	self.Gear = 0
 	self.GearRatio = 0
 	self.ChangeFinished = 0
 	
@@ -506,48 +525,79 @@ function ENT:Think()
 end
 
 function ENT:CheckLegal()
+
+	--make sure it's not invisible to traces
+	if not self:IsSolid() then return false end
+	
 	-- make sure weight is not below stock
 	if self:GetPhysicsObject():GetMass() < self.Mass then return false end
-	-- if it's not parented we're fine
-	if not IsValid( self:GetParent() ) then return true end
-	-- but not if it's parented to a parented prop
-	if IsValid( self:GetParent():GetParent() ) then return false end
-	-- parenting is only legal if it's also welded
-	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
-		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
+	
+	self.RootParent = nil
+	local rootparent = self:GetParent()
+	
+	-- if it's not parented, we're fine
+	if not IsValid( rootparent ) then return true end
+	
+	--find the root parent
+	local depth = 0
+	while rootparent:GetParent():IsValid() and depth<5 do
+		depth = depth + 1
+		rootparent = rootparent:GetParent()
 	end
+	
+	--if there's still more parents, it's not legal
+	if rootparent:GetParent():IsValid() then return false end
+	
+	--if it's welded, make sure it's welded to root parent
+	if IsValid( constraint.FindConstraintEntity( self, "Weld" ) ) then
+		for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
+			if v.Ent1 == rootparent or v.Ent2 == rootparent then return true end
+		end
+	else
+		--if it's parented and not welded, check that it's allowed for this gearbox type
+		if self.Parentable then
+			self.RootParent = rootparent
+			return true
+		end
+	end
+	
 	return false
+	
 end
 
 function ENT:CheckRopes()
+
 	for Key, Link in pairs( self.WheelLink ) do
+	
 		local Ent = Link.Ent
-		-- make sure the rope is still there
-		if not IsValid( Link.Rope ) then 
-			self:Unlink( Ent )
-		continue end
 		
 		local OutPos = self:LocalToWorld( Link.Output )
 		local InPos = Ent:GetPos()
 		if Ent.IsGeartrain then
 			InPos = Ent:LocalToWorld( Ent.In )
 		end
+		
 		-- make sure it is not stretched too far
 		if OutPos:Distance( InPos ) > Link.RopeLen * 1.5 then
 			self:Unlink( Ent )
-		continue end
+		end
+		
 		-- make sure the angle is not excessive
 		local DrvAngle = ( OutPos - InPos ):GetNormalized():DotProduct( ( self:GetRight() * Link.Output.y ):GetNormalized() )
 		if DrvAngle < 0.7 then
 			self:Unlink( Ent )
 		end
+		
 	end
+
 end
 
 -- Check if every entity we are linked to still actually exists
 -- and remove any links that are invalid.
 function ENT:CheckEnts()
+	
 	for Key, Link in pairs( self.WheelLink ) do
+	
 		if not IsValid( Link.Ent ) then
 			table.remove( self.WheelLink, Key )
 		continue end
@@ -557,7 +607,9 @@ function ENT:CheckEnts()
 			Link.Ent:Remove()
 			table.remove( self.WheelLink, Key )
 		end
+		
 	end
+	
 end
 
 function ENT:Calc( InputRPM, InputInertia )
@@ -660,17 +712,26 @@ function ENT:CalcWheel( Link, SelfWorld )
 	
 	-- Reported BaseRPM is in angle per second and in the wrong direction, so we convert and add the gearratio
 	return BaseRPM / self.GearRatio / -6
+	
 end
 
 function ENT:Act( Torque, DeltaTime, MassRatio )
+
+	--internal torque loss from being damaged
+	local Loss = math.Clamp(((1 - 0.4) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, 0.4, 1)
+	
+	--internal torque loss from inefficiency
+	local Slop = self.Auto and 0.9 or 1
+	
 	local ReactTq = 0	
 	-- Calculate the ratio of total requested torque versus what's avaliable, and then multiply it but the current gearratio
 	local AvailTq = 0
 	if Torque ~= 0 then
-		AvailTq = math.min( math.abs( Torque ) / self.TotalReqTq, 1 ) / self.GearRatio * -( -Torque / math.abs( Torque ) )
+		AvailTq = math.min( math.abs( Torque ) / self.TotalReqTq, 1 ) / self.GearRatio * -( -Torque / math.abs( Torque ) ) * Loss * Slop
 	end
 	
 	for Key, Link in pairs( self.WheelLink ) do
+		
 		local Brake = 0
 		if Link.Side == 0 then
 			Brake = self.LBrake
@@ -684,9 +745,16 @@ function ENT:Act( Torque, DeltaTime, MassRatio )
 			self:ActWheel( Link, Link.ReqTq * AvailTq, Brake, DeltaTime )
 			ReactTq = ReactTq + Link.ReqTq * AvailTq
 		end
+		
 	end
 	
-	local BoxPhys = self:GetPhysicsObject()
+	local BoxPhys
+	if IsValid( self.RootParent ) then
+		BoxPhys = self.RootParent:GetPhysicsObject()
+	else
+		BoxPhys = self:GetPhysicsObject()
+	end
+	
 	if IsValid( BoxPhys ) and ReactTq ~= 0 then	
 		local Force = self:GetForward() * ReactTq * MassRatio - self:GetForward()
 		BoxPhys:ApplyForceOffset( Force * 39.37 * DeltaTime, self:GetPos() + self:GetUp() * -39.37 )
@@ -694,6 +762,7 @@ function ENT:Act( Torque, DeltaTime, MassRatio )
 	end
 	
 	self.LastActive = CurTime()
+	
 end
 
 function ENT:ActWheel( Link, Torque, Brake, DeltaTime )
@@ -717,7 +786,10 @@ end
 
 function ENT:ChangeGear(value)
 
-	self.Gear = math.Clamp(value,0,self.Gears)
+	local new = math.Clamp(math.floor(value),0,self.Gears)
+	if self.Gear == new then return end
+	
+	self.Gear = new
 	self.GearRatio = (self.GearTable[self.Gear] or 0)*self.GearTable.Final
 	self.ChangeFinished = CurTime() + self.SwitchTime
 	self.InGear = false
@@ -725,7 +797,6 @@ function ENT:ChangeGear(value)
 	Wire_TriggerOutput(self, "Current Gear", self.Gear)
 	self:EmitSound("buttons/lever7.wav",250,100)
 	Wire_TriggerOutput(self, "Ratio", self.GearRatio)
-	self:UpdateOverlayText()
 	
 end
 
@@ -762,7 +833,10 @@ function ENT:Link( Target )
 		return false, "Cannot link due to excessive driveshaft angle!"
 	end
 	
-	local Rope = constraint.CreateKeyframeRope( OutPosWorld, 1, "cable/cable2", nil, self, OutPos, 0, Target, InPos, 0 )
+	local Rope = nil
+	if self.Owner:GetInfoNum( "ACF_MobilityRopeLinks", 1) == 1 then
+		Rope = constraint.CreateKeyframeRope( OutPosWorld, 1, "cable/cable2", nil, self, OutPos, 0, Target, InPos, 0 )
+	end
 	
 	local Link = {
 		Ent = Target,

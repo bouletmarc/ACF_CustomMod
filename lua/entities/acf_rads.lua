@@ -7,6 +7,24 @@ ENT.WireDebugName = "ACF Rads"
 
 if CLIENT then
 	
+	local ACF_ExtraRadsInfoWhileSeated = CreateClientConVar("ACF_ExtraRadsInfoWhileSeated", 0, true, false)
+	
+	-- copied from base_wire_entity: DoNormalDraw's notip arg isn't accessible from ENT:Draw defined there.
+	function ENT:Draw()
+	
+		local lply = LocalPlayer()
+		local hideBubble = not GetConVar("ACF_ExtraRadsInfoWhileSeated"):GetBool() and IsValid(lply) and lply:InVehicle()
+		
+		self.BaseClass.DoNormalDraw(self, false, hideBubble)
+		Wire_Render(self)
+		
+		if self.GetBeamLength and (not self.GetShowBeam or self:GetShowBeam()) then 
+			-- Every SENT that has GetBeamLength should draw a tracer. Some of them have the GetShowBeam boolean
+			Wire_DrawTracerBeam( self, 1, self.GetBeamHighlight and self:GetBeamHighlight() or false ) 
+		end
+		
+	end
+	
 	function ACFRadsGUICreate( Table )
 		
 		if not acfmenupanelcustom.ModData then
@@ -172,18 +190,27 @@ function ENT:Think()
 end
 
 function ENT:CheckLegal()
+	--make sure it's not invisible to traces
+	if not self:IsSolid() then return false end
 	-- make sure weight is not below stock
 	if self:GetPhysicsObject():GetMass() < self.Weight then return false end
+	local rootparent = self:GetParent()
 	-- if it's not parented we're fine
-	if not IsValid( self:GetParent() ) then return true end
-	-- but not if it's parented to a parented prop
-	if IsValid( self:GetParent():GetParent() ) then return false end
-	-- parenting is only legal if it's also welded
+	if not IsValid( rootparent ) then return true end
+	--find the root parent
+	local depth = 0
+	while rootparent:GetParent():IsValid() and depth<5 do
+		depth = depth + 1
+		rootparent = rootparent:GetParent()
+	end
+	--if there's still more parents, it's not legal
+	if rootparent:GetParent():IsValid() then return false end
+	--make sure it's welded to root parent
 	for k, v in pairs( constraint.FindConstraints( self, "Weld" ) ) do
-		if v.Ent1 == self:GetParent() or v.Ent2 == self:GetParent() then return true end
+		if v.Ent1 == rootparent or v.Ent2 == rootparent then return true end
 	end
 	
-	return false
+	return false	
 end
 
 --RESET VALUES UNLINKED

@@ -7,6 +7,24 @@ ENT.WireDebugName = "ACF Supercharger"
 
 if CLIENT then
 	
+	local ACF_ExtraSuperChargersInfoWhileSeated = CreateClientConVar("ACF_ExtraSuperChargersInfoWhileSeated", 0, true, false)
+	
+	-- copied from base_wire_entity: DoNormalDraw's notip arg isn't accessible from ENT:Draw defined there.
+	function ENT:Draw()
+	
+		local lply = LocalPlayer()
+		local hideBubble = not GetConVar("ACF_ExtraSuperChargersInfoWhileSeated"):GetBool() and IsValid(lply) and lply:InVehicle()
+		
+		self.BaseClass.DoNormalDraw(self, false, hideBubble)
+		Wire_Render(self)
+		
+		if self.GetBeamLength and (not self.GetShowBeam or self:GetShowBeam()) then 
+			-- Every SENT that has GetBeamLength should draw a tracer. Some of them have the GetShowBeam boolean
+			Wire_DrawTracerBeam( self, 1, self.GetBeamHighlight and self:GetBeamHighlight() or false ) 
+		end
+		
+	end
+	
 	function ACFSuperchargerGUICreate( Table )
 		
 		if not acfmenupanelcustom.ModData then

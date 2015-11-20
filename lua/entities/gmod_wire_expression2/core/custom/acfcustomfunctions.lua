@@ -24,6 +24,15 @@ local function restrictInfo(ply, ent)
 	return false
 end
 
+local function isLinkableACFEnt(ent)
+
+	if not validPhysics(ent) then return false end
+	
+	local entClass = ent:GetClass()
+	
+	return ACF_E2_LinkTables[entClass] ~= nil
+
+end
 
 -- [General Functions ] --
 
@@ -165,9 +174,9 @@ end
 
 --allows e2 to perform ACF links
 e2function number entity:acfCustomLinkTo(entity target, number notify)
-	if not ((isEngine(this) or isGearbox(this)) or isChips(this) and (isOwner(self, this) and isOwner(self, target))) then
+	if not (isLinkableACFEnt(this)) and (isOwner(self, this) and isOwner(self, target)) then
 		if notify > 0 then
-			ACFCUSTOM_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
 		end
 		return 0
 	end
@@ -181,9 +190,9 @@ end
 
 --allows e2 to perform ACF unlinks
 e2function number entity:acfCustomUnlinkFrom(entity target, number notify)
-	if not ((isEngine(this) or isGearbox(this)) or isChips(this) and (isOwner(self, this) and isOwner(self, target))) then
+	if not (isLinkableACFEnt(this)) and (isOwner(self, this) and isOwner(self, target)) then
 		if notify > 0 then
-			ACFCUSTOM_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
 		end
 		return 0
 	end
