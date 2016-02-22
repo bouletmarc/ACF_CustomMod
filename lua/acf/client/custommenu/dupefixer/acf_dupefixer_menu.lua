@@ -157,7 +157,7 @@ function PANEL:Init( )
 	DupeFixer.Save:SetTall(30)
 	DupeFixer.Save:SetDisabled(true)
 	DupeFixer.Save.DoClick = function()
-		Encode( function(data)
+		EncodeACF( function(data)
 			SaveDupe(data)
 		end)
 	end
@@ -217,7 +217,7 @@ function PANEL:UpdateDisplay()
 	end
 	
 	if DupeFixer.Selected != "" then
-		DecodeDupe()
+		DecodeDupeACF()
 	end
 	
 	acfmenupanelfixer:PerformLayout()

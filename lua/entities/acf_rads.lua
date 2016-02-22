@@ -64,7 +64,7 @@ function ENT:Initialize()
 	self.Legal = true
 	self.LastActive = 0
 	
-	self.GetRpm = true --This extra need to get the Rpm
+	//self.GetRpm = true --This extra need to get the Rpm
 	
 	self.LinkedEng = 0	--set linked
 	self.TempRpmHighPercent = 0	--set the rpm fast increaser

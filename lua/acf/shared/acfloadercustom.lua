@@ -45,6 +45,12 @@ local auto_base = {
 	type = "MobilityCustom",
 	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
 }
+--manual
+local manual_base = {
+	ent = "acf_gearbox_manual",
+	type = "MobilityCustom",
+	sound = "vehicles/junker/jnk_fourth_cruise_loop2.wav"
+}
 --radiator
 local rads_base = {
 	ent = "acf_rads",
@@ -84,6 +90,9 @@ if CLIENT then
 	--automatic
 	auto_base.guicreate = function( panel, tbl ) ACFGearboxAutoGUICreate( tbl ) end or nil
 	auto_base.guiupdate = function() return end
+	--manual
+	manual_base.guicreate = function( panel, tbl ) ACFGearboxManualGUICreate( tbl ) end or nil
+	manual_base.guiupdate = function() return end
 	--radiator
 	rads_base.guicreate = function( panel, tbl ) ACFRadsGUICreate( tbl ) end or nil
 	rads_base.guiupdate = function() return end
@@ -137,6 +146,12 @@ end
 function ACF_DefineAutomatic( id, data )
 	data.id = id
 	table.Inherit( data, auto_base )
+	MobilityTable[ id ] = data
+end
+--manual
+function ACF_DefineGearboxManual( id, data )
+	data.id = id
+	table.Inherit( data, manual_base )
 	MobilityTable[ id ] = data
 end
 --radiator

@@ -113,7 +113,7 @@ end
 --------------------------------------
 --	Decode Table
 --------------------------------------
-function DecodeTable(tbl)
+function DecodeTableACF(tbl)
 	--Reload
 	DecodedDupeTableHeadEnt = {}
 	DecodedDupeTableConstraints = {}
@@ -140,7 +140,7 @@ end
 -----------------------------------------
 function ChangeBadValues()
 	--Replace CVT&Automatic gearboxes Id
-	if DupeFixer.FoundCVT or DupeFixer.FoundAuto then
+	if DupeFixer.FoundCVT or DupeFixer.FoundAuto or DupeFixer.FoundManual then
 		for k, v in pairs(DecodedDupeTableEntities) do
 			for key, value in pairs(v) do
 				local IDTable = {}
@@ -209,7 +209,7 @@ function ChangeBadValues()
 			if value == "acf_engine_custom" or value == "acf_engine_maker" or value == "acf_enginemaker" then
 				DecodedDupeTableEntities[k][key] = "acf_engine"
 			--gearboxes
-			elseif value == "acf_gearbox_cvt" or value == "acf_gearbox_auto" or value == "acf_gearbox_air" then
+			elseif value == "acf_gearbox_cvt" or value == "acf_gearbox_auto" or value == "acf_gearbox_air" or value == "acf_gearbox_manual" then
 				DecodedDupeTableEntities[k][key] = "acf_gearbox"
 			--old gearboxes ids
 			elseif value == "acf_gearboxcvt" or value == "acf_gearboxauto" or value == "acf_gearboxair" then
@@ -310,6 +310,7 @@ function SetFoundText()
 	local S3 = ""
 	local S4 = ""
 	local S5 = ""
+	local S6 = ""
 	--Set string
 	if DupeFixer.FoundCustom then
 		S1 = "ENGINE CUSTOM FOUND!\n"
@@ -331,9 +332,13 @@ function SetFoundText()
 		S5 = "GEARBOX AIR FOUND AND CHANGED!\n"
 		MenuSpacing = MenuSpacing + 15
 	end
+	if DupeFixer.FoundManual then
+		S6 = "GEARBOX MANUAL FOUND AND CHANGED!\n"
+		MenuSpacing = MenuSpacing + 15
+	end
 	--Set color & text
 	if DupeFixer.EngineFound or DupeFixer.GearboxFound then
-		DupeFixer.FoundText:SetText(S1..S2..S3..S4..S5)
+		DupeFixer.FoundText:SetText(S1..S2..S3..S4..S5..S6)
 		DupeFixer.FoundText:SetTextColor(Color(0,200,0,255))
 	elseif not DupeFixer.EngineFound and not DupeFixer.GearboxFound then
 		DupeFixer.FoundText:SetText("NOHING FOUND!")
@@ -357,13 +362,14 @@ end
 --	Check for Engine&Gearbox
 --------------------------------------
 function CheckEntities(tbl, EnableSorted, CurrentFileName)
-	if DecodeTable(tbl) then
+	if DecodeTableACF(tbl) then
 		--Check For Engine Custom, Engine Maker or Gearboxes
 		DupeFixer.FoundCustom = false
 		DupeFixer.FoundMaker = false
 		DupeFixer.FoundCVT = false
 		DupeFixer.FoundAuto = false
 		DupeFixer.FoundAir = false
+		DupeFixer.FoundManual = false
 		
 		DupeFixer.EngineFound = false
 		DupeFixer.GearboxFound = false
@@ -386,6 +392,9 @@ function CheckEntities(tbl, EnableSorted, CurrentFileName)
 					DupeFixer.GearboxFound = true
 				elseif value == "acf_gearbox_air" or value == "acf_gearboxair" then
 					DupeFixer.FoundAir = true
+					DupeFixer.GearboxFound = true
+				elseif value == "acf_gearbox_manual" then
+					DupeFixer.FoundManual = true
 					DupeFixer.GearboxFound = true
 				end
 			end
@@ -491,7 +500,7 @@ function AddSorted(tbl, CurrentFileName)
 		DupeFixer.CurrentFile = DupeFixer.CurrentFile + 1
 		if DupeFixer.FileTableNotSorted[DupeFixer.CurrentFile] != nil then
 			local EnableSorted = true
-			DecodeDupe(EnableSorted, DupeFixer.FileTableNotSorted[DupeFixer.CurrentFile])
+			DecodeDupeACF(EnableSorted, DupeFixer.FileTableNotSorted[DupeFixer.CurrentFile])
 		else
 			SelectionFolder()
 		end

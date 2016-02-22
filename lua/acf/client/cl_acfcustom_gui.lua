@@ -69,7 +69,7 @@ function PANEL:Init( )
 		local NodeAdd = Mobility
 		if( MobilityTable.ent == "acf_engine_custom" ) then
 			NodeAdd = Engines
-		elseif ( MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" ) then
+		elseif ( MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" or MobilityTable.ent == "acf_gearbox_manual" ) then
 			NodeAdd = CustomGB
 		elseif( MobilityTable.ent == "acf_engine_maker") then
 			if Makerlimit > 0 then NodeAdd = MakerNode end
@@ -90,7 +90,7 @@ function PANEL:Init( )
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]
 			end
-		elseif MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" then
+		elseif MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" or MobilityTable.ent == "acf_gearbox_manual" then
 			NodeAdd = CustomGB
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]

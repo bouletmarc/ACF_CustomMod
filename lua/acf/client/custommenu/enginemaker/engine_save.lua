@@ -24,7 +24,6 @@ function NewEngineSaveFunc()
 	local Nametxtfile = string.lower(string.gsub(EngT[1], ".", invalid_filename_chars))
 	
 	file.Write("acf/custom.engines/"..Nametxtfile..".txt", tostring(LastEngineText))--Save the engine
-	file.Write("acf/lastengine.txt", tostring(LastEngineText))--Save the engine also as
 end
 --------------------------------------
 --	Create Menu

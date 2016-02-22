@@ -35,7 +35,7 @@ function TOOL:LeftClick( trace )
 
 	local pl = self:GetOwner();
 
-	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" and #self.GearboxCopyData > 1 and ent.CanUpdate ) then
+	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" or ent:GetClass() == "acf_gearbox_manual" and #self.GearboxCopyData > 1 and ent.CanUpdate ) then
 		local success, msg = ent:Update( self.GearboxCopyData );
 		ACFCUSTOM_SendNotify( pl, success, msg );
 	end
@@ -66,7 +66,7 @@ function TOOL:RightClick( trace )
 
 	local pl = self:GetOwner();
 
-	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" ) then
+	if( ent:GetClass() == "acf_gearbox" or ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" or ent:GetClass() == "acf_gearbox_manual" ) then
 		local ArgsTable = {};
 		-- zero out the un-needed tool trace information
 		ArgsTable[1] = pl;

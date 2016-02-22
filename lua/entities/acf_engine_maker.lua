@@ -796,15 +796,14 @@ function ENT:Think()
 		--SET VALUES FOR RADIATORS
 		for Key, Radiator in pairs(self.RadiatorLink) do
 			if IsValid( Radiator ) then
-				if Radiator.GetRpm == true then
-					if not Radiator.Legal then continue end
-					Radiator:GetRPM(0, self.LimitRPM, self.Active2)
-				end
+				if not Radiator.Legal then continue end
+				Radiator:GetRPM(0, self.LimitRPM, self.Active2)
 			end
 		end
 	end
 	
 	self:SetRadsInfos()
+	self:SetManualInfos()
 
 	self.LastThink = Time
 	self:NextThink( Time )
@@ -992,11 +991,17 @@ function ENT:CalcRPM()
 		Link.ReqTq = Link.Ent:Calc( self.FlyRPM, self.Inertia )
 		TotalReqTq = TotalReqTq + Link.ReqTq
 	end
-	-- Calculate the ratio of total requested torque versus what's avaliable
-	local AvailRatio = math.min( TorqueDiff / TotalReqTq / Boxes, 1 )
+	
 	-- Split the torque fairly between the gearboxes who need it
 	for Key, Link in pairs( self.GearLink ) do
 		if not Link.Ent.Legal then continue end
+		-- Set TRUE Manual Gearbox Torque
+		if (IsValid(Link.isManual) && Link.isManual) then
+			TorqueDiff = math.max( self.FlyRPM, 0 ) * self.Inertia
+		end
+		-- Calculate the ratio of total requested torque versus what's avaliable
+		local AvailRatio = math.min( TorqueDiff / TotalReqTq / Boxes, 1 )
+		-- Set the Torque
 		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime, self.MassRatio )
 	end
 
@@ -1054,10 +1059,8 @@ function ENT:CalcRPM()
 	--Update radiator values
 	for Key, Radiator in pairs(self.RadiatorLink) do
 		if IsValid( Radiator ) then
-			if Radiator.GetRpm == true then
-				if not Radiator.Legal then continue end
-				Radiator:GetRPM(self.FlyRPM, self.LimitRPM, self.Active2)
-			end
+			if not Radiator.Legal then continue end
+			Radiator:GetRPM(self.FlyRPM, self.LimitRPM, self.Active2)
 		end
 	end
 	
@@ -1123,7 +1126,7 @@ end
 
 function ENT:Link( Target )
 	--Allowable Target
-	if not IsValid( Target ) or not table.HasValue( { "acf_gearbox", "acf_gearboxcvt", "acf_gearboxauto", "acf_fueltank", "acf_chips", "acf_nos", "acf_rads", "acf_turbo", "acf_supercharger" }, Target:GetClass() ) then
+	if not IsValid( Target ) or not table.HasValue( { "acf_gearbox", "acf_gearbox_cvt", "acf_gearbox_auto", "acf_gearbox_air", "acf_gearbox_manual", "acf_fueltank", "acf_chips", "acf_nos", "acf_rads", "acf_turbo", "acf_supercharger" }, Target:GetClass() ) then
 		return false, "Can only link to gearboxes, fuel tanks or engine extras!"
 	end
 	--Fuel Tank Linking
@@ -1382,6 +1385,24 @@ function ENT:SetRadsInfos()
 	end
 	
 	if Blowed then
+		self.Active = false
+		self:TriggerInput( "Active" , 0 )
+	end
+end
+--SET Manual Gearbox Functions (Kill Engine)
+function ENT:SetManualInfos()
+	local Staled = false
+	
+	--Get Gearbox, and if its manual, stall engine under half idle rpm
+	for Key, Link in pairs( self.GearLink ) do
+		if (IsValid( Link ) && IsValid(Link.isManual) && Link.isManual) then
+			if (self.FlyRPM < (self.idlerpm / 2)) then
+				Staled = true
+			end
+		end
+	end
+	
+	if Staled then
 		self.Active = false
 		self:TriggerInput( "Active" , 0 )
 	end

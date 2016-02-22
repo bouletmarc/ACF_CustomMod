@@ -39,9 +39,10 @@ if CLIENT then
 	
 	language.Add( "Undone_ACF Entity", "Undone ACF Entity" )
 	language.Add( "Undone_acf_engine", "Undone ACF Engine" )
-	language.Add( "Undone_acf_enginemaker", "Undone ACF Engine Maker" )
-	language.Add( "Undone_acf_gearboxcvt", "Undone ACF Gearbox CVT" )
-	language.Add( "Undone_acf_gearboxauto", "Undone ACF Gearbox Automatic" )
+	language.Add( "Undone_acf_engine_maker", "Undone ACF Engine Maker" )
+	language.Add( "Undone_acf_gearbox_cvt", "Undone ACF Gearbox CVT" )
+	language.Add( "Undone_acf_gearbox_auto", "Undone ACF Gearbox Automatic" )
+	language.Add( "Undone_acf_gearbox_manual", "Undone ACF Gearbox Manual" )
 	language.Add( "Undone_acf_chips", "Undone ACF Engine Chips" )
 	language.Add( "Undone_acf_vtec", "Undone ACF Vtec Chip" )
 	language.Add( "Undone_acf_nos", "Undone ACF Nos Bottle" )
@@ -93,25 +94,38 @@ function TOOL:LeftClick( trace )
 		local Allowed = false
 		--original engine
 		if Class == "acf_engine" and ClassMenu == "acf_engine_custom" then Allowed = true end
-		if Class == "acf_engine" and ClassMenu == "acf_enginemaker" then Allowed = true end
+		if Class == "acf_engine" and ClassMenu == "acf_engine_maker" then Allowed = true end
 		--custom engine
 		if Class == "acf_engine_custom" and ClassMenu == "acf_engine" then Allowed = true end
-		if Class == "acf_engine_custom" and ClassMenu == "acf_enginemaker" then Allowed = true end
+		if Class == "acf_engine_custom" and ClassMenu == "acf_engine_maker" then Allowed = true end
 		--engine maker
-		if Class == "acf_enginemaker" and ClassMenu == "acf_engine" then Allowed = true end
-		if Class == "acf_enginemaker" and ClassMenu == "acf_engine_custom" then Allowed = true end
+		if Class == "acf_engine_maker" and ClassMenu == "acf_engine" then Allowed = true end
+		if Class == "acf_engine_maker" and ClassMenu == "acf_engine_custom" then Allowed = true end
 		--original gearbox
 		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_cvt" then Allowed = true end
 		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
 		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_air" then Allowed = true end
+		if Class == "acf_gearbox" and ClassMenu == "acf_gearbox_manual" then Allowed = true end
 		--cvt gearbox
 		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox" then Allowed = true end
 		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
 		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox_air" then Allowed = true end
+		if Class == "acf_gearbox_cvt" and ClassMenu == "acf_gearbox_manual" then Allowed = true end
 		--airplane gearbox
 		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox" then Allowed = true end
 		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox_cvt" then Allowed = true end
 		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
+		if Class == "acf_gearbox_air" and ClassMenu == "acf_gearbox_manual" then Allowed = true end
+		--auto gearbox
+		if Class == "acf_gearbox_auto" and ClassMenu == "acf_gearbox" then Allowed = true end
+		if Class == "acf_gearbox_auto" and ClassMenu == "acf_gearbox_cvt" then Allowed = true end
+		if Class == "acf_gearbox_auto" and ClassMenu == "acf_gearbox_air" then Allowed = true end
+		if Class == "acf_gearbox_auto" and ClassMenu == "acf_gearbox_manual" then Allowed = true end
+		--manual gearbox
+		if Class == "acf_gearbox_manual" and ClassMenu == "acf_gearbox" then Allowed = true end
+		if Class == "acf_gearbox_manual" and ClassMenu == "acf_gearbox_cvt" then Allowed = true end
+		if Class == "acf_gearbox_manual" and ClassMenu == "acf_gearbox_air" then Allowed = true end
+		if Class == "acf_gearbox_manual" and ClassMenu == "acf_gearbox_auto" then Allowed = true end
 		
 		--Set Welding Chips to Trace.Entity
 		local Welding = false
@@ -123,6 +137,7 @@ function TOOL:LeftClick( trace )
 		if ClassMenu == "acf_chips" and Class == "acf_gearbox_cvt" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_gearbox_air" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_gearbox_auto" then Welding = true end
+		if ClassMenu == "acf_chips" and Class == "acf_gearbox_manual" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_fueltank" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_rads" then Welding = true end
 		if ClassMenu == "acf_chips" and Class == "acf_turbo" then Welding = true end

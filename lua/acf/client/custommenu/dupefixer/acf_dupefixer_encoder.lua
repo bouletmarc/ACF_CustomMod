@@ -217,7 +217,7 @@ end
 --------------------------------------
 --	Encode Dupe
 --------------------------------------
-function Encode(callback, ...)
+function EncodeACF(callback, ...)
 	--Remake table
 	local EndTable = {}
 	EndTable["HeadEnt"] = DecodedDupeTableHeadEnt["HeadEnt"]

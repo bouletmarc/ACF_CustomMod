@@ -197,7 +197,7 @@ end
 --------------------------------------
 --	Decode Dupe
 --------------------------------------
-function DecodeDupe(EnableSorted, CurrentFileName)
+function DecodeDupeACF(EnableSorted, CurrentFileName)
 	local FolderString = ""
 	if not EnableSorted then
 		if GetDuplicatorVersion() then

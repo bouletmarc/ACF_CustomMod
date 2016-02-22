@@ -409,6 +409,14 @@ check the feedback of them
 --Fixed E2 Linking Functions (not tested)
 --
 --Updated with original rev.569
+
+*r133
+-V1.3.3
+--Fixed EngineMaker Bug
+--Fixed Engine Spawn Bug
+--Fixed Tool Duping Class
+--Fixed Gearboxes Act Issue
+--Fixed DupeFixer Tool
 --
 ##I've being really busy this time, not
 everything are tested yet, but it should
