@@ -299,7 +299,7 @@ function MakeACF_GearboxCVT(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, D
 	end
 	
     GearboxCVT.Inputs = Wire_CreateInputs( GearboxCVT.Entity, Inputs )
-	GearboxCVT.Outputs = WireLib.CreateSpecialOutputs( GearboxCVT.Entity, { "Ratio", "Entity" , "Current Gear", "Gearbox RPM" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
+	GearboxCVT.Outputs = WireLib.CreateSpecialOutputs( GearboxCVT.Entity, { "Ratio", "Entity" , "Current Gear" }, { "NORMAL" , "ENTITY" , "NORMAL" , "NORMAL" } )
 	Wire_TriggerOutput(GearboxCVT.Entity, "Entity", GearboxCVT.Entity)
 	
 	GearboxCVT.LClutch = GearboxCVT.MaxTorque
@@ -672,12 +672,6 @@ function ENT:Calc( InputRPM, InputInertia )
 			local RPM = self:CalcWheel( Link, SelfWorld )
 			if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
 				Link.ReqTq = math.min( Clutch, ( InputRPM - RPM ) * InputInertia )
-			end
-			--Calling RPM Ouputs Value's
-			if Clutch == 0 then
-				Wire_TriggerOutput(self, "Gearbox RPM", 0)
-			elseif Clutch > 0 then
-				Wire_TriggerOutput(self, "Gearbox RPM", RPM)
 			end
 		end
 		self.TotalReqTq = self.TotalReqTq + math.abs( Link.ReqTq )

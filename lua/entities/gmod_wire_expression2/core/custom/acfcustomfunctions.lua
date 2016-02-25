@@ -9,7 +9,7 @@ end
 
 local function isGearbox(ent)
 	if not validPhysics(ent) then return false end
-	if (ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto") then return true else return false end
+	if (ent:GetClass() == "acf_gearbox_cvt" or ent:GetClass() == "acf_gearbox_auto" or ent:GetClass() == "acf_gearbox_manual") then return true else return false end
 end
 
 local function isChips(ent)
@@ -74,6 +74,7 @@ local linkTables =
 	acf_gearbox_air		= {WheelLink = true, Master = false},
 	acf_gearbox_cvt		= {WheelLink = true, Master = false},
 	acf_gearbox_auto		= {WheelLink = true, Master = false},
+	acf_gearbox_manual		= {WheelLink = true, Master = false},
 	acf_chips	= {Master = false},
 	acf_nos			= {Master = false}
 }
@@ -97,6 +98,7 @@ local function searchForGearboxLinks(ent)
 	local boxes = ents.FindByClass("acf_gearbox")
 	local boxes3 = ents.FindByClass("acf_gearbox_cvt")
 	local boxes4 = ents.FindByClass("acf_gearbox_auto")
+	local boxes5 = ents.FindByClass("acf_gearbox_manual")
 	
 	local ret = {}
 	
@@ -127,6 +129,17 @@ local function searchForGearboxLinks(ent)
 			for _, link in pairs(box4.WheelLink) do
 				if link.Ent == ent then
 					ret[#ret+1] = box4
+					break
+				end
+			end
+		end
+	end
+	
+	for _, box5 in pairs(boxes5) do
+		if IsValid(box5) then
+			for _, link in pairs(box5.WheelLink) do
+				if link.Ent == ent then
+					ret[#ret+1] = box5
 					break
 				end
 			end
@@ -176,7 +189,7 @@ end
 e2function number entity:acfCustomLinkTo(entity target, number notify)
 	if not (isLinkableACFEnt(this)) and (isOwner(self, this) and isOwner(self, target)) then
 		if notify > 0 then
-			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+			ACFCUSTOM_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
 		end
 		return 0
 	end
@@ -192,7 +205,7 @@ end
 e2function number entity:acfCustomUnlinkFrom(entity target, number notify)
 	if not (isLinkableACFEnt(this)) and (isOwner(self, this) and isOwner(self, target)) then
 		if notify > 0 then
-			ACF_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
+			ACFCUSTOM_SendNotify(self.player, 0, "Must be called on a gun, engine, or gearbox you own.")
 		end
 		return 0
 	end

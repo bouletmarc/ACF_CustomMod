@@ -76,7 +76,7 @@ function ENT:Initialize()
 	self.Legal = true
 	
 	self.Inputs = Wire_CreateInputs( self, {"Clutch", "Brake"} )
-	self.Outputs = WireLib.CreateSpecialOutputs( self, { "Entity" , "Gearbox RPM" }, { "ENTITY" , "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "Entity" }, { "ENTITY" , "NORMAL" } )
     Wire_TriggerOutput( self, "Entity", self )
 	
 end  
@@ -322,12 +322,6 @@ function ENT:Calc( InputRPM, InputInertia, GetRatio )
 		else RPM = self:GetVelocity():Length()*-1.5 end
 		if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
 			Link.ReqTq = math.min( Clutch, ( InputRPM - RPM ) * InputInertia )
-		end
-		--Calling RPM Ouputs Value's
-		if Clutch == 0 then
-			Wire_TriggerOutput(self, "Gearbox RPM", 0)
-		elseif Clutch > 0 then
-			Wire_TriggerOutput(self, "Gearbox RPM", RPM)
 		end
 		self.PropellerRpm = RPM
 		self:UpdateOverlayText()

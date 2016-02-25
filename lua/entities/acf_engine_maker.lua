@@ -187,18 +187,25 @@ function ENT:Initialize()
 	self.CanUpdate = true
 	self.RequiresFuel = false
 	
+	self.Fuelusing = 0
+	-- Rev Limiter Vars
 	self.CutMode = 0
 	self.CutRpm = 0
-	self.Fuelusing = 0
 	self.DisableCut = 0
+	self.DisableCutFinal = 0
+	-- Table Vars
 	self.ExtraLink = {}
 	self.RadiatorLink = {}
+	-- Extra Vars
 	self.PeakTorqueExtra = 0
 	self.RPMExtra = 0
 	self.ExtraUsing = 0
 	self.PeakTorqueHealth = 0
+	-- Manual Gearbox Vars
+	self.ManualGearbox = false
+	self.GearboxCurrentGear = 0
 	
-	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Entity", "Mass", "Physical Mass" }, { "NORMAL","NORMAL","NORMAL", "NORMAL", "ENTITY", "NORMAL", "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Entity", "Mass", "Physical Mass", "Running" }, { "NORMAL","NORMAL","NORMAL", "NORMAL", "ENTITY", "NORMAL", "NORMAL", "NORMAL" } )
 	Wire_TriggerOutput( self, "Entity", self )
 	self.WireDebugName = "ACF Engine Maker"
 
@@ -250,53 +257,38 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		Engine.ModTable[14] = Data14
 		Engine.ModTable[15] = Data15
 		
-		Engine.Mod1 = Data1
-		Engine.Mod2 = Data2
-		Engine.Mod3 = Data3
-		Engine.Mod4 = Data4
-		Engine.Mod5 = Data5
-		Engine.Mod6 = Data6
-		Engine.Mod7 = Data7
-		Engine.Mod8 = Data8
-		Engine.Mod9 = Data9
-		Engine.Mod10 = Data10
-		Engine.Mod11 = Data11
-		Engine.Mod12 = Data12
-		Engine.Mod13 = Data13
-		Engine.Mod14 = Data14
-		Engine.Mod15 = Data15
 		--Set Strings Values
-		if tostring(Engine.Mod1) != nil then Engine.EngineName = tostring(Engine.Mod1) else Engine.EngineName = "No Name" end
-		if tostring(Engine.Mod2) != nil then Engine.SoundPath = tostring(Engine.Mod2) else Engine.SoundPath = "" end
-		if string.find(tostring(Engine.Mod3),".mdl") then Engine.Model = tostring(Engine.Mod3) else Engine.Model = "models/engines/inline4s.mdl" end
-		if tostring(Engine.Mod4) != nil then Engine.FuelType = tostring(Engine.Mod4) else Engine.FuelType = "Petrol" end
-		if tostring(Engine.Mod5) != nil then Engine.EngineType = tostring(Engine.Mod5) else Engine.EngineType = "GenericPetrol" end
+		if tostring(Data1) != nil then Engine.EngineName = tostring(Data1) else Engine.EngineName = "No Name" end
+		if tostring(Data2) != nil then Engine.SoundPath = tostring(Data2) else Engine.SoundPath = "" end
+		if string.find(tostring(Data3),".mdl") then Engine.Model = tostring(Data3) else Engine.Model = "models/engines/inline4s.mdl" end
+		if tostring(Data4) != nil then Engine.FuelType = tostring(Data4) else Engine.FuelType = "Petrol" end
+		if tostring(Data5) != nil then Engine.EngineType = tostring(Data5) else Engine.EngineType = "GenericPetrol" end
 		--Set Torque
-		if(tonumber(Engine.Mod6) >= 1) then Engine.PeakTorque = tonumber(Engine.Mod6)
+		if(tonumber(Data6) >= 1) then Engine.PeakTorque = tonumber(Data6)
 		elseif(tonumber(Data6) < 1 or tonumber(Data6) == nil) then Engine.PeakTorque = 1 end
 		--Set Idle
-		if(tonumber(Engine.Mod7) >= 1) then Engine.IdleRPM = tonumber(Engine.Mod7)
-		elseif(tonumber(Engine.Mod7) < 1 or tonumber(Engine.Mod7) == nil) then Engine.IdleRPM = 1 end
+		if(tonumber(Data7) >= 1) then Engine.IdleRPM = tonumber(Data7)
+		elseif(tonumber(Data7) < 1 or tonumber(Data7) == nil) then Engine.IdleRPM = 1 end
 		--Set PeakMin
-		if(tonumber(Engine.Mod8) >= 1) then Engine.PeakMinRPM = tonumber(Engine.Mod8)
-		elseif(tonumber(Engine.Mod8) < 1 or tonumber(Engine.Mod8) == nil) then Engine.PeakMinRPM = 1 end
+		if(tonumber(Data8) >= 1) then Engine.PeakMinRPM = tonumber(Data8)
+		elseif(tonumber(Data8) < 1 or tonumber(Data8) == nil) then Engine.PeakMinRPM = 1 end
 		--Set PeakMax
-		if(Engine.Mod9 <= Engine.Mod10 and tonumber(Engine.Mod9) >= 1 ) then  Engine.PeakMaxRPM = tonumber(Engine.Mod9)
-		elseif(Engine.Mod9 > Engine.Mod10 ) then Engine.PeakMaxRPM = tonumber(Engine.Mod10)
-		elseif(tonumber(Engine.Mod9) < 1 or tonumber(Engine.Mod9) == nil) then Engine.PeakMaxRPM = 1 end
+		if(Data9 <= Data10 and tonumber(Data9) >= 1 ) then  Engine.PeakMaxRPM = tonumber(Data9)
+		elseif(Data9 > Data10 ) then Engine.PeakMaxRPM = tonumber(Data10)
+		elseif(tonumber(Data9) < 1 or tonumber(Data9) == nil) then Engine.PeakMaxRPM = 1 end
 		--Set Limit
-		if(tonumber(Engine.Mod10) >= 100) then Engine.LimitRPM = tonumber(Engine.Mod10)
-		elseif(tonumber(Engine.Mod10) < 100 or tonumber(Engine.Mod10) == nil) then Engine.LimitRPM = 100 end
+		if(tonumber(Data10) >= 100) then Engine.LimitRPM = tonumber(Data10)
+		elseif(tonumber(Data10) < 100 or tonumber(Data10) == nil) then Engine.LimitRPM = 100 end
 		--Set Flywheel
-		if(tonumber(Engine.Mod11) >= 0.001) then Engine.FlywheelMassValue = tonumber(Engine.Mod11)
-		elseif(tonumber(Engine.Mod11) < 0.001 or tonumber(Engine.Mod11) == nil) then Engine.FlywheelMassValue = 0.001 end
+		if(tonumber(Data11) >= 0.001) then Engine.FlywheelMassValue = tonumber(Data11)
+		elseif(tonumber(Data11) < 0.001 or tonumber(Data11) == nil) then Engine.FlywheelMassValue = 0.001 end
 		--Set Weight
-		if(tonumber(Engine.Mod12) >= 1) then Engine.Weight = tonumber(Engine.Mod12)
-		elseif(tonumber(Engine.Mod12) < 1 or tonumber(Engine.Mod12) == nil ) then Engine.Weight = 1 end
+		if(tonumber(Data12) >= 1) then Engine.Weight = tonumber(Data12)
+		elseif(tonumber(Data12) < 1 or tonumber(Data12) == nil ) then Engine.Weight = 1 end
 		--Set Electric/turbine stuff
-		if tobool(Engine.Mod13) != nil then Engine.iselec = tobool(Engine.Mod13) else Engine.iselec = false end
-		if tobool(Engine.Mod14) != nil then Engine.IsTrans = tobool(Engine.Mod14) else Engine.IsTrans = false end
-		if tonumber(Engine.Mod15) != nil then Engine.FlywheelOverride = tonumber(Engine.Mod15) else Engine.FlywheelOverride = 1200  end
+		if tobool(Data13) != nil then Engine.iselec = tobool(Data13) else Engine.iselec = false end
+		if tobool(Data14) != nil then Engine.IsTrans = tobool(Data14) else Engine.IsTrans = false end
+		if tonumber(Data15) != nil then Engine.FlywheelOverride = tonumber(Data15) else Engine.FlywheelOverride = 1200  end
 		--Set Original Values
 		Engine.PeakTorqueHeld = Engine.PeakTorque
 		Engine.CutValue = Engine.LimitRPM / 20
@@ -311,13 +303,12 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		if Engine.CustomLimit > 0 then
 			if Engine.EngineType == "Turbine" or Engine.EngineType == "Electric" then	--Create inputs for Electric&Turbine
 				table.insert(Inputs, "TqAdd")
-				table.insert(Inputs, "LimitRpmAdd")
+				table.insert(Inputs, "RpmAdd")
 				table.insert(Inputs, "FlywheelMass")
 				table.insert(Inputs, "Override")
 			else		 --Create inputs others engines
 				table.insert(Inputs, "TqAdd")
-				table.insert(Inputs, "MaxRpmAdd")
-				table.insert(Inputs, "LimitRpmAdd")
+				table.insert(Inputs, "RpmAdd")
 				table.insert(Inputs, "FlywheelMass")
 				table.insert(Inputs, "Idle")
 				table.insert(Inputs, "Disable Cutoff")
@@ -429,53 +420,38 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	self.ModTable[13] = ArgsTable[17]
 	self.ModTable[14] = ArgsTable[18]
 	self.ModTable[15] = ArgsTable[19]
-	self.Mod1 = ArgsTable[5]
-	self.Mod2 = ArgsTable[6]
-	self.Mod3 = ArgsTable[7]
-	self.Mod4 = ArgsTable[8]
-	self.Mod5 = ArgsTable[9]
-	self.Mod6 = ArgsTable[10]
-	self.Mod7 = ArgsTable[11]
-	self.Mod8 = ArgsTable[12]
-	self.Mod9 = ArgsTable[13]
-	self.Mod10 = ArgsTable[14]
-	self.Mod11 = ArgsTable[15]
-	self.Mod12 = ArgsTable[16]
-	self.Mod13 = ArgsTable[17]
-	self.Mod14 = ArgsTable[18]
-	self.Mod15 = ArgsTable[19]
 	--Set String Values
-	if tostring(self.Mod1) != nil then self.EngineName = tostring(self.Mod1) else self.EngineName = "No Name" end
-	if tostring(self.Mod2) != nil then self.SoundPath = tostring(self.Mod2) else self.SoundPath = "" end
-	if string.find(tostring(self.Mod3),".mdl") then self.Model = tostring(self.Mod3) else self.Model = "models/engines/v8s.mdl" end
-	if tostring(self.Mod4) != nil then self.FuelType = tostring(self.Mod4) else self.FuelType = "Petrol" end
-	if tostring(self.Mod5) != nil then self.EngineType = tostring(self.Mod5) else self.EngineType = "GenericPetrol" end
+	if tostring(ArgsTable[5]) != nil then self.EngineName = tostring(ArgsTable[5]) else self.EngineName = "No Name" end
+	if tostring(ArgsTable[6]) != nil then self.SoundPath = tostring(ArgsTable[6]) else self.SoundPath = "" end
+	if string.find(tostring(ArgsTable[7]),".mdl") then self.Model = tostring(ArgsTable[7]) else self.Model = "models/engines/v8s.mdl" end
+	if tostring(ArgsTable[8]) != nil then self.FuelType = tostring(ArgsTable[8]) else self.FuelType = "Petrol" end
+	if tostring(ArgsTable[9]) != nil then self.EngineType = tostring(ArgsTable[9]) else self.EngineType = "GenericPetrol" end
 	--Set Torque
-	if(tonumber(self.Mod6) >= 1) then self.PeakTorque = tonumber(self.Mod6)
-	elseif(tonumber(self.Mod6) < 1 or tonumber(self.Mod6) == nil) then self.PeakTorque = 1 end
+	if(tonumber(ArgsTable[10]) >= 1) then self.PeakTorque = tonumber(ArgsTable[10])
+	elseif(tonumber(ArgsTable[10]) < 1 or tonumber(ArgsTable[10]) == nil) then self.PeakTorque = 1 end
 	--Set Idle
-	if(tonumber(self.Mod7) >= 1) then self.IdleRPM = tonumber(self.Mod7)
-	elseif(tonumber(self.Mod7) < 1 or tonumber(self.Mod7) == nil) then self.IdleRPM = 1 end
+	if(tonumber(ArgsTable[11]) >= 1) then self.IdleRPM = tonumber(ArgsTable[11])
+	elseif(tonumber(ArgsTable[11]) < 1 or tonumber(ArgsTable[11]) == nil) then self.IdleRPM = 1 end
 	--Set PeakMin
-	if(tonumber(self.Mod8) >= 1) then self.PeakMinRPM = tonumber(self.Mod8)
-	elseif(tonumber(self.Mod8) < 1 or tonumber(self.Mod8) == nil) then self.PeakMinRPM = 1 end
+	if(tonumber(ArgsTable[12]) >= 1) then self.PeakMinRPM = tonumber(ArgsTable[12])
+	elseif(tonumber(ArgsTable[12]) < 1 or tonumber(ArgsTable[12]) == nil) then self.PeakMinRPM = 1 end
 	--Set PeakMax
-	if(self.Mod9 <= self.Mod10 and tonumber(self.Mod9) >= 1 ) then self.PeakMaxRPM = tonumber(self.Mod9)
-	elseif(self.Mod9 > self.Mod10 ) then self.PeakMaxRPM = tonumber(self.Mod10)
-	elseif(tonumber(self.Mod9) < 1 or tonumber(self.Mod9) == nil) then self.PeakMaxRPM = 1 end
+	if(ArgsTable[13] <= ArgsTable[14] and tonumber(ArgsTable[13]) >= 1 ) then self.PeakMaxRPM = tonumber(ArgsTable[13])
+	elseif(ArgsTable[13] > ArgsTable[14] ) then self.PeakMaxRPM = tonumber(ArgsTable[14])
+	elseif(tonumber(ArgsTable[13]) < 1 or tonumber(ArgsTable[13]) == nil) then self.PeakMaxRPM = 1 end
 	--Set Limit
-	if(tonumber(self.Mod10) >= 100) then self.LimitRPM = tonumber(self.Mod10)
-	elseif(tonumber(self.Mod10) < 100 or tonumber(self.Mod10) == nil) then self.LimitRPM = 100 end
+	if(tonumber(ArgsTable[14]) >= 100) then self.LimitRPM = tonumber(ArgsTable[14])
+	elseif(tonumber(ArgsTable[14]) < 100 or tonumber(ArgsTable[14]) == nil) then self.LimitRPM = 100 end
 	--Set Flywheel
-	if(tonumber(self.Mod11) >= 0.001) then self.FlywheelMassValue = tonumber(self.Mod11)
-	elseif(tonumber(self.Mod11) < 0.001 or tonumber(self.Mod11) == nil) then self.FlywheelMassValue = 0.001 end
+	if(tonumber(ArgsTable[15]) >= 0.001) then self.FlywheelMassValue = tonumber(ArgsTable[15])
+	elseif(tonumber(ArgsTable[15]) < 0.001 or tonumber(ArgsTable[15]) == nil) then self.FlywheelMassValue = 0.001 end
 	--Set Weight
-	if(tonumber(self.Mod12) >= 1) then self.Weight = tonumber(self.Mod12)
-	elseif(tonumber(self.Mod12) < 1 or tonumber(self.Mod12) == nil) then self.Weight = 1 end
+	if(tonumber(ArgsTable[16]) >= 1) then self.Weight = tonumber(ArgsTable[16])
+	elseif(tonumber(ArgsTable[16]) < 1 or tonumber(ArgsTable[16]) == nil) then self.Weight = 1 end
 	--Set Electric/Turbine Stuff
-	if tobool(self.Mod13) != nil then self.iselec = tobool(self.Mod13) else self.iselec = false end
-	if tobool(self.Mod14) != nil then self.IsTrans = tobool(self.Mod14) else self.IsTrans = false end
-	if tonumber(self.Mod15) != nil then self.FlywheelOverride = tonumber(self.Mod15) else self.FlywheelOverride = 1200 end
+	if tobool(ArgsTable[17]) != nil then self.iselec = tobool(ArgsTable[17]) else self.iselec = false end
+	if tobool(ArgsTable[18]) != nil then self.IsTrans = tobool(ArgsTable[18]) else self.IsTrans = false end
+	if tonumber(ArgsTable[19]) != nil then self.FlywheelOverride = tonumber(ArgsTable[19]) else self.FlywheelOverride = 1200 end
 	--Set Original Values
 	self.PeakTorqueHeld = self.PeakTorque
 	self.CutValue = self.LimitRPM / 20
@@ -490,13 +466,12 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	if self.CustomLimit > 0 then
 		if self.EngineType == "Turbine" or self.EngineType == "Electric" then	--Create inputs for Electric&Turbine
 			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "LimitRpmAdd")
+			table.insert(Inputs, "RpmAdd")
 			table.insert(Inputs, "FlywheelMass")
 			table.insert(Inputs, "Override")
 		else 		--Create inputs others engines
 			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "MaxRpmAdd")
-			table.insert(Inputs, "LimitRpmAdd")
+			table.insert(Inputs, "RpmAdd")
 			table.insert(Inputs, "FlywheelMass")
 			table.insert(Inputs, "Idle")
 			table.insert(Inputs, "Disable Cutoff")
@@ -576,7 +551,8 @@ function ENT:UpdateOverlayText()
 	//self.FuelusingGUI = self.Fuelusing
 	//self.FlyRPMGUI = self.FlyRPM
 	
-	local text = "Power: " .. math.Round(self.PowerGUI) .. " kW / " .. math.Round(self.PowerGUI * 1.34) .. " hp\n"
+	local text = "" .. self.EngineName.."\n"
+	text = text .. "Power: " .. math.Round(self.PowerGUI) .. " kW / " .. math.Round(self.PowerGUI * 1.34) .. " hp\n"
 	text = text .. "Torque: " .. math.Round(self.TorqueGUI) .. " Nm / " .. math.Round(self.TorqueGUI * 0.73) .. " ft-lb\n"
 	text = text .. "Powerband: " .. pbmin .. " - " .. pbmax .. " RPM\n"
 	if self.EngineType == "Turbine" or self.EngineType == "Electric" then
@@ -636,6 +612,7 @@ function ENT:TriggerInput( iname, value )
 				self.RPM[1] = self.IdleRPM
 				self.Active = true
 				self.Active2 = true
+				Wire_TriggerOutput( self, "Running", 1 )
 				self.Sound = CreateSound(self, self.SoundPath)
 				self.Sound:PlayEx(0.5,100)
 				self:ACFInit()
@@ -656,6 +633,7 @@ function ENT:TriggerInput( iname, value )
 				Wire_TriggerOutput( self, "Torque", 0 )
 				Wire_TriggerOutput( self, "Power", 0 )
 				Wire_TriggerOutput( self, "Fuel Use", 0 )
+				Wire_TriggerOutput( self, "Running", 0 )
 			end
 		elseif (value <= 0 and self.Active) then
 			self.Active = false
@@ -663,6 +641,7 @@ function ENT:TriggerInput( iname, value )
 			Wire_TriggerOutput( self, "Torque", 0 )
 			Wire_TriggerOutput( self, "Power", 0 )
 			Wire_TriggerOutput( self, "Fuel Use", 0 )
+			Wire_TriggerOutput( self, "Running", 0 )
 		end
 	
 	elseif (iname == "TqAdd") then
@@ -803,7 +782,11 @@ function ENT:Think()
 	end
 	
 	self:SetRadsInfos()
-	self:SetManualInfos()
+	
+	--Set Manual Gearbox Infos (Stall Engine)
+	if (self.ManualGearbox) then
+		self:SetManualInfos()
+	end
 
 	self.LastThink = Time
 	self:NextThink( Time )
@@ -936,113 +919,122 @@ function ENT:CalcRPM()
 	self.TorqueMult = math.Clamp(((1 - self.TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, self.TorqueScale, 1)
 	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth) * self.TorqueMult
 	
-	-- Calculate the current torque from flywheel RPM
-	self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM, (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
-	
-	self.Inertia = self.FlywheelMassValue*(3.1416)^2
-	
 	local Drag
 	local TorqueDiff
-	if self.Active then
-		if( self.CutMode == 0 ) then
-			self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
-			
-			if self.iselec == true then
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - self.Throttle) / self.Inertia
-			else
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - self.Throttle) / self.Inertia
-			end
-		
-		elseif( self.CutMode == 1 ) then
-			self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
-			
-			if self.iselec == true then
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
-			else
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - 0) / self.Inertia
-			end
-			
-		end 
-		-- Let's accelerate the flywheel based on that torque
-		self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-		-- This is the presently avaliable torque from the engine
-		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
-	else
-		self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
-		if self.iselec == true then
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
-		else
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - 0) / self.Inertia
-		end
 	
-		-- Let's accelerate the flywheel based on that torque
+	--Custom Drag Value for Engines Types
+	local DragType = self.PeakMaxRPM+self.RPMExtra
+	if self.iselec == true then
+		DragType = self.FlywheelOverride
+	end
+	
+	if (self.Active and self.CutMode == 0) then
+		--Set Torque & Drag
+		self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
+		Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / DragType) * (1 - self.Throttle) / self.Inertia
+		--Set FlyRPM & TorqueDiff
 		self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-		-- This is the presently avaliable torque from the engine
+		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
+		--Reset TorqueDiff for Manual Gearbox
+		if (self.ManualGearbox) then
+			TorqueDiff = math.max( self.FlyRPM + (self.IdleRPM/4), 0 ) * self.Inertia
+		end
+	else
+		--Set Torque & Drag
+		self.Torque = 0
+		Drag = 10 * (math.max( self.FlyRPM, 0) / DragType) * 1 / (0.001*(3.1416)^2)
+		--Set RPM & TorqueDiff
+		self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
 		TorqueDiff = 0
 	end
 	
 	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
 	local Boxes = table.Count( self.GearLink )
 	local TotalReqTq = 0
+	local TotalReqTq2 = 0	--Used for Manual Gearbox (Aka Engine Back-Force)
+	
 	-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
 	for Key, Link in pairs( self.GearLink ) do
 		if not Link.Ent.Legal then continue end
-		
+		-- Set accelerating engine gearbox Back-Force
 		Link.ReqTq = Link.Ent:Calc( self.FlyRPM, self.Inertia )
 		TotalReqTq = TotalReqTq + Link.ReqTq
+		if self.ManualGearbox then
+			-- Set deccelerating engine gearbox Back-Force (Manual Gearbox)
+			Link.ReqTq2 = Link.Ent:Calc2( self.FlyRPM, self.Inertia )
+			TotalReqTq2 = TotalReqTq2 + Link.ReqTq2
+		end
 	end
 	
 	-- Split the torque fairly between the gearboxes who need it
 	for Key, Link in pairs( self.GearLink ) do
 		if not Link.Ent.Legal then continue end
-		-- Set TRUE Manual Gearbox Torque
-		if (IsValid(Link.isManual) && Link.isManual) then
-			TorqueDiff = math.max( self.FlyRPM, 0 ) * self.Inertia
-		end
 		-- Calculate the ratio of total requested torque versus what's avaliable
 		local AvailRatio = math.min( TorqueDiff / TotalReqTq / Boxes, 1 )
-		-- Set the Torque
+		self.GearboxCurrentGear = Link.Ent.Gear
+		-- Reset AvailRatio (Manual Gearbox)
+		if (self.ManualGearbox and self.Throttle == 0 and self.GearboxCurrentGear != 0 and self.FlyRPM > self.IdleRPM) then
+			AvailRatio = 0
+		end
+		-- Set the Torque On Gearboxes
 		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime, self.MassRatio )
 	end
 
+	-- Remove RPM with Gearbox Velocity (Engine Back Force)
 	self.FlyRPM = self.FlyRPM - math.min( TorqueDiff, TotalReqTq ) / self.Inertia
 	
-	if( self.DisableCut == 0 ) then
+	-- Add RPM (Manual Gearbox)(Engine Back Force)
+	if (self.ManualGearbox and self.Active) then
+		if self.Throttle == 0 and self.GearboxCurrentGear != 0 then
+			--Remove Rev Limiter while decompressing
+			self.DisableCutFinal = 1
+			
+			self.FlyRPM = self.FlyRPM + (TotalReqTq2 / self.Inertia)
+		else
+			--Enable Rev Limiter
+			self.DisableCutFinal = self.DisableCut
+		end
+	else
+		--Enable Rev Limiter
+		self.DisableCutFinal = self.DisableCut
+	end
+	
+	if( self.DisableCutFinal == 0 ) then
+		-- Cut the Engine (Rev Limiter)
 		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 ) then
 			self.CutMode = 1
 			if self.Sound then
 				self.Sound:Stop()
 			end
 			self.Sound = nil
-			local MakeSound = math.random(1,3)
+			local MakeSound = math.random(1,4)
 			if MakeSound <= 1 and self.Sound2 and self.Sound2:IsPlaying() then self.Sound2:Stop() end
 			if MakeSound <= 1 then
 				self.Sound2 = CreateSound(self, "ambient/explosions/explode_4.wav")
 				self.Sound2:PlayEx(0.7,100)
 			end
 		end
+		-- Enable back Engine (Rev Limiter)
 		if( self.FlyRPM <= self.CutRpm - self.CutValue and self.CutMode == 1 ) then
 			self.CutMode = 0
 			self.Sound = CreateSound(self, self.SoundPath)
 			self.Sound:PlayEx(0.5,100)
 		end
-	elseif( self.DisableCut == 1 ) then
-		self.CutMode = 0
-	end
-	if( self.FlyRPM <= 50 and self.Active == false ) then
-		self.Active2 = false
-		self.FlyRPM = 0
-		if self.Sound then
-			self.Sound:Stop()
+	elseif( self.DisableCutFinal == 1 ) then
+		-- Fix Sound Bug once its cutted
+		if( self.CutMode == 1 ) then
+			self.Sound = CreateSound(self, self.SoundPath)
+			self.Sound:PlayEx(0.5,100)
 		end
-		self.Sound = nil
-		self:UpdateOverlayText()
+		-- No Rev Limiting
+		self.CutMode = 0
 	end
 	
 	--Update Gui
 	/*if self.FuelusingGUI != self.Fuelusing or self.FlyRPMGUI != self.FlyRPM then
 		self:UpdateOverlayText()
 	end*/
+	
 	--Update extras values
 	for Key, Extra in pairs(self.ExtraLink) do
 		if IsValid(Extra) then
@@ -1056,6 +1048,7 @@ function ENT:CalcRPM()
 			end
 		end
 	end
+	
 	--Update radiator values
 	for Key, Radiator in pairs(self.RadiatorLink) do
 		if IsValid( Radiator ) then
@@ -1174,7 +1167,8 @@ function ENT:Link( Target )
 		Ent = Target,
 		Rope = Rope,
 		RopeLen = ( OutPos - InPos ):Length(),
-		ReqTq = 0
+		ReqTq = 0,
+		ReqTq2 = 0	--used for manual gearbox, engine back-force torque
 	}
 	
 	table.insert( self.GearLink, Link )
@@ -1213,6 +1207,9 @@ function ENT:Unlink( Target )
 			end
 			
 			table.remove( self.GearLink,Key )
+			
+			-- Make Sure Manual Gearbox are disabled
+			self.ManualGearbox = false
 			
 			return true, "Unlink successful!"
 			
@@ -1393,18 +1390,14 @@ end
 function ENT:SetManualInfos()
 	local Staled = false
 	
-	--Get Gearbox, and if its manual, stall engine under half idle rpm
-	for Key, Link in pairs( self.GearLink ) do
-		if (IsValid( Link ) && IsValid(Link.isManual) && Link.isManual) then
-			if (self.FlyRPM < (self.idlerpm / 2)) then
-				Staled = true
-			end
-		end
+	if (self.FlyRPM < (self.IdleRPM / 2)) then
+		Staled = true
 	end
 	
 	if Staled then
 		self.Active = false
 		self:TriggerInput( "Active" , 0 )
+		Wire_TriggerOutput( self, "Running", 0 )
 	end
 end
 	

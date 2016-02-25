@@ -101,7 +101,7 @@ function ENT:Initialize()
 	self.Throttle = 0
 	self.Active = false
 	self.IsMaster = true
-	self.GearLink = {} -- a "Link" has these components: Ent, Rope, RopeLen, ReqTq
+	self.GearLink = {} 		-- a "Link" has these components: Ent, Rope, RopeLen, ReqTq, ReqTq2
 	self.FuelLink = {}
 
 	self.LastCheck = 0
@@ -112,18 +112,25 @@ function ENT:Initialize()
 	self.CanUpdate = true
 	self.RequiresFuel = false
 	
+	self.Fuelusing = 0
+	-- Rev Limiter Vars
 	self.CutMode = 0
 	self.CutRpm = 0
-	self.Fuelusing = 0
 	self.DisableCut = 0
+	self.DisableCutFinal = 0
+	-- Table Vars
 	self.ExtraLink = {}
 	self.RadiatorLink = {}
+	-- Extra Vars
 	self.PeakTorqueExtra = 0
 	self.RPMExtra = 0
 	self.ExtraUsing = 0
 	self.PeakTorqueHealth = 0
+	-- Manual Gearbox Vars
+	self.ManualGearbox = false
+	self.GearboxCurrentGear = 0
 	
-	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Entity", "Mass", "Physical Mass" }, { "NORMAL","NORMAL","NORMAL", "NORMAL", "ENTITY", "NORMAL", "NORMAL" } )
+	self.Outputs = WireLib.CreateSpecialOutputs( self, { "RPM", "Torque", "Power", "Fuel Use", "Entity", "Mass", "Physical Mass", "Running" }, { "NORMAL","NORMAL","NORMAL", "NORMAL", "ENTITY", "NORMAL", "NORMAL", "NORMAL" } )
 	Wire_TriggerOutput( self, "Entity", self )
 	self.WireDebugName = "ACF Engine"
 
@@ -445,6 +452,7 @@ function ENT:TriggerInput( iname, value )
 				self.RPM[1] = self.IdleRPM
 				self.Active = true
 				self.Active2 = true
+				Wire_TriggerOutput( self, "Running", 1 )
 				self.Sound = CreateSound(self, self.SoundPath)
 				self.Sound:PlayEx(0.5,100)
 				self:ACFInit()
@@ -465,6 +473,7 @@ function ENT:TriggerInput( iname, value )
 				Wire_TriggerOutput( self, "Torque", 0 )
 				Wire_TriggerOutput( self, "Power", 0 )
 				Wire_TriggerOutput( self, "Fuel Use", 0 )
+				Wire_TriggerOutput( self, "Running", 0 )
 			end
 		elseif (value <= 0 and self.Active) then
 			self.Active = false
@@ -472,6 +481,7 @@ function ENT:TriggerInput( iname, value )
 			Wire_TriggerOutput( self, "Torque", 0 )
 			Wire_TriggerOutput( self, "Power", 0 )
 			Wire_TriggerOutput( self, "Fuel Use", 0 )
+			Wire_TriggerOutput( self, "Running", 0 )
 		end
 		
 	elseif (iname == "TqAdd") then
@@ -612,7 +622,11 @@ function ENT:Think()
 	end
 	
 	self:SetRadsInfos()
-	self:SetManualInfos()
+	
+	--Set Manual Gearbox Infos (Stall Engine)
+	if (self.ManualGearbox) then
+		self:SetManualInfos()
+	end
 
 	self.LastThink = Time
 	self:NextThink( Time )
@@ -745,94 +759,126 @@ function ENT:CalcRPM()
 	self.TorqueMult = math.Clamp(((1 - self.TorqueScale) / (0.5)) * ((self.ACF.Health/self.ACF.MaxHealth) - 1) + 1, self.TorqueScale, 1)
 	self.PeakTorque = (self.PeakTorqueAdd+self.PeakTorqueExtra-self.PeakTorqueHealth) * self.TorqueMult
 	
-	-- Calculate the current torque from flywheel RPM
-	self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM, (self.LimitRPM - self.FlyRPM) / (self.LimitRPM - self.PeakMaxRPM), 1 ), 0 )
-	
 	local Drag
 	local TorqueDiff
-	if self.Active then
-		if( self.CutMode == 0 ) then
-			self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
-			if self.iselec == true then
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - self.Throttle) / self.Inertia
-			else
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - self.Throttle) / self.Inertia
-			end
-		elseif( self.CutMode == 1 ) then
-			self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
-			if self.iselec == true then
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
-			else
-				Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - 0) / self.Inertia
-			end
-		end 
-		-- Let's accelerate the flywheel based on that torque
+	
+	--Custom Drag Value for Engines Types
+	local DragType = self.PeakMaxRPM+self.RPMExtra
+	if self.iselec == true then
+		DragType = self.FlywheelOverride
+	end
+	
+	if (self.Active and self.CutMode == 0) then
+		--Set Torque & Drag
+		self.Torque = boost * self.Throttle * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
+		Drag = self.PeakTorque * (math.max( self.FlyRPM - self.IdleRPM, 0) / DragType) * (1 - self.Throttle) / self.Inertia
+		--Set FlyRPM & TorqueDiff
 		self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-		-- This is the presently avaliable torque from the engine
 		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
-	else
-		self.Torque = boost * 0 * math.max( self.PeakTorque * math.min( self.FlyRPM / self.PeakMinRPM , ((self.LimitRPM+self.RPMExtra) - self.FlyRPM) / ((self.LimitRPM+self.RPMExtra) - (self.PeakMaxRPM+self.RPMExtra)), 1 ), 0 )
-		if self.iselec == true then
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / self.FlywheelOverride) * (1 - 0) / self.Inertia
-		else
-			Drag = self.PeakTorque * (math.max( self.FlyRPM - 0, 0) / (self.PeakMaxRPM+self.RPMExtra)) * ( 1 - 0) / self.Inertia
+		--Reset TorqueDiff for Manual Gearbox
+		if (self.ManualGearbox) then
+			TorqueDiff = math.max( self.FlyRPM + (self.IdleRPM/4), 0 ) * self.Inertia
 		end
-		-- Let's accelerate the flywheel based on that torque
+	else
+		--Set Torque & Drag
+		self.Torque = 0
+		Drag = 10 * (math.max( self.FlyRPM, 0) / DragType) * 1 / (0.001*(3.1416)^2)
+		--Set RPM & TorqueDiff
 		self.FlyRPM = math.max( self.FlyRPM + self.Torque / self.Inertia - Drag, 1 )
-		-- This is the presently avaliable torque from the engine
 		TorqueDiff = 0
 	end
 	
 	-- The gearboxes don't think on their own, it's the engine that calls them, to ensure consistent execution order
 	local Boxes = table.Count( self.GearLink )
 	local TotalReqTq = 0
+	local TotalReqTq2 = 0	--Used for Manual Gearbox (Aka Engine Back-Force)
+	
 	-- Get the requirements for torque for the gearboxes (Max clutch rating minus any wheels currently spinning faster than the Flywheel)
 	for Key, Link in pairs( self.GearLink ) do
 		if not Link.Ent.Legal then continue end
-		
+		-- Set accelerating engine gearbox Back-Force
 		Link.ReqTq = Link.Ent:Calc( self.FlyRPM, self.Inertia )
 		TotalReqTq = TotalReqTq + Link.ReqTq
+		if self.ManualGearbox then
+			-- Set deccelerating engine gearbox Back-Force (Manual Gearbox)
+			Link.ReqTq2 = Link.Ent:Calc2( self.FlyRPM, self.Inertia )
+			TotalReqTq2 = TotalReqTq2 + Link.ReqTq2
+		end
 	end
 	
 	-- Split the torque fairly between the gearboxes who need it
 	for Key, Link in pairs( self.GearLink ) do
 		if not Link.Ent.Legal then continue end
-		-- Set TRUE Manual Gearbox Torque
-		if (IsValid(Link.isManual) && Link.isManual) then
-			TorqueDiff = math.max( self.FlyRPM, 0 ) * self.Inertia
-		end
 		-- Calculate the ratio of total requested torque versus what's avaliable
 		local AvailRatio = math.min( TorqueDiff / TotalReqTq / Boxes, 1 )
-		-- Set the Torque
+		self.GearboxCurrentGear = Link.Ent.Gear
+		-- Reset AvailRatio (Manual Gearbox)
+		if (self.ManualGearbox and self.Throttle == 0 and self.GearboxCurrentGear != 0 and self.FlyRPM > self.IdleRPM) then
+			AvailRatio = 0
+		end
+		-- Set the Torque On Gearboxes
 		Link.Ent:Act( Link.ReqTq * AvailRatio * self.MassRatio, DeltaTime, self.MassRatio )
 	end
 
+	-- Remove RPM with Gearbox Velocity (Engine Back Force)
 	self.FlyRPM = self.FlyRPM - math.min( TorqueDiff, TotalReqTq ) / self.Inertia
 	
-	if( self.DisableCut == 0 ) then
+	-- Add RPM (Manual Gearbox)(Engine Back Force)
+	if (self.ManualGearbox and self.Active) then
+		if self.Throttle == 0 and self.GearboxCurrentGear != 0 then
+			--Remove Rev Limiter while decompressing
+			self.DisableCutFinal = 1
+			
+			self.FlyRPM = self.FlyRPM + (TotalReqTq2 / self.Inertia)
+		else
+			--Enable Rev Limiter
+			self.DisableCutFinal = self.DisableCut
+		end
+	else
+		--Enable Rev Limiter
+		self.DisableCutFinal = self.DisableCut
+	end
+	
+	if( self.DisableCutFinal == 0 ) then
+		-- Cut the Engine (Rev Limiter)
 		if( self.FlyRPM >= self.CutRpm and self.CutMode == 0 ) then
 			self.CutMode = 1
 			if self.Sound then
 				self.Sound:Stop()
 			end
 			self.Sound = nil
-			local MakeSound = math.random(1,3)
+			local MakeSound = math.random(1,4)
 			if MakeSound <= 1 and self.Sound2 and self.Sound2:IsPlaying() then self.Sound2:Stop() end
 			if MakeSound <= 1 then
 				self.Sound2 = CreateSound(self, "ambient/explosions/explode_4.wav")
 				self.Sound2:PlayEx(0.7,100)
 			end
 		end
+		-- Enable back Engine (Rev Limiter)
 		if( self.FlyRPM <= self.CutRpm - self.CutValue and self.CutMode == 1 ) then
 			self.CutMode = 0
 			self.Sound = CreateSound(self, self.SoundPath)
 			self.Sound:PlayEx(0.5,100)
 		end
-	elseif( self.DisableCut == 1 ) then
+	elseif( self.DisableCutFinal == 1 ) then
+		-- Fix Sound Bug once its cutted
+		if( self.CutMode == 1 ) then
+			self.Sound = CreateSound(self, self.SoundPath)
+			self.Sound:PlayEx(0.5,100)
+		end
+		-- No Rev Limiting
 		self.CutMode = 0
 	end
-	if( self.FlyRPM <= 50 and self.Active == false ) then
+	
+	--Update Gui
+	/*if self.FuelusingGUI != self.Fuelusing or self.FlyRPMGUI != self.FlyRPM then
+		self:UpdateOverlayText()
+	end*/
+	
+	-- Kill the Engine Off under 100 RPM
+	if( self.FlyRPM <= 100 and self.Active == false ) then
 		self.Active2 = false
+		Wire_TriggerOutput( self, "Running", 0 )
 		self.FlyRPM = 0
 		if self.Sound then
 			self.Sound:Stop()
@@ -853,6 +899,7 @@ function ENT:CalcRPM()
 			end
 		end
 	end
+	
 	--Update radiator values
 	for Key, Radiator in pairs(self.RadiatorLink) do
 		if IsValid( Radiator ) then
@@ -971,11 +1018,17 @@ function ENT:Link( Target )
 		Ent = Target,
 		Rope = Rope,
 		RopeLen = ( OutPos - InPos ):Length(),
-		ReqTq = 0
+		ReqTq = 0,
+		ReqTq2 = 0	--used for manual gearbox, engine back-force torque
 	}
 	
 	table.insert( self.GearLink, Link )
 	table.insert( Target.Master, self )
+	
+	//Perform Manual Gearbox Checkup
+	if Target.isManual then
+		self.ManualGearbox = true
+	end
 	
 	return true, "Link successful!"
 end
@@ -1010,6 +1063,9 @@ function ENT:Unlink( Target )
 			end
 			
 			table.remove( self.GearLink,Key )
+			
+			-- Make Sure Manual Gearbox are disabled
+			self.ManualGearbox = false
 			
 			return true, "Unlink successful!"
 			
@@ -1184,24 +1240,21 @@ function ENT:SetRadsInfos()
 	if Blowed then
 		self.Active = false
 		self:TriggerInput( "Active" , 0 )
+		Wire_TriggerOutput( self, "Running", 0 )
 	end
 end
 --SET Manual Gearbox Functions (Kill Engine)
 function ENT:SetManualInfos()
 	local Staled = false
 	
-	--Get Gearbox, and if its manual, stall engine under half idle rpm
-	for Key, Link in pairs( self.GearLink ) do
-		if (IsValid( Link ) && IsValid(Link.isManual) && Link.isManual) then
-			if (self.FlyRPM < (self.idlerpm / 2)) then
-				Staled = true
-			end
-		end
+	if (self.FlyRPM < (self.IdleRPM / 2)) then
+		Staled = true
 	end
 	
 	if Staled then
 		self.Active = false
 		self:TriggerInput( "Active" , 0 )
+		Wire_TriggerOutput( self, "Running", 0 )
 	end
 end
 	

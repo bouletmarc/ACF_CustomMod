@@ -417,19 +417,16 @@ check the feedback of them
 --Fixed Tool Duping Class
 --Fixed Gearboxes Act Issue
 --Fixed DupeFixer Tool
---
-##I've being really busy this time, not
-everything are tested yet, but it should
-be stated as working. I am still looking
-for someone to become the dev of this mod.##
---
-##I don't play gmod since years and I am 
-still updating it, I am wondering if this
-is the last update I do on it.##
---
-##Thank You everyone for enjoying this mod
-from 2012 to now. This hard lua scriting
-time allowed me to script java, c#, c++ 
-and almost any others script in about no time,
-I am now a Game Developper, and I can say,
-it's only because of this mod !##
+
+*r134
+-V1.3.4
+--Added TRUE Manual Gearboxes
+--Added Compatility Manual with Original
+--Added Engines Running Output
+--Added Display for engine maker name
+--Cleaned Engines CalcRPM Function
+--Cleaned Rev Limiter Function
+--Cleaned Engine Maker Data Vars
+--Cleaned Engine Maker Inputs
+--Removed Gearbox RPM Outputs
+--Faster Engine Stall

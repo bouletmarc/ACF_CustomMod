@@ -110,22 +110,15 @@ function ENT:Initialize()
 	
 	self.LegalThink = 0
 	
-	self.RPM = {}
-	self.CurRPM = 0
-    //self.CVT = false
 	self.DoubleDiff = false
 	self.InGear = false
 	self.CanUpdate = true
 	self.LastActive = 0
 	self.Legal = true
 	
+	//Manual Gearbox Vars
 	self.isManual = true
-	
-	//self.OnReverse = 0
-	//self.Usable = 1
-	//self.AllowChange = 0
-	//self.ClutchMode = 0
-	//self.ClutchModeUse = 0
+	self.TotalReqTq2 = 0
 	
 end  
 
@@ -188,7 +181,7 @@ function MakeACF_GearboxManual(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4
 	end
 	
     local Outputs = { "Ratio", "Entity", "Current Gear" }
-    local OutputTypes = { "NORMAL", "ENTITY", "NORMAL" }
+    local OutputTypes = { "NORMAL", "ENTITY", "NORMAL", "NORMAL" }
 	
 	GearboxManual.Inputs = Wire_CreateInputs( GearboxManual, Inputs )
 	GearboxManual.Outputs = WireLib.CreateSpecialOutputs( GearboxManual, Outputs, OutputTypes )
@@ -264,8 +257,8 @@ function ENT:Update( ArgsTable )
 			table.insert(Inputs, "Brake")
 		end
 		
-		local Outputs = { "Ratio", "Entity", "Current Gear" }
-		local OutputTypes = { "NORMAL", "ENTITY", "NORMAL" }
+		local Outputs = { "Ratio", "Entity", "Current Gear", "Gearbox RPM" }
+		local OutputTypes = { "NORMAL", "ENTITY", "NORMAL", "NORMAL" }
 		
 		self.Inputs = Wire_CreateInputs( self, Inputs )
 		self.Outputs = WireLib.CreateSpecialOutputs( self, Outputs, OutputTypes )
@@ -458,6 +451,14 @@ function ENT:CheckEnts()
 	
 end
 
+function ENT:GetGear( )
+	return self.Gear
+end
+
+function ENT:GetClutching( )
+	return self.Clutching
+end
+
 function ENT:Calc( InputRPM, InputInertia )
 
 	if self.LastActive == CurTime() then
@@ -466,6 +467,10 @@ function ENT:Calc( InputRPM, InputInertia )
 	
 	if self.ChangeFinished < CurTime() then
 		self.InGear = true
+	else
+		-- disable power while changing gear
+		self.TotalReqTq = 0
+		return self.TotalReqTq
 	end
 	
 	self:CheckEnts()
@@ -504,10 +509,10 @@ function ENT:Calc( InputRPM, InputInertia )
 					Sign = 0
 				end
 				if Link.Side == 0 then 
-						local DTq = math.Clamp( ( self.SteerRate * ( ( InputRPM * ( math.abs( self.SteerRate ) + 1 ) ) - (RPM * Sign) ) ) * InputInertia, -self.MaxTorque, self.MaxTorque )
+					local DTq = math.Clamp( ( self.SteerRate * ( ( InputRPM * ( math.abs( self.SteerRate ) + 1 ) ) - (RPM * Sign) ) ) * InputInertia, -self.MaxTorque, self.MaxTorque )
 					Link.ReqTq = ( NTq + DTq )
 				elseif Link.Side == 1 then
-						local DTq = math.Clamp( ( self.SteerRate * ( ( InputRPM * ( math.abs( self.SteerRate ) + 1 ) ) + (RPM * Sign) ) ) * InputInertia, -self.MaxTorque, self.MaxTorque )
+					local DTq = math.Clamp( ( self.SteerRate * ( ( InputRPM * ( math.abs( self.SteerRate ) + 1 ) ) + (RPM * Sign) ) ) * InputInertia, -self.MaxTorque, self.MaxTorque )
 					Link.ReqTq = ( NTq - DTq )
 				end
 			end
@@ -521,6 +526,225 @@ function ENT:Calc( InputRPM, InputInertia )
 	end
 			
 	return math.min( self.TotalReqTq, self.MaxTorque )
+end
+
+function ENT:Calc2( InputRPM, InputInertia )
+	if self.LastActive == CurTime() then
+		return self.TotalReqTq2
+	end
+
+	local BoxPhys = self:GetPhysicsObject()
+	local SelfWorld = self:LocalToWorld( BoxPhys:GetAngleVelocity() ) - self:GetPos()
+	
+	self.TotalReqTq2 = 0
+	
+	for Key, Link in pairs( self.WheelLink ) do
+		if not IsValid( Link.Ent ) then
+			table.remove( self.WheelLink, Key )
+		continue end
+		
+		local Clutch = 0
+		if Link.Side == 0 then
+			Clutch = self.LClutch
+		elseif Link.Side == 1 then
+			Clutch = self.RClutch
+		end
+	
+		Link.ReqTq2 = 0
+		if Link.Ent.IsGeartrain then
+			if not Link.Ent.Legal then continue end
+			
+			-- ONLY if Calc2() is added on the linked gearbox ## NOT ADDED ON ANY GEARBOXES --> OVERRIDE MODE INSTEAD FOR COMPATIBILITY WITH ORIGINAL ACF
+			/*if IsValid(Link.Ent.TotalReqTq2) then
+				Link.ReqTq2 = math.min( Clutch, math.abs( Link.Ent:Calc2( InputRPM * self.GearRatio, Inertia ) * self.GearRatio ) )
+			end*/
+			
+			//#### MORE THAN 4GEARBOXES ARE ALMOST IMPOSSIBLE, IT WOULD BE STUPID TO HAVE SOMETHING LIKE THIS : MANUAL-->CLUTCH-->TRANSFER-->TRANSFER-->DIFF
+			
+			-- Link up to 4x external gearboxes, and override the manual function to read the final wheel RPM
+			for Key2, Link2 in pairs( Link.Ent.WheelLink ) do
+				if Link2.Ent.IsGeartrain then
+					for Key3, Link3 in pairs( Link2.Ent.WheelLink ) do
+						if Link3.Ent.IsGeartrain then
+							for Key4, Link4 in pairs( Link3.Ent.WheelLink ) do
+								if Link4.Ent.IsGeartrain then
+									for Key5, Link5 in pairs( Link4.Ent.WheelLink ) do
+										if !Link5.Ent.IsGeartrain then
+											if !Link4.Ent.DoubleDiff then
+												Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, false, Link, Link2, Link3, Link4, Link5)
+											else
+												Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, true, Link, Link2, Link3, Link4, Link5)
+											end
+										end
+									end
+								else
+									if !Link3.Ent.DoubleDiff then
+										Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, false, Link, Link2, Link3, Link4)
+									else
+										Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, true, Link, Link2, Link3, Link4)
+									end
+								end
+							end
+						else
+							if !Link2.Ent.DoubleDiff then
+								Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, false, Link, Link2, Link3)
+							else
+								Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, true, Link, Link2, Link3)
+							end
+						end
+					end
+				else
+					if !Link.Ent.DoubleDiff then
+						Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, false, Link, Link2)
+					else
+						Link.ReqTq2 = self:RPMCheckup(InputRPM, InputInertia, true, Link, Link2)
+					end
+				end
+			end
+		elseif self.DoubleDiff then
+			local RPM = self:CalcWheel( Link, SelfWorld )
+			if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
+				local NTq = math.min( Clutch, ( RPM - InputRPM) * InputInertia)
+				-- Set Sign
+				if( self.SteerRate ~= 0 ) then Sign = self.SteerRate / math.abs( self.SteerRate ) else Sign = 0 end
+				-- Set Link Sides
+				if Link.Side == 0 then 
+					local DTq = math.Clamp( ( self.SteerRate * ( (RPM * Sign) - ( InputRPM * ( math.abs( self.SteerRate ) + 1 ) ) ) ) * InputInertia, -self.MaxTorque, self.MaxTorque )
+				elseif Link.Side == 1 then
+					local DTq = math.Clamp( ( self.SteerRate * ( (RPM * Sign) + ( InputRPM * ( math.abs( self.SteerRate ) + 1 ) ) ) ) * InputInertia, -self.MaxTorque, self.MaxTorque )
+				end
+				Link.ReqTq2 = ( NTq + DTq )
+			end
+		else
+			local RPM = self:CalcWheel( Link, SelfWorld )
+			if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM > InputRPM ) or ( InputRPM < 0 and RPM < InputRPM ) ) then
+				Link.ReqTq2 = math.min( Clutch, ( RPM - InputRPM ) * InputInertia )
+			end
+		end
+		self.TotalReqTq2 = self.TotalReqTq2 + math.abs( Link.ReqTq2 )
+	end
+	return self.TotalReqTq2
+end
+
+-- THIS IS AN 'OVERRIDE' FUNCTION FOR GEARBOX WITHOUT MANUAL MODE, IT RUN HERE INSTEAD OF COPYING IT IN ANY GEARBOXES FILES
+function ENT:RPMCheckup (InputRPM, InputInertia, DoubleDiff, Link1, Link2, Link3, Link4, Link5)
+	/*if LinkNumer == 2 then
+	elseif LinkNumer == 3 then
+	elseif LinkNumer == 4 then
+	end*/
+	-- Perform RPM Checkup on the next Gearbox
+	-- Set Links Number (link up to 4x gearboxes)
+	local LinkNumer = 2
+	if (IsValid(Link3)) then LinkNumer = 3 end
+	if (IsValid(Link4)) then LinkNumer = 4 end
+	if (IsValid(Link5)) then LinkNumer = 5 end
+	
+	-- Set EngineRPM
+	local InputRPM2 = InputRPM * self.GearRatio
+	if LinkNumer > 2 then
+		if LinkNumer == 3 then InputRPM2 = (InputRPM * self.GearRatio) * Link1.Ent.GearRatio end
+		if LinkNumer == 4 then InputRPM2 = ((InputRPM * self.GearRatio) * Link1.Ent.GearRatio) * Link2.Ent.GearRatio end
+		if LinkNumer == 5 then InputRPM2 = (((InputRPM * self.GearRatio) * Link1.Ent.GearRatio) * Link2.Ent.GearRatio) * Link3.Ent.GearRatio end
+	end
+	
+	-- Set Inertia
+	local Inertia = InputInertia / self.GearRatio
+	if LinkNumer > 2 then
+		if LinkNumer == 3 then Inertia = (InputInertia / self.GearRatio) / Link1.Ent.GearRatio end
+		if LinkNumer == 4 then Inertia = ((InputInertia / self.GearRatio) / Link1.Ent.GearRatio) / Link2.Ent.GearRatio end
+		if LinkNumer == 5 then Inertia = (((InputInertia / self.GearRatio) / Link1.Ent.GearRatio) / Link2.Ent.GearRatio) / Link3.Ent.GearRatio end
+	end
+	
+	-- Set Pos, World, Phys Vars
+	local BoxPhys
+	local SelfWorld
+	if LinkNumer == 2 then
+		BoxPhys = Link1.Ent:GetPhysicsObject()
+		SelfWorld = Link1.Ent:LocalToWorld( BoxPhys:GetAngleVelocity() ) - Link1.Ent:GetPos()
+	elseif LinkNumer == 3 then
+		BoxPhys = Link2.Ent:GetPhysicsObject()
+		SelfWorld = Link2.Ent:LocalToWorld( BoxPhys:GetAngleVelocity() ) - Link2.Ent:GetPos()
+	elseif LinkNumer == 4 then
+		BoxPhys = Link3.Ent:GetPhysicsObject()
+		SelfWorld = Link3.Ent:LocalToWorld( BoxPhys:GetAngleVelocity() ) - Link3.Ent:GetPos()
+	elseif LinkNumer == 5 then
+		BoxPhys = Link4.Ent:GetPhysicsObject()
+		SelfWorld = Link4.Ent:LocalToWorld( BoxPhys:GetAngleVelocity() ) - Link4.Ent:GetPos()
+	end
+	
+	-- Get RPM
+	local RPM = 0
+	if LinkNumer == 2 then RPM = Link1.Ent:CalcWheel(Link2, SelfWorld)
+	elseif LinkNumer == 3 then RPM = Link2.Ent:CalcWheel(Link3, SelfWorld)
+	elseif LinkNumer == 4 then RPM = Link3.Ent:CalcWheel(Link4, SelfWorld)
+	elseif LinkNumer == 5 then RPM = Link4.Ent:CalcWheel(Link5, SelfWorld)
+	end
+	
+	-- Set Clutch
+	local Clutch = 0
+	if LinkNumer == 2 then
+		if Link2.Side == 0 then Clutch = Link1.Ent.LClutch
+		elseif Link2.Side == 1 then Clutch = Link1.Ent.RClutch end
+	elseif LinkNumer == 3 then
+		if Link3.Side == 0 then Clutch = Link2.Ent.LClutch
+		elseif Link3.Side == 1 then Clutch = Link2.Ent.RClutch end
+	elseif LinkNumer == 4 then
+		if Link4.Side == 0 then Clutch = Link3.Ent.LClutch
+		elseif Link4.Side == 1 then Clutch = Link3.Ent.RClutch end
+	elseif LinkNumer == 5 then
+		if Link5.Side == 0 then Clutch = Link4.Ent.LClutch
+		elseif Link5.Side == 1 then Clutch = Link4.Ent.RClutch end
+	end
+	
+	-- Set RPM Torque to send
+	if ((LinkNumer==2 and Link1.Ent.GearRatio~=0) or (LinkNumer==3 and Link2.Ent.GearRatio~=0) or (LinkNumer==4 and Link3.Ent.GearRatio~=0) or (LinkNumer==5 and Link4.Ent.GearRatio~=0))then
+		if ((InputRPM2 > 0 and RPM > InputRPM2) or (InputRPM2 < 0 and RPM < InputRPM2)) then
+			if DoubleDiff then
+				-- DoubleDiff
+				local NTq = math.min( Clutch, ( RPM - InputRPM2) * Inertia)
+				-- Set Sign
+				if LinkNumer == 2 then if( Link1.Ent.SteerRate ~= 0 ) then Sign = Link1.Ent.SteerRate / math.abs( Link1.Ent.SteerRate ) else Sign = 0 end end
+				if LinkNumer == 3 then if( Link2.Ent.SteerRate ~= 0 ) then Sign = Link2.Ent.SteerRate / math.abs( Link2.Ent.SteerRate ) else Sign = 0 end end
+				if LinkNumer == 4 then if( Link3.Ent.SteerRate ~= 0 ) then Sign = Link3.Ent.SteerRate / math.abs( Link3.Ent.SteerRate ) else Sign = 0 end end
+				if LinkNumer == 5 then if( Link4.Ent.SteerRate ~= 0 ) then Sign = Link4.Ent.SteerRate / math.abs( Link4.Ent.SteerRate ) else Sign = 0 end end
+				
+				-- Set Link Sides
+				if LinkNumer == 2 then
+					if Link2.Side == 0 then 
+						local DTq = math.Clamp((Link1.Ent.SteerRate*((RPM*Sign)-(InputRPM2*(math.abs(Link1.Ent.SteerRate)+1))))*Inertia, -Link1.Ent.MaxTorque, Link1.Ent.MaxTorque)
+					elseif Link2.Side == 1 then
+						local DTq = math.Clamp((Link1.Ent.SteerRate*((RPM*Sign)+(InputRPM2*(math.abs(Link1.Ent.SteerRate)+1))))*Inertia, -Link1.Ent.MaxTorque, Link1.Ent.MaxTorque)
+					end
+				elseif LinkNumer == 3 then
+					if Link3.Side == 0 then 
+						local DTq = math.Clamp((Link2.Ent.SteerRate*((RPM*Sign)-(InputRPM2*(math.abs(Link2.Ent.SteerRate)+1))))*Inertia, -Link2.Ent.MaxTorque, Link2.Ent.MaxTorque)
+					elseif Link3.Side == 1 then
+						local DTq = math.Clamp((Link2.Ent.SteerRate*((RPM*Sign)+(InputRPM2*(math.abs(Link2.Ent.SteerRate)+1))))*Inertia, -Link2.Ent.MaxTorque, Link2.Ent.MaxTorque)
+					end
+				elseif LinkNumer == 4 then
+					if Link4.Side == 0 then 
+						local DTq = math.Clamp((Link3.Ent.SteerRate*((RPM*Sign)-(InputRPM2*(math.abs(Link3.Ent.SteerRate)+1))))*Inertia, -Link3.Ent.MaxTorque, Link3.Ent.MaxTorque)
+					elseif Link4.Side == 1 then
+						local DTq = math.Clamp((Link3.Ent.SteerRate*((RPM*Sign)+(InputRPM2*(math.abs(Link3.Ent.SteerRate)+1))))*Inertia, -Link3.Ent.MaxTorque, Link3.Ent.MaxTorque)
+					end
+				elseif LinkNumer == 5 then
+					if Link5.Side == 0 then 
+						local DTq = math.Clamp((Link4.Ent.SteerRate*((RPM*Sign)-(InputRPM2*(math.abs(Link4.Ent.SteerRate)+1))))*Inertia, -Link4.Ent.MaxTorque, Link4.Ent.MaxTorque)
+					elseif Link5.Side == 1 then
+						local DTq = math.Clamp((Link4.Ent.SteerRate*((RPM*Sign)+(InputRPM2*(math.abs(Link4.Ent.SteerRate)+1))))*Inertia, -Link4.Ent.MaxTorque, Link4.Ent.MaxTorque)
+					end
+				end
+				return (NTq + DTq)
+			else
+				-- Normal
+				return math.min( Clutch, ( RPM - InputRPM2 ) * Inertia )
+			end
+		else
+			return 0
+		end
+	else
+		return 0
+	end
 end
 
 function ENT:CalcWheel( Link, SelfWorld )
@@ -662,6 +886,7 @@ function ENT:Link( Target )
 		RopeLen = ( OutPosWorld - InPosWorld ):Length(),
 		Output = OutPos,
 		ReqTq = 0,
+		ReqTq2 = 0,
 		Vel = 0
 	}
 	table.insert( self.WheelLink, Link )

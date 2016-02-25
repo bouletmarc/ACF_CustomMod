@@ -1,4 +1,4 @@
-/*
+
 -- Manual Gearboxes
 
 -- Weight
@@ -33,9 +33,9 @@ local StWB = 0.75 --straight weight bonus mulitplier
 local StTB = 1.25 --straight torque bonus multiplier
 
 -- Shift Time
-local ShiftS = 0.25
-local ShiftM = 0.35
-local ShiftL = 0.5
+local ShiftS = 0.15
+local ShiftM = 0.22
+local ShiftL = 0.3
 
 -- 4 Speed
 -- Inline
@@ -541,7 +541,7 @@ ACF_DefineGearboxManual( "6Gear-T-LM", {
 
 -- Transaxial Dual Clutch
 
-ACF_DefineGearboxManual( "6Gear-T-SM", {
+ACF_DefineGearboxManual( "6Gear-T-SMD", {
 	name = "6-Speed Manual, Transaxial, Small, Dual Clutch",
 	desc = "A small, and light 6 speed manual gearbox, with a somewhat limited max torque rating",
 	model = "models/engines/transaxial_s.mdl",
@@ -563,7 +563,7 @@ ACF_DefineGearboxManual( "6Gear-T-SM", {
 	}
 } )
 
-ACF_DefineGearboxManual( "6Gear-T-MM", {
+ACF_DefineGearboxManual( "6Gear-T-MMD", {
 	name = "6-Speed Manual, Transaxial, Medium, Dual Clutch",
 	desc = "A medium sized, 6 speed manual gearbox",
 	model = "models/engines/transaxial_m.mdl",
@@ -585,7 +585,7 @@ ACF_DefineGearboxManual( "6Gear-T-MM", {
 	}
 } )
 
-ACF_DefineGearboxManual( "6Gear-T-LM", {
+ACF_DefineGearboxManual( "6Gear-T-LMD", {
 	name = "6-Speed Manual, Transaxial, Large, Dual Clutch",
 	desc = "A large, heavy and sturdy 6 speed manual gearbox",
 	model = "models/engines/transaxial_l.mdl",
@@ -1034,4 +1034,3 @@ ACF_DefineGearboxManual( "8Gear-ST-LM", {
 		[ -1 ] = 0.5
 	}
 } )
-*/

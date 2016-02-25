@@ -326,7 +326,7 @@ function MakeACF_GearboxAuto(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		table.insert(Inputs, "Brake")
 	end
 	
-    local Outputs = { "Ratio", "Entity", "Current Gear", "Gearbox RPM" }
+    local Outputs = { "Ratio", "Entity", "Current Gear" }
     local OutputTypes = { "NORMAL", "ENTITY", "NORMAL", "NORMAL" }
 	
 	GearboxAuto.Inputs = Wire_CreateInputs( GearboxAuto, Inputs )
@@ -685,12 +685,6 @@ function ENT:Calc( InputRPM, InputInertia )
 			local RPM = self:CalcWheel( Link, SelfWorld )
 			if self.GearRatio ~= 0 and ( ( InputRPM > 0 and RPM < InputRPM ) or ( InputRPM < 0 and RPM > InputRPM ) ) then
 				Link.ReqTq = math.min( Clutch, ( InputRPM - RPM ) * InputInertia )
-			end
-			--Calling RPM Ouputs Value's
-			if Clutch == 0 then
-				Wire_TriggerOutput(self, "Gearbox RPM", 0)
-			elseif Clutch > 0 then
-				Wire_TriggerOutput(self, "Gearbox RPM", RPM)
 			end
 		end
 		self.TotalReqTq = self.TotalReqTq + math.abs( Link.ReqTq )
