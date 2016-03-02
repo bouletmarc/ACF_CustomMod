@@ -164,7 +164,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.Weight = Lookup.weight
 	Engine.IdleRPM = Lookup.idlerpm
 	Engine.PeakTorque = Lookup.torque
-	Engine.PeakTorqueHeld = Lookup.torque
 	Engine.PeakMinRPM = Lookup.peakminrpm
 	Engine.PeakMaxRPM = Lookup.peakmaxrpm
 	Engine.LimitRPM = Lookup.limitrpm
@@ -175,8 +174,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine.FuelType = Lookup.fuel or "Petrol"
 	Engine.EngineType = Lookup.enginetype or "GenericPetrol"
 	Engine.SoundPitch = Lookup.pitch or 1
-	Engine.SpecialHealth = true
-	Engine.SpecialDamage = true
 	Engine.TorqueMult = 1
 	Engine.FuelTank = 0
 	
@@ -243,7 +240,6 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 
 	Engine:SetNWString( "WireName", Lookup.name )
 	------ GUI ---------
-	Engine.FlywheelMassGUI = Engine.FlywheelMassValue
 	Engine:UpdateOverlayText()
 	
 	Owner:AddCount("_acf_engine", Engine)
@@ -293,7 +289,6 @@ function ENT:Update( ArgsTable )
 	self.Weight = Lookup.weight
 	self.IdleRPM = Lookup.idlerpm
 	self.PeakTorque = Lookup.torque
-	self.PeakTorqueHeld = Lookup.torque
 	self.PeakMinRPM = Lookup.peakminrpm
 	self.PeakMaxRPM = Lookup.peakmaxrpm
 	self.LimitRPM = Lookup.limitrpm
@@ -304,8 +299,6 @@ function ENT:Update( ArgsTable )
 	self.FuelType = Lookup.fuel
 	self.EngineType = Lookup.enginetype
 	self.SoundPitch = Lookup.pitch or 1
-	self.SpecialHealth = true
-	self.SpecialDamage = true
 	self.TorqueMult = self.TorqueMult or 1
 	self.FuelTank = 0
 	
@@ -365,7 +358,6 @@ function ENT:Update( ArgsTable )
 	
 	self:SetNWString( "WireName", Lookup.name )
 	------ GUI ---------
-	self.FlywheelMassGUI = self.FlywheelMassValue
 	self:UpdateOverlayText()
 	
 	ACF_Activate( self, 1 )
@@ -415,7 +407,7 @@ function ENT:UpdateOverlayText()
 		text = text .. "Idle: " .. math.Round(self.IdleRPM) .. " RPM\n"
 	end
 	text = text .. "Redline: " .. math.Round((self.LimitRPM+self.RPMExtra)) .. " RPM\n"
-	text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
+	text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassValue,3) .. " Kg\n"
 	text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
 	if self.RequiresFuel then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
 	text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
@@ -513,11 +505,11 @@ function ENT:TriggerInput( iname, value )
 	elseif (iname == "FlywheelMass") then
 		if (value > 0 and self.FlywheelMassValue != value) then
 			self.FlywheelMassValue = value
-			self.FlywheelMassGUI = self.FlywheelMassValue
+			self.Inertia = self.FlywheelMassValue*(3.1416)^2
 			self:UpdateOverlayText()
 		elseif (value <= 0 and self.FlywheelMassValue != self.FlywheelMassNormal) then
 			self.FlywheelMassValue = self.FlywheelMassNormal
-			self.FlywheelMassGUI = self.FlywheelMassValue
+			self.Inertia = self.FlywheelMassValue*(3.1416)^2
 			self:UpdateOverlayText()
 		end
 	elseif (iname == "Override") then

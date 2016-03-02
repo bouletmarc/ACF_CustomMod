@@ -434,7 +434,7 @@ check the feedback of them
 *r135
 -V1.3.5
 --Fixed Battery Model Interfering
---Fixed Fixed Sound Tool Interfering
+--Fixed Sound Tool Interfering
 --Fixed Engine Sound not dying when no Fuel
 --Added Original Entities to Sound Tool
 --Added PulseJet Script to Custom Engines
@@ -456,3 +456,10 @@ check the feedback of them
 --Added 'EM' Error Report with Color
 --'EM' Turbine are only Turbine Model
 --'EM' PulseJet are only PulseJet Model
+
+
+
+## remove flywheel mass gui, and others useless vars
+## reset inertia with flywheelmass input
+## SetDark manual GB
+remove manual gearbox AvailRatio rpm's vars

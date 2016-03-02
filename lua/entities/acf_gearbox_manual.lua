@@ -75,6 +75,7 @@ if CLIENT then
 				acfmenupanelcustom["CData"][Gear]["Gear"] = Gear
 				acfmenupanelcustom["CData"][Gear]["ID"] = ID
 				acfmenupanelcustom["CData"][Gear]:SetValue(Value)
+				acfmenupanelcustom["CData"][Gear]:SetDark( true )
 				RunConsoleCommand( "acfcustom_data"..Gear, Value )
 				acfmenupanelcustom["CData"][Gear].OnValueChanged = function( slider, val )
 					acfmenupanelcustom.GearboxData[slider.ID]["GearTable"][slider.Gear] = val
@@ -449,14 +450,6 @@ function ENT:CheckEnts()
 		
 	end
 	
-end
-
-function ENT:GetGear( )
-	return self.Gear
-end
-
-function ENT:GetClutching( )
-	return self.Clutching
 end
 
 function ENT:Calc( InputRPM, InputInertia )

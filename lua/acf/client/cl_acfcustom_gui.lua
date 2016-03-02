@@ -67,7 +67,7 @@ function PANEL:Init( )
 	local EngineSubcats = {}
 	for _, MobilityTable in pairs(self.WeaponDisplay["MobilityCustom"]) do
 		local NodeAdd = Mobility
-		if( MobilityTable.ent == "acf_engine_custom" ) then
+		if( MobilityTable.ent == "acf_engine_custom" or MobilityTable.ent == "acf_engine_flywheel") then
 			NodeAdd = Engines
 		elseif ( MobilityTable.ent == "acf_gearbox_auto" or MobilityTable.ent == "acf_gearbox_cvt" or MobilityTable.ent == "acf_gearbox_air" or MobilityTable.ent == "acf_gearbox_manual" ) then
 			NodeAdd = CustomGB
@@ -85,7 +85,7 @@ function PANEL:Init( )
 	
 	for MobilityID,MobilityTable in pairs(self.WeaponDisplay["MobilityCustom"]) do
 		local NodeAdd = Mobility
-		if MobilityTable.ent == "acf_engine_custom" then
+		if MobilityTable.ent == "acf_engine_custom" or MobilityTable.ent == "acf_engine_flywheel" then
 			NodeAdd = Engines
 			if(MobilityTable.category) then
 				NodeAdd = EngineSubcats[MobilityTable.category]

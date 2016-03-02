@@ -66,6 +66,11 @@ local supercharger_base = {
 	ent = "acf_supercharger",
 	type = "MobilityCustom"
 }
+--flywheel
+local fly_base = {
+	ent = "acf_engine_flywheel",
+	type = "MobilityCustom"
+}
 --------------------------------------
 --	Setup GUI
 --------------------------------------
@@ -102,6 +107,9 @@ if CLIENT then
 	--supercharger
 	supercharger_base.guicreate = function( panel, tbl ) ACFSuperchargerGUICreate( tbl ) end or nil
 	supercharger_base.guiupdate = function() return end
+	--flywheel
+	fly_base.guicreate = function( panel, tbl ) ACFEngineFlyGUICreate( tbl ) end or nil
+	fly_base.guiupdate = function() return end
 end
 --------------------------------------
 --	Setup Functions
@@ -170,6 +178,12 @@ end
 function ACF_DefineSupercharger( id, data )
 	data.id = id
 	table.Inherit( data, supercharger_base )
+	MobilityTable[ id ] = data
+end
+--flywheel
+function ACF_DefineFly( id, data )
+	data.id = id
+	table.Inherit( data, fly_base )
 	MobilityTable[ id ] = data
 end
 -------------------------------------

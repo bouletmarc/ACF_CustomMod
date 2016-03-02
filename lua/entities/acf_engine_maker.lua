@@ -296,7 +296,6 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 		if tonumber(Data15) != nil then Engine.FlywheelOverride = tonumber(Data15) else Engine.FlywheelOverride = 1200  end
 		
 		--Set Original Values
-		Engine.PeakTorqueHeld = Engine.PeakTorque
 		Engine.CutValue = Engine.LimitRPM / 20
 		Engine.CutRpm = Engine.LimitRPM - 100
 		Engine.Inertia = Engine.FlywheelMassValue*(3.1416)^2
@@ -368,7 +367,6 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 
 	Engine:SetNWString( "WireName", Lookup.name )
 	------ GUI ---------
-	Engine.FlywheelMassGUI = Engine.FlywheelMassValue
 	Engine:UpdateOverlayText()
 	
 	Owner:AddCount("_acf_engine_maker", Engine)
@@ -476,7 +474,6 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 	if tonumber(ArgsTable[19]) != nil then self.FlywheelOverride = tonumber(ArgsTable[19]) else self.FlywheelOverride = 1200  end
 	
 	--Set Original Values
-	self.PeakTorqueHeld = self.PeakTorque
 	self.CutValue = self.LimitRPM / 20
 	self.CutRpm = self.LimitRPM - 100
 	self.Inertia = self.FlywheelMassValue*(3.1416)^2
@@ -541,7 +538,6 @@ function ENT:Update( ArgsTable )	--That table is the player data, as sorted in t
 
 	self:SetNWString( "WireName", self.EngineName )
 	------ GUI ---------
-	self.FlywheelMassGUI = self.FlywheelMassValue
 	self:UpdateOverlayText()
 	
 	ACF_Activate( self, 1 )
@@ -592,7 +588,7 @@ function ENT:UpdateOverlayText()
 		text = text .. "Idle: " .. math.Round(self.IdleRPM) .. " RPM\n"
 	end
 	text = text .. "Redline: " .. math.Round((self.LimitRPM+self.RPMExtra)) .. " RPM\n"
-	text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
+	text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassValue,3) .. " Kg\n"
 	text = text .. "EngineType: " .. self.EngineTypeFinal .. "\n"
 	//text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
 	//if self.RequiresFuel then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
@@ -691,11 +687,11 @@ function ENT:TriggerInput( iname, value )
 	elseif (iname == "FlywheelMass") then
 		if (value > 0 and self.FlywheelMassValue != value) then
 			self.FlywheelMassValue = value
-			self.FlywheelMassGUI = self.FlywheelMassValue
+			self.Inertia = self.FlywheelMassValue*(3.1416)^2
 			self:UpdateOverlayText()
 		elseif (value <= 0 and self.FlywheelMassValue != self.FlywheelMassNormal) then
 			self.FlywheelMassValue = self.FlywheelMassNormal
-			self.FlywheelMassGUI = self.FlywheelMassValue
+			self.Inertia = self.FlywheelMassValue*(3.1416)^2
 			self:UpdateOverlayText()
 		end
 	elseif (iname == "Override") then
