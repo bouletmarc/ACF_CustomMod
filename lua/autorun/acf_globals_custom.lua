@@ -2,13 +2,14 @@
 --	Set vars
 --------------------------------------
 ACFCUSTOM = {}
-ACFCUSTOM.Version = 134
+ACFCUSTOM.Version = 135
 ACFCUSTOM.CurrentVersion = 0
-ACFCUSTOM.EngineMakerVersion = 6.1
+ACFCUSTOM.EngineMakerVersion = 6.2
 ACFC = {}
 ACFC.R = 0
 ACFC.G = 0
 ACFC.B = 200
+ACFCUSTOM.HasUnofficialExtra = false
 local VersionTable = string.ToTable(ACFCUSTOM.Version)
 ACFCUSTOM.VersionCustom = VersionTable[1].."."..VersionTable[2].."."..VersionTable[3]
 print("[[ ACF Custom Loaded ]]")
@@ -75,6 +76,12 @@ end
 include("acf/shared/acfloadercustom.lua")
 
 ACFCUSTOM.Weapons = list.Get("ACFCUSTOMEnts")
+--------------------------------------
+--	Check for Unofficial Extra
+--------------------------------------
+if file.Exists("acf/shared/engines/pulsejet.lua", "LUA") then	
+	ACFCUSTOM.HasUnofficialExtra = true
+end
 --------------------------------------
 --	Notify
 --------------------------------------

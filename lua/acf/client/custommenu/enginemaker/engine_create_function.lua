@@ -5,16 +5,28 @@ local InvalidModelsTable = {}
 table.insert(InvalidModelsTable, "linear_l.mdl")
 table.insert(InvalidModelsTable, "linear_m.mdl")
 table.insert(InvalidModelsTable, "linear_s.mdl")
+table.insert(InvalidModelsTable, "linear_t.mdl")
 table.insert(InvalidModelsTable, "t5large.mdl")
 table.insert(InvalidModelsTable, "t5med.mdl")
 table.insert(InvalidModelsTable, "t5small.mdl")
+table.insert(InvalidModelsTable, "t5tiny.mdl")
 table.insert(InvalidModelsTable, "transaxial_l.mdl")
 table.insert(InvalidModelsTable, "transaxial_m.mdl")
 table.insert(InvalidModelsTable, "transaxial_s.mdl")
+table.insert(InvalidModelsTable, "transaxial_t.mdl")
 table.insert(InvalidModelsTable, "flywheelclutchb.mdl")
 table.insert(InvalidModelsTable, "flywheelclutchm.mdl")
 table.insert(InvalidModelsTable, "flywheelclutchs.mdl")
 table.insert(InvalidModelsTable, "flywheelclutcht.mdl")
+table.insert(InvalidModelsTable, "pulsejets.mdl")
+table.insert(InvalidModelsTable, "pulsejetm.mdl")
+table.insert(InvalidModelsTable, "pulsejetl.mdl")
+table.insert(InvalidModelsTable, "turbine_s.mdl")
+table.insert(InvalidModelsTable, "turbine_m.mdl")
+table.insert(InvalidModelsTable, "turbine_l.mdl")
+table.insert(InvalidModelsTable, "gasturbine_s.mdl")
+table.insert(InvalidModelsTable, "gasturbine_m.mdl")
+table.insert(InvalidModelsTable, "gasturbine_l.mdl")
 --------------------------------------
 --	Set invalid's char
 --------------------------------------
@@ -26,59 +38,103 @@ local invalid_filename_chars = {
 --------------------------------------
 --	Load all models
 --------------------------------------
-function LoadAllModels()
+function LoadAllModels(OnlyTurbine, OnlyPulseJet)
+	//Clear List
+	ModelsList:Clear()
+	
 	local LastAdded
-	local Name, Ext = file.Find("models/engines/*.mdl", "GAME")
-	for k, v in pairs(Name) do
-		if not table.HasValue(InvalidModelsTable, v) then
-			if v != LastAdded then
-				LastAdded = v
-				ModelsList:AddLine(v)
+	if !OnlyTurbine and !OnlyPulseJet then
+		local Name, Ext = file.Find("models/engines/*.mdl", "GAME")
+		for k, v in pairs(Name) do
+			if not table.HasValue(InvalidModelsTable, v) then
+				if v != LastAdded then
+					LastAdded = v
+					ModelsList:AddLine(v)
+				end
 			end
 		end
+		--Reload Model
+		local Name, Ext = file.Find("models/engines/*.mdl", "GAME")
+		MdlText = "models/engines/"..tostring(Name[1])
+		EngineModel2:SetText( "Models :\n"..MdlText )
+		EngineModel2:SizeToContents()
+		DisplayModel:SetModel( MdlText )
+		ModelsList:SelectFirstItem()
+	elseif OnlyTurbine and !OnlyPulseJet then
+		ModelsList:AddLine("turbine_s.mdl")
+		ModelsList:AddLine("turbine_m.mdl")
+		ModelsList:AddLine("turbine_l.mdl")
+		ModelsList:AddLine("gasturbine_s.mdl")
+		ModelsList:AddLine("gasturbine_m.mdl")
+		ModelsList:AddLine("gasturbine_l.mdl")
+		--Reload Model
+		MdlText = "models/engines/".."turbine_s.mdl"
+		EngineModel2:SetText( "Models :\n"..MdlText )
+		EngineModel2:SizeToContents()
+		DisplayModel:SetModel( MdlText )
+		ModelsList:SelectFirstItem()
+	elseif !OnlyTurbine and OnlyPulseJet then
+		ModelsList:AddLine("pulsejets.mdl")
+		ModelsList:AddLine("pulsejetm.mdl")
+		ModelsList:AddLine("pulsejetl.mdl")
+		--Reload Model
+		MdlText = "models/engines/".."pulsejets.mdl"
+		EngineModel2:SetText( "Models :\n"..MdlText )
+		EngineModel2:SizeToContents()
+		DisplayModel:SetModel( MdlText )
+		ModelsList:SelectFirstItem()
 	end
 end
 ------------------------------------------
---	Set Flywheel Override Entry to false
+--	Set Flywheel Override Entry to true/false
 ------------------------------------------
-function SetFlywheelOverFalse(Text)
-	FlywheelOverEntry:SetDrawBackground(false)
-	FlywheelOverEntry:SetEditable(false)
-	if Text then
+function SetFlywheelOver(Text, Editable)
+	if Editable then
+		FlywheelOverEntry:SetDrawBackground(true)
+		FlywheelOverEntry:SetEditable(true)
+	else
+		FlywheelOverEntry:SetDrawBackground(false)
+		FlywheelOverEntry:SetEditable(false)
+	end
+	if Text != "" then
 		FlywheelOverEntry:SetText(Text)
 	end
 end
 ------------------------------------------
---	Set Flywheel Override Entry to true
+--	Set Flywheel Override Entry to true/false
 ------------------------------------------
-function SetFlywheelOverTrue(Text)
-	FlywheelOverEntry:SetDrawBackground(true)
-	FlywheelOverEntry:SetEditable(true)
-	if Text then
-		FlywheelOverEntry:SetText(Text)
+function SetPulsetJetLock(Locking)
+	if Locking then
+		LimitEntry:SetDrawBackground(false)
+		LimitEntry:SetEditable(false)
+		FlywheelEntry:SetDrawBackground(false)
+		FlywheelEntry:SetEditable(false)
+	else
+		LimitEntry:SetDrawBackground(true)
+		LimitEntry:SetEditable(true)
+		FlywheelEntry:SetDrawBackground(true)
+		FlywheelEntry:SetEditable(true)
 	end
 end
 --------------------------------------------------
---	Set Entry to true since its gaz or diesel
+--	Set Entry to true(gaz or diesel) or false (electric or any)
 --------------------------------------------------
-function SetEntryToTrue()
-	IdleEntry:SetEditable(true)
-	PeakMinEntry:SetEditable(true)
-	PeakMaxEntry:SetEditable(true)
-	IdleEntry:SetDrawBackground(true)
-	PeakMinEntry:SetDrawBackground(true)
-	PeakMaxEntry:SetDrawBackground(true)
-end
---------------------------------------------------
---	Set Entry to false since its electric or any
---------------------------------------------------
-function SetEntryToFalse()
-	IdleEntry:SetEditable(false)
-	PeakMinEntry:SetEditable(false)
-	PeakMaxEntry:SetEditable(false)
-	IdleEntry:SetDrawBackground(false)
-	PeakMinEntry:SetDrawBackground(false)
-	PeakMaxEntry:SetDrawBackground(false)
+function SetEntryTo(Entry)
+	if Entry then
+		IdleEntry:SetEditable(true)
+		PeakMinEntry:SetEditable(true)
+		PeakMaxEntry:SetEditable(true)
+		IdleEntry:SetDrawBackground(true)
+		PeakMinEntry:SetDrawBackground(true)
+		PeakMaxEntry:SetDrawBackground(true)
+	else
+		IdleEntry:SetEditable(false)
+		PeakMinEntry:SetEditable(false)
+		PeakMaxEntry:SetEditable(false)
+		IdleEntry:SetDrawBackground(false)
+		PeakMinEntry:SetDrawBackground(false)
+		PeakMaxEntry:SetDrawBackground(false)
+	end
 end
 -------------------------------------------
 --	Reload Last Engine is used the option
@@ -90,42 +146,56 @@ function ReloadLastEngine()
 		table.insert(EngT, w)
 	end
 	local ModelLoad = tostring(EngT[3])
-	local FuelTypeLoad = tostring(EngT[4])
-	local WeightLoad = tonumber(EngT[12])
+	local EngineTypeLoad = tostring(EngT[5])
 	local iSelectLoad = tostring(EngT[15])
 	local IsTransLoad = tostring(EngT[16])
 	
+	EngineTypeButton:SetText(tostring(EngT[5]))
+	
 	--Set Fuel Type
-	if FuelTypeLoad == "Petrol" then
-		FuelTypeValue = 0
-	elseif FuelTypeLoad == "Diesel" then
-		FuelTypeValue = 1
-	elseif FuelTypeLoad == "Electric" then
-		FuelTypeValue = 2
-		--set false entry
-		SetEntryToFalse()
-	elseif FuelTypeLoad == "Any" then
-		FuelTypeValue = 3
-		--set false entry
-		SetEntryToFalse()
+	if string.find(ModelLoad, "/pulsejet") then
+		--Pulsejet
+		FuelTypeValue = 6
+		SetEntryTo(false)
+		LoadAllModels(false, true)
+	else
+		--All Others Types
+		if EngineTypeLoad == "GenericPetrol" then
+			FuelTypeValue = 0
+			EngineTypeButton:SetText("Petrol")
+		elseif EngineTypeLoad == "GenericDiesel" then
+			FuelTypeValue = 1
+			EngineTypeButton:SetText("Diesel")
+		elseif EngineTypeLoad == "Wankel" then
+			FuelTypeValue = 2
+		elseif EngineTypeLoad == "Radial" then
+			FuelTypeValue = 3
+		elseif EngineTypeLoad == "Electric" then
+			FuelTypeValue = 4
+			SetEntryTo(false)
+			SetFlywheelOver(EngT[17], true)
+		elseif EngineTypeLoad == "Turbine" then
+			FuelTypeValue = 5
+			SetFlywheelOver(EngT[17], true)
+			SetEntryTo(false)
+			LoadAllModels(true, false)
+		end
 	end
 	
-	--Set Electric
-	if iSelectLoad == "true" and IsTransLoad == "false" then
-		SetFlywheelOverTrue(EngT[17])
-	--Set Turbine
-	elseif iSelectLoad == "true" and IsTransLoad == "true" then
-		SetFlywheelOverTrue(EngT[17])
-	--Set others Engines
+	--Set FlywheelOverride
+	if EngineTypeLoad == "Electric" or EngineTypeLoad == "Turbine" then
+		SetFlywheelOver(EngT[17], true)
 	else
-		FlywheelOverEntry:SetDrawBackground(false)
-		FlywheelOverEntry:SetEditable(false)
-		FlywheelOverEntry:SetText("Override Number")
+		SetFlywheelOver("", false)
+	end
+	
+	--PulseJet Lock
+	if EngineTypeLoad == "Pulsejet" then
+		SetPulsetJetLock(true)
 	end
 	
 	--Set Values
 	EngineName:SetText(EngT[1])
-	FuelTypeButton:SetText(FuelTypeLoad)
 	EngineModel2:SetText("Models :\n"..ModelLoad)
 	EngineModel2:SizeToContents()
 	DisplayModel:SetModel(ModelLoad)
@@ -136,8 +206,8 @@ function ReloadLastEngine()
 	LimitEntry:SetText(EngT[10])
 	FlywheelEntry:SetText(EngT[11])
 	WeightEntry:SetText(EngT[12])
-	iSelectVal = iSelectLoad
-	IsTransVal = IsTransLoad
+	iSelectVal = tostring(EngT[15])
+	IsTransVal = tostring(EngT[16])
 	MdlText = ModelLoad
 end
 --------------------------------------
@@ -174,64 +244,84 @@ end
 function SetEngineFuelType()
 	if FuelTypeValue == 0 then
 		FuelTypeValue = 1
-		FuelTypeButton:SetText("Diesel")
+		EngineTypeButton:SetText("Diesel")
 	elseif FuelTypeValue == 1 then
 		FuelTypeValue = 2
-		FuelTypeButton:SetText("Electric")
+		EngineTypeButton:SetText("Wankel")
+	elseif FuelTypeValue == 2 then
+		FuelTypeValue = 3
+		EngineTypeButton:SetText("Radial")
+	elseif FuelTypeValue == 3 then
+		FuelTypeValue = 4
+		EngineTypeButton:SetText("Electric")
 		iSelectVal = "true"
 		IsTransVal = "false"
 		--Set False Values
 		IdleEntry:SetText( "10" )
 		PeakMinEntry:SetText( "10" )
 		PeakMaxEntry:SetText( "10" )
-		--set false entry
-		SetEntryToFalse()
-		--Set True Value
-		SetFlywheelOverTrue()
-	elseif FuelTypeValue == 2 then
-		FuelTypeValue = 3
-		FuelTypeButton:SetText("Turbine")
+		IdleEntry:SetTextColor(Color(0,0,200,255))
+		PeakMinEntry:SetTextColor(Color(0,0,200,255))
+		PeakMaxEntry:SetTextColor(Color(0,0,200,255))
+		FlywheelOverEntry:SetTextColor(Color(200,0,0,255))
+		--Reset Available Entry
+		SetEntryTo(false)
+		SetFlywheelOver("", true)
+	elseif FuelTypeValue == 4 then
+		FuelTypeValue = 5
+		EngineTypeButton:SetText("Turbine")
 		iSelectVal = "true"
 		IsTransVal = "true"
 		--Set False Values
 		IdleEntry:SetText( "1" )
 		PeakMinEntry:SetText( "1" )
 		PeakMaxEntry:SetText( "1" )
-		--set false entry
-		SetEntryToFalse()
-		--Set True Value
-		SetFlywheelOverTrue()
-	elseif FuelTypeValue == 3 then
-		FuelTypeValue = 0
-		FuelTypeButton:SetText("Petrol")
+		LoadAllModels(true, false)
+	elseif FuelTypeValue == 5 and ACFCUSTOM.HasUnofficialExtra then
+		FuelTypeValue = 6
+		EngineTypeButton:SetText("Pulsejet")
 		iSelectVal = "false"
 		IsTransVal = "false"
+		--Set False Values
+		IdleEntry:SetText( "100" )
+		PeakMinEntry:SetText( "1" )
+		PeakMaxEntry:SetText( "1" )
+		FlywheelEntry:SetText( "0.001" )
+		LimitEntry:SetText( "50000" )
+		LimitEntry:SetTextColor(Color(0,0,200,255))
+		FlywheelEntry:SetTextColor(Color(0,0,200,255))
+		FlywheelOverEntry:SetTextColor(Color(0,0,200,255))
+		--Reset Available Entry
+		SetFlywheelOver("1", false)
+		SetPulsetJetLock(true)
+		LoadAllModels(false, true)
+	elseif (FuelTypeValue == 5 and !ACFCUSTOM.HasUnofficialExtra) or FuelTypeValue == 6 then
+		FuelTypeValue = 0
+		EngineTypeButton:SetText("Petrol")
 		--Reset True Value
 		IdleEntry:SetText( "Idle Number" )
 		PeakMinEntry:SetText( "PeakMin RPM Number" )
 		PeakMaxEntry:SetText( "PeakMax RPM Number" )
-		--Set true entry
-		SetEntryToTrue()
-		--Reset False Value
-		SetFlywheelOverFalse("Override Number")
+		LimitEntry:SetText( "Limit RPM Number" )
+		IdleEntry:SetTextColor(Color(200,0,0,255))
+		PeakMinEntry:SetTextColor(Color(200,0,0,255))
+		PeakMaxEntry:SetTextColor(Color(200,0,0,255))
+		LimitEntry:SetTextColor(Color(200,0,0,255))
+		--Reset Available Entry
+		SetFlywheelOver("Override Number", false)
+		SetEntryTo(true)
+		SetPulsetJetLock(false)
+		LoadAllModels(false, false)
 	end
 end
 --------------------------------------
 --	Check if its number
 --------------------------------------
-function NumberCheck(CurrentNumberString, ReturnMode)
-	local HasLetter = false
-	if string.match(CurrentNumberString, "[%a]") != nil then
-		HasLetter = true
-	end
-	--check for letters
-	if HasLetter then
-		--set error message
+function NumberCheck(CurrentNumberString)
+	if string.match(CurrentNumberString, "[%a]") then
 		notification.AddLegacy("FOUND A LETTER IN '"..CurrentNumberString.."' NUMBER!", NOTIFY_ERROR, 5)
-		if ReturnMode then
-			return false
-		end
-	elseif ReturnMode then
+		return false
+	else
 		return true
 	end
 end
@@ -253,59 +343,25 @@ function SaveAndNextStep()
 	local FlywheelOverLoad = 1
 	local FlywheelOverLoadT = 0
 	
-	--torque
-	if NumberCheck(tostring(TorqueEntry:GetValue()), true) then
-		TorqueLoadT = TorqueEntry:GetValue()
-	else
-		return false
-	end
-	--idle
-	if NumberCheck(tostring(IdleEntry:GetValue()), true) then
-		IdleLoadT = IdleEntry:GetValue()
-	else
-		return false
-	end
-	--peak min
-	if NumberCheck(tostring(PeakMinEntry:GetValue()), true) then
-		PeakMinLoadT = PeakMinEntry:GetValue()
-	else
-		return false
-	end
-	--peak max
-	if NumberCheck(tostring(PeakMaxEntry:GetValue()), true) then
-		PeakMaxLoadT = PeakMaxEntry:GetValue()
-	else
-		return false
-	end
-	--limit
-	if NumberCheck(tostring(LimitEntry:GetValue()), true) then
-		LimitRpmLoadT = LimitEntry:GetValue()
-	else
-		return false
-	end
-	--flywheel
-	if NumberCheck(tostring(FlywheelEntry:GetValue()), true) then
-		FlywheelLoadT = FlywheelEntry:GetValue()
-	else
-		return false
-	end
-	--weight
-	if NumberCheck(tostring(WeightEntry:GetValue()), true) then
-		WeightLoadT = WeightEntry:GetValue()
-	else
-		return false
-	end
-	--flywheel override
+	local ErrorDetected = false
+	
+	if NumberCheck(tostring(TorqueEntry:GetValue())) then TorqueLoadT = TorqueEntry:GetValue() else ErrorDetected = true, TorqueEntry:SetTextColor(Color(200,0,0,255)) end
+	if NumberCheck(tostring(IdleEntry:GetValue())) then IdleLoadT = IdleEntry:GetValue() else ErrorDetected = true, IdleEntry:SetTextColor(Color(200,0,0,255)) end
+	if NumberCheck(tostring(PeakMinEntry:GetValue())) then PeakMinLoadT = PeakMinEntry:GetValue() else ErrorDetected = true, PeakMinEntry:SetTextColor(Color(200,0,0,255)) end
+	if NumberCheck(tostring(PeakMaxEntry:GetValue())) then PeakMaxLoadT = PeakMaxEntry:GetValue() else ErrorDetected = true, PeakMaxEntry:SetTextColor(Color(200,0,0,255)) end
+	if NumberCheck(tostring(LimitEntry:GetValue())) then LimitRpmLoadT = LimitEntry:GetValue() else ErrorDetected = true, LimitEntry:SetTextColor(Color(200,0,0,255)) end
+	if NumberCheck(tostring(FlywheelEntry:GetValue())) then FlywheelLoadT = FlywheelEntry:GetValue() else ErrorDetected = true, FlywheelEntry:SetTextColor(Color(200,0,0,255)) end
+	if NumberCheck(tostring(WeightEntry:GetValue())) then WeightLoadT = WeightEntry:GetValue() else ErrorDetected = true, WeightEntry:SetTextColor(Color(200,0,0,255)) end
 	if tostring(FlywheelOverEntry:GetValue()) != "Override Number" then
-		if NumberCheck(tostring(FlywheelOverEntry:GetValue()), true) then
-			FlywheelOverLoad = FlywheelOverEntry:GetValue()
-		else
-			return false
-		end
+		if NumberCheck(tostring(FlywheelOverEntry:GetValue())) then FlywheelOverLoad = FlywheelOverEntry:GetValue() else ErrorDetected = true, FlywheelOverEntry:SetTextColor(Color(200,0,0,255)) end
 	else
 		FlywheelOverLoad = FlywheelOverEntry:GetValue()
 	end
 	
+	--Go Back Error Detected
+	if ErrorDetected then return false end
+	
+	--Reset Override Number
 	if FlywheelOverLoad == "Override Number" then FlywheelOverLoadT = 0 else FlywheelOverLoadT = FlywheelOverLoad end
 	
 	local EngineLast = file.Read("acf/lastengine.txt", "DATA")
@@ -322,10 +378,19 @@ function SaveAndNextStep()
 		FuelTypeLoadT = "Diesel"
 		EngineTypeLoadT = "GenericDiesel"
 	elseif FuelTypeValue == 2 then
+		FuelTypeLoadT = "Petrol"
+		EngineTypeLoadT = "Wankel"
+	elseif FuelTypeValue == 3 then
+		EngineTypeLoadT = "Radial"
+	elseif FuelTypeValue == 4 then
 		FuelTypeLoadT = "Electric"
 		EngineTypeLoadT = "Electric"
-	elseif FuelTypeValue == 3 then
-		FuelTypeLoadT = "Any"
+	elseif FuelTypeValue == 5 then
+		FuelTypeLoadT = "Multifuel"
+		EngineTypeLoadT = "Turbine"
+	elseif FuelTypeValue == 6 then
+		FuelTypeLoadT = "Multifuel"
+		--EngineTypeLoadT = "Pulsejet" --It Doesnt Work return this type, since its unavailable yet
 		EngineTypeLoadT = "Turbine"
 	end
 	

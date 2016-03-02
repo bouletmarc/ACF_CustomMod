@@ -183,20 +183,26 @@ function MakeACF_Engine(Owner, Pos, Angle, Id)
 	Engine:FirstLoadCustom()
 	Engine.FlywheelMassValue = Lookup.flywheelmass
 	--Creating Wire Inputs
-	Engine.CustomLimit = GetConVarNumber("sbox_max_acf_modding")
 	local Inputs = {"Active", "Throttle"}
-	if Engine.CustomLimit > 0 then
-		if Engine.EngineType == "Turbine" or Engine.EngineType == "Electric" then	--Create inputs for Electric&Turbine
+	if GetConVarNumber("sbox_max_acf_modding") > 0 then
+		if string.find(Engine.Model, "/pulsejet") then
+			--Create inputs for PulseJet
 			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "RpmAdd")
-			table.insert(Inputs, "FlywheelMass")
-			table.insert(Inputs, "Override")
-		else		 --Create inputs others engines
-			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "RpmAdd")
-			table.insert(Inputs, "FlywheelMass")
-			table.insert(Inputs, "Idle")
-			table.insert(Inputs, "Disable Cutoff")
+		else
+			if Engine.EngineType == "Turbine" or Engine.EngineType == "Electric" then
+				--Create inputs for Electric&Turbine
+				table.insert(Inputs, "TqAdd")
+				table.insert(Inputs, "RpmAdd")
+				table.insert(Inputs, "FlywheelMass")
+				table.insert(Inputs, "Override")
+			else
+				--Create inputs others engines
+				table.insert(Inputs, "TqAdd")
+				table.insert(Inputs, "RpmAdd")
+				table.insert(Inputs, "FlywheelMass")
+				table.insert(Inputs, "Idle")
+				table.insert(Inputs, "Disable Cutoff")
+			end
 		end
 	end
 	Engine.Inputs = Wire_CreateInputs( Engine, Inputs )
@@ -306,20 +312,26 @@ function ENT:Update( ArgsTable )
 	self:FirstLoadCustom()
 	self.FlywheelMassValue = Lookup.flywheelmass
 	--Creating Wire Inputs
-	self.CustomLimit = GetConVarNumber("sbox_max_acf_modding")
 	local Inputs = {"Active", "Throttle"}
-	if self.CustomLimit > 0 then
-		if self.EngineType == "Turbine" or self.EngineType == "Electric" then	--Create inputs for Electric&Turbine
+	if GetConVarNumber("sbox_max_acf_modding") > 0 then
+		if string.find(self.Model, "/pulsejet") then
+			--Create inputs for PulseJet
 			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "RpmAdd")
-			table.insert(Inputs, "FlywheelMass")
-			table.insert(Inputs, "Override")
-		else 		--Create inputs others engines
-			table.insert(Inputs, "TqAdd")
-			table.insert(Inputs, "RpmAdd")
-			table.insert(Inputs, "FlywheelMass")
-			table.insert(Inputs, "Idle")
-			table.insert(Inputs, "Disable Cutoff")
+		else
+			if self.EngineType == "Turbine" or self.EngineType == "Electric" then
+				--Create inputs for Electric&Turbine
+				table.insert(Inputs, "TqAdd")
+				table.insert(Inputs, "RpmAdd")
+				table.insert(Inputs, "FlywheelMass")
+				table.insert(Inputs, "Override")
+			else
+				--Create inputs others engines
+				table.insert(Inputs, "TqAdd")
+				table.insert(Inputs, "RpmAdd")
+				table.insert(Inputs, "FlywheelMass")
+				table.insert(Inputs, "Idle")
+				table.insert(Inputs, "Disable Cutoff")
+			end
 		end
 	end
 	self.Inputs = Wire_CreateInputs( self, Inputs )
@@ -404,6 +416,8 @@ function ENT:UpdateOverlayText()
 	end
 	text = text .. "Redline: " .. math.Round((self.LimitRPM+self.RPMExtra)) .. " RPM\n"
 	text = text .. "FlywheelMass: " .. math.Round(self.FlywheelMassGUI,3) .. " Kg\n"
+	text = text .. "Rpm: " .. math.Round(self.FlyRPM) .. " RPM\n"
+	if self.RequiresFuel then text = text .. "Consumption: " .. math.Round(self.Fuelusing,3) .. " liters/min\n" end
 	text = text .. "Weight: " .. math.Round(self.Weight) .. "Kg"
 	
 	self:SetOverlayText( text )
@@ -425,7 +439,6 @@ function ENT:UpdateEngineConsumption()
 	end
 	--update gui final
 	self:UpdateOverlayText()
-	//self.CanUpdateGui = 0
 end
 
 --###################################################
@@ -749,8 +762,10 @@ function ENT:CalcRPM()
 		Wire_TriggerOutput(self, "Fuel Use", math.Round(60*Consumption/DeltaTime,3))
 		self.Fuelusing = math.Round((60*Consumption/DeltaTime),3)
 	elseif self.RequiresFuel then
+		self.Active = false
 		self:TriggerInput( "Active", 0 ) --shut off if no fuel and requires it
-		return 0
+		Wire_TriggerOutput( self, "Running", 0 )
+		//return 0
 	else
 		Wire_TriggerOutput(self, "Fuel Use", 0)
 	end
@@ -777,7 +792,10 @@ function ENT:CalcRPM()
 		TorqueDiff = math.max( self.FlyRPM - self.IdleRPM, 0 ) * self.Inertia
 		--Reset TorqueDiff for Manual Gearbox
 		if (self.ManualGearbox) then
-			TorqueDiff = math.max( self.FlyRPM + (self.IdleRPM/4), 0 ) * self.Inertia
+			local MaxTorque = math.max(self.LimitRPM - self.IdleRPM, 0) * self.Inertia
+			local AddedTorque = math.max(self.FlyRPM + self.IdleRPM, 0) * self.Inertia
+			local MaxAddedTorque = math.max(self.LimitRPM + self.IdleRPM, 0) * self.Inertia
+			TorqueDiff = (AddedTorque * MaxTorque) / MaxAddedTorque
 		end
 	else
 		--Set Torque & Drag
@@ -871,9 +889,7 @@ function ENT:CalcRPM()
 	end
 	
 	--Update Gui
-	/*if self.FuelusingGUI != self.Fuelusing or self.FlyRPMGUI != self.FlyRPM then
-		self:UpdateOverlayText()
-	end*/
+	//self:UpdateOverlayText()
 	
 	-- Kill the Engine Off under 100 RPM
 	if( self.FlyRPM <= 100 and self.Active == false ) then

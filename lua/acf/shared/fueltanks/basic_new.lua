@@ -43,15 +43,15 @@ ACF_DefineFuelTankSize( "Battery_1x8x4", {
 	dims = { 81.1, 11, 40.4 }
 } )
 
-ACF_DefineFuelTankSize( "Tank_2x4x1", {
-	name = "2x4x1",
+ACF_DefineFuelTankSize( "Battery_2x4x1", {
+	name = "2x4x1 Battery",
 	desc = "",
 	model = "models/fueltank/battery16m.mdl",
 	dims = { 41.7, 21.7, 11.6 }
 } )
 
-ACF_DefineFuelTankSize( "Tank_2x4x2", {
-	name = "2x4x2",
+ACF_DefineFuelTankSize( "Battery_2x4x2", {
+	name = "2x4x2 Battery",
 	desc = "Mini Cooper.",
 	model = "models/fueltank/battery32m.mdl",
 	dims = { 41.7, 21.6, 21.6 }

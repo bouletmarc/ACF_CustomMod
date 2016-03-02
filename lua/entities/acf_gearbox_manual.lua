@@ -682,7 +682,12 @@ function ENT:RPMCheckup (InputRPM, InputInertia, DoubleDiff, Link1, Link2, Link3
 	
 	-- Set Clutch
 	local Clutch = 0
-	if LinkNumer == 2 then
+	if Link1.Side == 0 then
+		Clutch = self.LClutch
+	elseif Link1.Side == 1 then
+		Clutch = self.RClutch
+	end
+	/*if LinkNumer == 2 then
 		if Link2.Side == 0 then Clutch = Link1.Ent.LClutch
 		elseif Link2.Side == 1 then Clutch = Link1.Ent.RClutch end
 	elseif LinkNumer == 3 then
@@ -694,7 +699,7 @@ function ENT:RPMCheckup (InputRPM, InputInertia, DoubleDiff, Link1, Link2, Link3
 	elseif LinkNumer == 5 then
 		if Link5.Side == 0 then Clutch = Link4.Ent.LClutch
 		elseif Link5.Side == 1 then Clutch = Link4.Ent.RClutch end
-	end
+	end*/
 	
 	-- Set RPM Torque to send
 	if ((LinkNumer==2 and Link1.Ent.GearRatio~=0) or (LinkNumer==3 and Link2.Ent.GearRatio~=0) or (LinkNumer==4 and Link3.Ent.GearRatio~=0) or (LinkNumer==5 and Link4.Ent.GearRatio~=0))then

@@ -430,3 +430,29 @@ check the feedback of them
 --Cleaned Engine Maker Inputs
 --Removed Gearbox RPM Outputs
 --Faster Engine Stall
+
+*r135
+-V1.3.5
+--Fixed Battery Model Interfering
+--Fixed Fixed Sound Tool Interfering
+--Fixed Engine Sound not dying when no Fuel
+--Added Original Entities to Sound Tool
+--Added PulseJet Script to Custom Engines
+--Removed PulseJet 'Override' wire inputs
+--Replace FuelType 'Any' to 'MultiFuel'
+-
+--##'MGB' = Manual Gearbox##
+--Fixed Clutch bug on 'MGB'
+--Added more idle torque 'MGB'
+--Better torque powerband 'MGB'
+-
+--##'EM' = Engine Maker##
+--Fixed 'EM' Dupe Error
+--Fixed 'EM' no Gearbox Models
+--Added PulseJet to 'EM'
+--Added Wankel Type to 'EM'
+--Added Radial Type to 'EM'
+--Added 'EM' Display the FuelType
+--Added 'EM' Error Report with Color
+--'EM' Turbine are only Turbine Model
+--'EM' PulseJet are only PulseJet Model

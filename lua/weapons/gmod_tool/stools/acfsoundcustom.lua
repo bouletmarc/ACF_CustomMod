@@ -13,14 +13,9 @@ if CLIENT then
 	language.Add( "Tool.acfsoundcustom.0", "Left click to apply sound. Right click to copy sound. Reload to set default sound." )
 end
 
+ACFCUSTOM.SoundToolSupport = {
 
-
-
-ACF.SoundToolSupport = 
-{
-
-	acf_supercharger = 
-	{
+	acf_supercharger = {
 		GetSound = function(ent) return {Sound = ent.Sound} end,
 		
 		SetSound = function(ent, soundData) 
@@ -30,17 +25,14 @@ ACF.SoundToolSupport =
 		
 		ResetSound = function(ent)
 			local Id = ent.Id
-			local List = list.Get("ACFCUSTOMEnts")
-			
-			local soundData = {Sound = List["MobilityCustom"][Id]["sound"]}
-			
-			local setSound = ACF.SoundToolSupport["acf_supercharger"].SetSound
+			local List = list.Get("ACFCUSTOMEnts") 
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"]} 
+			local setSound = ACFCUSTOM.SoundToolSupport["acf_supercharger"].SetSound
 			setSound( ent, soundData )
 		end
 	},
 	
-	acf_turbo = 
-	{
+	acf_turbo = {
 		GetSound = function(ent) return {Sound = ent.Sound} end,
 		
 		SetSound = function(ent, soundData) 
@@ -50,17 +42,32 @@ ACF.SoundToolSupport =
 		
 		ResetSound = function(ent)
 			local Id = ent.Id
-			local List = list.Get("ACFCUSTOMEnts")
-			
-			local soundData = {Sound = List["MobilityCustom"][Id]["sound"]}
-			
-			local setSound = ACF.SoundToolSupport["acf_turbo"].SetSound
+			local List = list.Get("ACFCUSTOMEnts") 
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"]} 
+			local setSound = ACFCUSTOM.SoundToolSupport["acf_turbo"].SetSound
 			setSound( ent, soundData )
 		end
 	},
 	
-	acf_engine_custom = 
-	{
+	acf_engine_custom = {
+		GetSound = function(ent) return {Sound = ent.SoundPath, Pitch = ent.SoundPitch} end,
+		
+		SetSound = function(ent, soundData) 
+			ent.SoundPath = soundData.Sound
+			ent.SoundPitch = soundData.Pitch
+		end,
+		
+		ResetSound = function(ent)
+			local Id = ent.Id
+			local List = list.Get("ACFCUSTOMEnts")
+			local pitch = List["MobilityCustom"][Id]["pitch"] or 1 
+			local soundData = {Sound = List["MobilityCustom"][Id]["sound"], Pitch = pitch} 
+			local setSound = ACFCUSTOM.SoundToolSupport["acf_engine_custom"].SetSound
+			setSound( ent, soundData )
+		end
+	},
+	
+	acf_engine_maker = {
 		GetSound = function(ent) return {Sound = ent.SoundPath, Pitch = ent.SoundPitch} end,
 		
 		SetSound = function(ent, soundData) 
@@ -72,16 +79,30 @@ ACF.SoundToolSupport =
 			local Id = ent.Id
 			local List = list.Get("ACFCUSTOMEnts")
 			local pitch = List["MobilityCustom"][Id]["pitch"] or 1
-			
 			local soundData = {Sound = List["MobilityCustom"][Id]["sound"], Pitch = pitch}
-			
-			local setSound = ACF.SoundToolSupport["acf_engine_custom"].SetSound
+			local setSound = ACFCUSTOM.SoundToolSupport["acf_engine_maker"].SetSound
 			setSound( ent, soundData )
 		end
 	},
 	
-	acf_engine_maker = 
-	{
+	acf_gun =  {
+		GetSound = function(ent) return {Sound = ent.Sound} end,
+		
+		SetSound = function(ent, soundData) 
+			ent.Sound = soundData.Sound
+			ent:SetNWString( "Sound", soundData.Sound )
+		end,
+		
+		ResetSound = function(ent)
+			local Class = ent.Class
+			local Classes = list.Get("ACFClasses")
+			local soundData = {Sound = Classes["GunClass"][Class]["sound"]}
+			local setSound = ACFCUSTOM.SoundToolSupport["acf_gun"].SetSound
+			setSound( ent, soundData )
+		end
+	},
+	
+	acf_engine =  {
 		GetSound = function(ent) return {Sound = ent.SoundPath, Pitch = ent.SoundPitch} end,
 		
 		SetSound = function(ent, soundData) 
@@ -91,19 +112,14 @@ ACF.SoundToolSupport =
 		
 		ResetSound = function(ent)
 			local Id = ent.Id
-			local List = list.Get("ACFCUSTOMEnts")
-			local pitch = List["MobilityCustom"][Id]["pitch"] or 1
-			
-			local soundData = {Sound = List["MobilityCustom"][Id]["sound"], Pitch = pitch}
-			
-			local setSound = ACF.SoundToolSupport["acf_engine_maker"].SetSound
+			local List = list.Get("ACFEnts")
+			local pitch = List["Mobility"][Id]["pitch"] or 1
+			local soundData = {Sound = List["Mobility"][Id]["sound"], Pitch = pitch}
+			local setSound = ACFCUSTOM.SoundToolSupport["acf_engine"].SetSound
 			setSound( ent, soundData )
 		end
 	},
 }
-
-
-
 
 local function ReplaceSound( ply , Entity , data)
 	if !IsValid( Entity ) then return end
@@ -113,7 +129,7 @@ local function ReplaceSound( ply , Entity , data)
 	timer.Simple(1, function()
 		local class = Entity:GetClass()
 		
-		local support = ACF.SoundToolSupport[class]
+		local support = ACFCUSTOM.SoundToolSupport[class]
 		if not support then return end
 	
 		support.SetSound(Entity, {Sound = sound, Pitch = pitch})
@@ -134,8 +150,7 @@ local function IsReallyValid(trace, ply)
 	
 	
 	local class = trace.Entity:GetClass()
-	if not ACF.SoundToolSupport[class] then 
-	
+	if not ACFCUSTOM.SoundToolSupport[class] then
 		if string.StartWith(class, "acf_") then
 			ACFCUSTOM_SendNotify( ply, false, class .. " is not supported by the sound tool!" )
 		else
@@ -146,7 +161,6 @@ local function IsReallyValid(trace, ply)
 	end
 	
 	return true
-	
 end
 
 function TOOL:LeftClick( trace )
@@ -164,7 +178,7 @@ function TOOL:RightClick( trace )
 	if not IsReallyValid( trace, self:GetOwner() ) then return false end
 	
 	local class = trace.Entity:GetClass()
-	local support = ACF.SoundToolSupport[class]
+	local support = ACFCUSTOM.SoundToolSupport[class]
 	if not support then return false end
 	
 	local soundData = support.GetSound(trace.Entity)
@@ -183,7 +197,7 @@ function TOOL:Reload( trace )
 	if not IsReallyValid( trace, self:GetOwner() ) then return false end
 	
 	local class = trace.Entity:GetClass()
-	local support = ACF.SoundToolSupport[class]
+	local support = ACFCUSTOM.SoundToolSupport[class]
 	if not support then return false end
 	
 	support.ResetSound(trace.Entity)

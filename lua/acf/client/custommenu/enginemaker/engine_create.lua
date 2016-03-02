@@ -3,8 +3,8 @@
 --------------------------------------
 local MainPanel = nil
 
-FuelTypeValue = 0		--Petrol, Diesel, etc...
-EngTypeValue = 0		--I4, I6, etc..
+FuelTypeValue = 0		--Petrol, Diesel, Wankel, Radial, Electric, Turbine
+EngTypeValue = 0		--I4, I6, V6, V8, etc..
 EngSizeValue = 0		--Small, Medium, Fat
 MdlText = ""
 iSelectVal = "false"
@@ -13,6 +13,13 @@ IsTransVal = "false"
 --	Create Menu
 --------------------------------------
 local function CreateMenu()
+	--Reset
+	FuelTypeValue = 0		--Petrol, Diesel, etc...
+	EngTypeValue = 0		--I4, I6, etc..
+	EngSizeValue = 0		--Small, Medium, Fat
+	MdlText = ""
+	iSelectVal = "false"
+	IsTransVal = "false"
 
 	MainPanel = vgui.Create("DFrame")
 	MainPanel:SetSize(580, 400)
@@ -55,12 +62,12 @@ local function CreateMenu()
 			SetEngineName()
 		end
 		
-		FuelTypeButton = SecondPanel:Add("DButton")
-		FuelTypeButton:SetText("Petrol")
-		FuelTypeButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
-		FuelTypeButton:SetPos( 20, 60 )
-		FuelTypeButton:SetWide( 140 )
-		FuelTypeButton:SetTall( 30 )
+		EngineTypeButton = SecondPanel:Add("DButton")
+		EngineTypeButton:SetText("Petrol")
+		EngineTypeButton:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		EngineTypeButton:SetPos( 20, 60 )
+		EngineTypeButton:SetWide( 140 )
+		EngineTypeButton:SetTall( 30 )
 		
 		ModelsList = SecondPanel:Add("DListView")
 		ModelsList:SetParent(SecondPanel)
@@ -102,11 +109,12 @@ local function CreateMenu()
 		
 		TorqueEntry = SecondPanel:Add( "DTextEntry" )
 		TorqueEntry:SetText( "Torque Number" )
-		TorqueEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		TorqueEntry:SetTextColor(Color(200, 0, 0,255))
 		TorqueEntry:SetPos( 295, 50 )
 		TorqueEntry:SetWide( 115 )
 		TorqueEntry.OnMousePressed = function( )
 			TorqueEntry:SetText( "" )
+			TorqueEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		TorqueEntry.OnTextChanged = function( )
 			NumberCheck(tostring(TorqueEntry:GetValue()))
@@ -122,11 +130,12 @@ local function CreateMenu()
 		
 		IdleEntry = SecondPanel:Add( "DTextEntry" )
 		IdleEntry:SetText( "Idle Number" )
-		IdleEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		IdleEntry:SetTextColor(Color(200, 0, 0,255))
 		IdleEntry:SetPos( 295, 90 )
 		IdleEntry:SetWide( 115 )
 		IdleEntry.OnMousePressed = function( )
 			IdleEntry:SetText( "" )
+			IdleEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		IdleEntry.OnTextChanged = function( )
 			NumberCheck(tostring(IdleEntry:GetValue()))
@@ -142,11 +151,12 @@ local function CreateMenu()
 		
 		PeakMinEntry = SecondPanel:Add( "DTextEntry" )
 		PeakMinEntry:SetText( "PeakMin RPM Number" )
-		PeakMinEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		PeakMinEntry:SetTextColor(Color(200, 0, 0,255))
 		PeakMinEntry:SetPos( 295, 130 )
 		PeakMinEntry:SetWide( 115 )
 		PeakMinEntry.OnMousePressed = function( )
 			PeakMinEntry:SetText( "" )
+			PeakMinEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		PeakMinEntry.OnTextChanged = function( )
 			NumberCheck(tostring(PeakMinEntry:GetValue()))
@@ -162,11 +172,12 @@ local function CreateMenu()
 		
 		PeakMaxEntry = SecondPanel:Add( "DTextEntry" )
 		PeakMaxEntry:SetText( "PeakMax RPM Number" )
-		PeakMaxEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		PeakMaxEntry:SetTextColor(Color(200, 0, 0,255))
 		PeakMaxEntry:SetPos( 295, 170 )
 		PeakMaxEntry:SetWide( 115 )
 		PeakMaxEntry.OnMousePressed = function( )
 			PeakMaxEntry:SetText( "" )
+			PeakMaxEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		PeakMaxEntry.OnTextChanged = function( )
 			NumberCheck(tostring(PeakMaxEntry:GetValue()))
@@ -182,11 +193,12 @@ local function CreateMenu()
 		
 		LimitEntry = SecondPanel:Add( "DTextEntry" )
 		LimitEntry:SetText( "Limit RPM Number" )
-		LimitEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		LimitEntry:SetTextColor(Color(200, 0, 0,255))
 		LimitEntry:SetPos( 295, 210 )
 		LimitEntry:SetWide( 115 )
 		LimitEntry.OnMousePressed = function( )
 			LimitEntry:SetText( "" )
+			LimitEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		LimitEntry.OnTextChanged = function( )
 			NumberCheck(tostring(LimitEntry:GetValue()))
@@ -202,11 +214,12 @@ local function CreateMenu()
 		
 		FlywheelEntry = SecondPanel:Add( "DTextEntry" )
 		FlywheelEntry:SetText( "Flywheel Number" )
-		FlywheelEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		FlywheelEntry:SetTextColor(Color(200, 0, 0,255))
 		FlywheelEntry:SetPos( 295, 250 )
 		FlywheelEntry:SetWide( 115 )
 		FlywheelEntry.OnMousePressed = function( )
 			FlywheelEntry:SetText( "" )
+			FlywheelEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		FlywheelEntry.OnTextChanged = function( )
 			NumberCheck(tostring(FlywheelEntry:GetValue()))
@@ -222,13 +235,14 @@ local function CreateMenu()
 		
 		FlywheelOverEntry = SecondPanel:Add( "DTextEntry" )
 		FlywheelOverEntry:SetText( "Override Number" )
-		FlywheelOverEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		FlywheelOverEntry:SetTextColor(Color(0, 0, 200,255))
 		FlywheelOverEntry:SetPos( 295, 290 )
 		FlywheelOverEntry:SetWide( 115 )
 		FlywheelOverEntry:SetDrawBackground(false)
 		FlywheelOverEntry:SetEditable(false)
 		FlywheelOverEntry.OnMousePressed = function( )
 			FlywheelOverEntry:SetText( "" )
+			FlywheelOverEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		FlywheelOverEntry.OnTextChanged = function( )
 			NumberCheck(tostring(FlywheelOverEntry:GetValue()))
@@ -244,18 +258,19 @@ local function CreateMenu()
 		
 		WeightEntry = SecondPanel:Add( "DTextEntry" )
 		WeightEntry:SetText( "Weight Number" )
-		WeightEntry:SetTextColor(Color(ACFC.R,ACFC.G,ACFC.B,255))
+		WeightEntry:SetTextColor(Color(200, 0, 0,255))
 		WeightEntry:SetPos( 295, 330 )
 		WeightEntry:SetWide( 115 )
 		WeightEntry.OnMousePressed = function( )
 			WeightEntry:SetText( "" )
+			WeightEntry:SetTextColor(Color(0, 0, 200,255))
 		end
 		WeightEntry.OnTextChanged = function( )
 			NumberCheck(tostring(WeightEntry:GetValue()))
 		end
 		
 		--Fuel Do clic
-		FuelTypeButton.DoClick = function()
+		EngineTypeButton.DoClick = function()
 			SetEngineFuelType()
 		end
 		
@@ -287,17 +302,9 @@ local function CreateMenu()
 		end
 		
 		--load all models list
-		LoadAllModels()
+		LoadAllModels(false, false)
 		
-		if not EngineMakerUseLoad then
-			local Name, Ext = file.Find("models/engines/*.mdl", "GAME")
-			MdlText = "models/engines/"..tostring(Name[1])
-			EngineModel2:SetText( "Models :\n"..MdlText )
-			EngineModel2:SizeToContents()
-			DisplayModel:SetModel( MdlText )
-			ModelsList:SelectFirstItem()
-		--RELOAD IF USED OPTION LOAD OR EDIT LAST ENGINE
-		else
+		if EngineMakerUseLoad then
 			ReloadLastEngine()
 		end
 
