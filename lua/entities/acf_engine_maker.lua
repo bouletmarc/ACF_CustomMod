@@ -370,7 +370,7 @@ function MakeACF_EngineMaker(Owner, Pos, Angle, Id, Data1, Data2, Data3, Data4, 
 	Engine:UpdateOverlayText()
 	
 	Owner:AddCount("_acf_engine_maker", Engine)
-	Owner:AddCleanup( "acfmenu", Engine )
+	Owner:AddCleanup( "acfcustom", Engine )
 	
 	ACF_Activate( Engine, 0 )
 
@@ -1063,9 +1063,18 @@ function ENT:CalcRPM()
 	end
 	
 	--Update Gui
-	/*if self.FuelusingGUI != self.Fuelusing or self.FlyRPMGUI != self.FlyRPM then
-		self:UpdateOverlayText()
-	end*/
+	//self:UpdateOverlayText()
+	
+	-- Kill the Engine Off under 100 RPM
+	if( self.FlyRPM <= 100 and self.Active == false ) then
+		self.Active2 = false
+		Wire_TriggerOutput( self, "Running", 0 )
+		self.FlyRPM = 0
+		if self.Sound then
+			self.Sound:Stop()
+		end
+		self.Sound = nil
+	end
 	
 	--Update extras values
 	for Key, Extra in pairs(self.ExtraLink) do
@@ -1160,8 +1169,8 @@ function ENT:Link( Target )
 	end
 	--Extra Linking
 	if Target:GetClass() == "acf_chips" or Target:GetClass() == "acf_nos" or Target:GetClass() == "acf_turbo" or Target:GetClass() == "acf_supercharger" then
-		if self.ExtraUsing == 1 then	--Not link severals Extra Obje
-			return false, "You CAN'T use more that one Extra!"
+		if self.ExtraUsing == 1 then	--Not link severals Extra Object
+			return false, "You CAN'T use more than one Extra!"
 		else
 			return self:LinkExtra( Target )
 		end
@@ -1205,6 +1214,11 @@ function ENT:Link( Target )
 	
 	table.insert( self.GearLink, Link )
 	table.insert( Target.Master, self )
+	
+	//Perform Manual Gearbox Checkup
+	if Target.isManual then
+		self.ManualGearbox = true
+	end
 	
 	return true, "Link successful!"
 end
